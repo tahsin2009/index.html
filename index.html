@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,14 +31,21 @@
     flex-direction: column;
     padding: 12px;
   }
+
   #sidebar h3 {
     margin-bottom: 12px;
     font-size: 15px;
     font-weight: bold;
-    color: #505050;
+    color: #aaa;
     letter-spacing: 1px;
   }
-  #file-list { flex: 1; overflow-y: auto; }
+
+  /* File list scrolls naturally */
+  #file-list {
+    overflow-y: auto;
+    flex-grow: 1;
+    margin-bottom: 10px;
+  }
   #file-list li {
     list-style: none;
     padding: 8px;
@@ -47,35 +53,68 @@
     border-radius: 6px;
     margin-bottom: 4px;
     transition: 0.2s;
+    color: #ddd;
   }
   #file-list li:hover { background: #2c313c; }
   #file-list li.active { background: #3e5a6d; color: #fff; }
 
-
-  /* Sidebar controls */
+  /* Sidebar controls pinned at bottom */
   #sidebar-controls {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    margin-bottom: 10px;
+    gap: 10px;
+    margin-top: auto;
+    width: 100%;
   }
   #sidebar-controls button,
   #sidebar button {
     background: linear-gradient(145deg, #007acc, #005f99);
     color: #fff;
     border: none;
-    padding: 9px;
+    padding: 12px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    transition: 0.2s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: all 0.2s ease-in-out;
+    width: 100%;
   }
   #sidebar-controls button:hover,
   #sidebar button:hover {
     background: linear-gradient(145deg, #0095ff, #007acc);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+  }
+
+  /* New file bar */
+  #new-file-bar {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  #new-file-bar input {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #444;
+    background: #2a2d34;
+    color: #fff;
+    font-size: 14px;
+  }
+  #new-file-bar button {
+    background: #007acc;
+    border: none;
+    color: #fff;
+    padding: 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  #new-file-bar button:hover { background: #0095ff; }
+  #new-file-error {
+    color: #f55;
+    font-size: 12px;
+    margin-top: 4px;
   }
 
   /* Editor area */
@@ -122,6 +161,8 @@
   #editor {
     flex: 1;
     min-height: 0;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
   }
 
   /* Console & Preview */
@@ -153,7 +194,7 @@
     font-size: 12px;
     transition: 0.2s;
   }
-  #console-header button:hover { background: #0095ff; }
+  #console-header button:hover { background: #f55; }
   #console pre {
     margin: 0;
     padding: 12px;
@@ -176,24 +217,26 @@
 </head>
 <body>
 
-
-  
 <div id="sidebar">
   <h3>FILES</h3>
   <ul id="file-list"></ul>
 
+  <!-- Inline new file input -->
+  <div id="new-file-bar">
+    <input type="text" id="new-file-input" placeholder="Enter filename..." />
+    <div style="display:flex; gap:6px;">
+      <button onclick="confirmNewFile()">✔</button>
+      <button onclick="cancelNewFile()">✖</button>
+    </div>
+    <div id="new-file-error"></div>
+  </div>
+
   <div id="sidebar-controls">
     <button onclick="runCode()">▶ Run</button>
     <button onclick="goLive()">🌐 Go Live</button>
+    <button onclick="newFile()">+ New File</button>
   </div>
-
-  <button onclick="newFile()">+ New File</button>
 </div>
-
-
-
-
-
 
 <div id="editor-area">
   <div id="tabs"></div>
@@ -211,24 +254,21 @@
 </div>
 
 <script>
-
 function killConsole() {
   document.getElementById("console").style.display = "none";
 }
 
-
-
-
 /* --- ACE Editor Setup --- */
 let editor = ace.edit("editor");
-editor.setTheme("ace/theme/dracula"); // 🎨 modern theme
+editor.setTheme("ace/theme/dracula");
 editor.session.setMode("ace/mode/javascript");
 editor.setOptions({
   fontSize: "14px",
   enableBasicAutocompletion: true,
   enableLiveAutocompletion: true,
   enableSnippets: true,
-  showPrintMargin: false
+  showPrintMargin: false,
+  wrap: false
 });
 
 /* --- File Management --- */
@@ -257,14 +297,37 @@ function refreshFileList() {
   });
 }
 
+/* --- New File System (no alerts/prompt) --- */
 function newFile() {
-  let name = prompt("Enter file name (e.g., index.html, script.js, app.py):");
-  if (!name) return;
-  if (files[name]) { alert("File already exists!"); return; }
+  document.getElementById("new-file-bar").style.display = "flex";
+  document.getElementById("new-file-input").focus();
+}
+function confirmNewFile() {
+  let name = document.getElementById("new-file-input").value.trim();
+  let errorEl = document.getElementById("new-file-error");
+
+  if (!name) {
+    errorEl.textContent = "⚠ Please enter a file name";
+    return;
+  }
+  if (files[name]) {
+    errorEl.textContent = "⚠ File already exists!";
+    return;
+  }
+
   files[name] = "";
   saveFiles();
   refreshFileList();
   openTab(name);
+
+  document.getElementById("new-file-bar").style.display = "none";
+  document.getElementById("new-file-input").value = "";
+  errorEl.textContent = "";
+}
+function cancelNewFile() {
+  document.getElementById("new-file-bar").style.display = "none";
+  document.getElementById("new-file-input").value = "";
+  document.getElementById("new-file-error").textContent = "";
 }
 
 function openTab(name) {
@@ -328,15 +391,6 @@ editor.session.on("change", () => {
   }
 });
 
-/* --- Console --- */
-function clearConsole() {
-  document.getElementById("console-output").innerHTML = "";
-}
-function toggleConsole() {
-  let c = document.getElementById("console");
-  c.style.display = (c.style.display === "flex") ? "none" : "flex";
-}
-
 /* --- Run Code --- */
 function runCode() {
   if (!openFile) return;
@@ -348,12 +402,8 @@ function runCode() {
 
   if (openFile.endsWith(".js")) {
     try {
-      // Save originals
-      const originalLog = console.log;
-      const originalWarn = console.warn;
-      const originalError = console.error;
+      const originalLog = console.log, originalWarn = console.warn, originalError = console.error;
 
-      // Override
       console.log = function (...args) {
         output.innerHTML += `<div class="log">${args.join(" ")}</div>`;
         originalLog.apply(console, args);
@@ -368,15 +418,9 @@ function runCode() {
       };
 
       let result = eval(code);
-      if (result !== undefined) {
-        output.innerHTML += `<div class="log">${result}</div>`;
-      }
+      if (result !== undefined) output.innerHTML += `<div class="log">${result}</div>`;
 
-      // Restore
-      console.log = originalLog;
-      console.warn = originalWarn;
-      console.error = originalError;
-
+      console.log = originalLog; console.warn = originalWarn; console.error = originalError;
     } catch (err) {
       output.innerHTML += `<div class="error">Error: ${err}</div>`;
     }
@@ -387,7 +431,6 @@ function runCode() {
         pyodide.runPython(`
 import sys
 class ConsoleWriter:
-    def __init__(self): self.buffer = ""
     def write(self, s):
         import js
         js.document.getElementById("console-output").innerHTML += s
@@ -407,28 +450,11 @@ sys.stderr = ConsoleWriter()
 
 /* --- Go Live --- */
 function goLive() {
-  if (!openFile || !openFile.endsWith(".html")) { alert("🌐 Go Live only works with HTML files"); return; }
+  if (!openFile || !openFile.endsWith(".html")) return;
   let htmlBlob = new Blob([files[openFile]], { type: "text/html" });
   let url = URL.createObjectURL(htmlBlob);
   window.open(url, "_blank");
 }
-
-
-// function goLive() {
-//   if (!openFile || !openFile.endsWith(".html")) {
-//     alert("🌐 Go Live only works with HTML files");
-//     return;
-//   }
-
-//   let htmlBlob = new Blob([files[openFile]], { type: "text/html" });
-//   let url = URL.createObjectURL(htmlBlob);
-
-//   // Requires cordova-plugin-inappbrowser
-//   cordova.InAppBrowser.open(url, "_system");
-// }
-
-
-
 
 /* Init */
 refreshFileList();
