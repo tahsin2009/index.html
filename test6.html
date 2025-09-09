@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Code IDE</title>
+
+<!-- ACE Editor -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.js"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Fira Code", monospace;
+    background: linear-gradient(135deg, #1e1e2f, #151521);
+    color: #eee;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Sidebar */
+  #sidebar {
+    width: 18%;
+    max-width: 240px;
+    min-width: 150px;
+    background: #20232a;
+    border-right: 1px solid #727272;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+  }
+  #sidebar h3 {
+    margin-bottom: 12px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #505050;
+    letter-spacing: 1px;
+  }
+  #file-list { flex: 1; overflow-y: auto; }
+  #file-list li {
+    list-style: none;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    transition: 0.2s;
+  }
+  #file-list li:hover { background: #2c313c; }
+  #file-list li.active { background: #3e5a6d; color: #fff; }
+
+
+  /* Sidebar controls */
+  #sidebar-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  #sidebar-controls button,
+  #sidebar button {
+    background: linear-gradient(145deg, #007acc, #005f99);
+    color: #fff;
+    border: none;
+    padding: 9px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    transition: 0.2s;
+  }
+  #sidebar-controls button:hover,
+  #sidebar button:hover {
+    background: linear-gradient(145deg, #0095ff, #007acc);
+    transform: translateY(-1px);
+  }
+
+  /* Editor area */
+  #editor-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #1e1e1e;
+    border-left: 1px solid #333;
+  }
+
+  /* Tabs */
+  #tabs {
+    display: flex;
+    background: #252526;
+    border-bottom: 1px solid #333;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 8px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+    border-right: 1px solid #333;
+  }
+  .tab:hover { background: #2d2f38; }
+  .tab.active {
+    background: #1e1e2f;
+    font-weight: bold;
+    color: #61dafb;
+  }
+  .tab .close-btn {
+    color: #aaa;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .tab .close-btn:hover { color: #f55; }
+
+  /* Editor */
+  #editor {
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Console & Preview */
+  #console, #preview {
+    background: #0d1117;
+    border-top: 1px solid #333;
+    height: 200px;
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+    border-radius: 0 0 6px 6px;
+  }
+  #console-header {
+    background: #161b22;
+    padding: 6px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #61dafb;
+    font-size: 13px;
+  }
+  #console-header button {
+    background: #007acc;
+    border: none;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: 0.2s;
+  }
+  #console-header button:hover { background: #0095ff; }
+  #console pre {
+    margin: 0;
+    padding: 12px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    flex: 1;
+    font-size: 13px;
+  }
+  .log { color: #0f0; }
+  .warn { color: #ff0; }
+  .error { color: #f55; }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #fff;
+  }
+</style>
+</head>
+<body>
+
+
+  
+<div id="sidebar">
+  <h3>FILES</h3>
+  <ul id="file-list"></ul>
+
+  <div id="sidebar-controls">
+    <button onclick="runCode()">▶ Run</button>
+    <button onclick="goLive()">🌐 Go Live</button>
+  </div>
+
+  <button onclick="newFile()">+ New File</button>
+</div>
+
+
+
+
+
+
+<div id="editor-area">
+  <div id="tabs"></div>
+  <div id="editor"></div>
+  
+  <div id="console">
+    <div id="console-header">
+      <span>Console Output</span>
+      <button onclick="killConsole()">Kill Terminal</button>
+    </div>
+    <pre id="console-output"></pre>
+  </div>
+
+  <div id="preview"></div>
+</div>
+
+<script>
+
+function killConsole() {
+  document.getElementById("console").style.display = "none";
+}
+
+
+
+
+/* --- ACE Editor Setup --- */
+let editor = ace.edit("editor");
+editor.setTheme("ace/theme/dracula"); // 🎨 modern theme
+editor.session.setMode("ace/mode/javascript");
+editor.setOptions({
+  fontSize: "14px",
+  enableBasicAutocompletion: true,
+  enableLiveAutocompletion: true,
+  enableSnippets: true,
+  showPrintMargin: false
+});
+
+/* --- File Management --- */
+let files = JSON.parse(localStorage.getItem("files") || "{}");
+let openTabs = [];
+let openFile = null;
+let pyodideReady = false;
+
+async function loadPyodideEnv() {
+  window.pyodide = await loadPyodide();
+  pyodideReady = true;
+}
+loadPyodideEnv();
+
+function saveFiles() { localStorage.setItem("files", JSON.stringify(files)); }
+
+function refreshFileList() {
+  let ul = document.getElementById("file-list");
+  ul.innerHTML = "";
+  Object.keys(files).forEach(name => {
+    let li = document.createElement("li");
+    li.textContent = name;
+    li.className = (name === openFile ? "active" : "");
+    li.onclick = () => openTab(name);
+    ul.appendChild(li);
+  });
+}
+
+function newFile() {
+  let name = prompt("Enter file name (e.g., index.html, script.js, app.py):");
+  if (!name) return;
+  if (files[name]) { alert("File already exists!"); return; }
+  files[name] = "";
+  saveFiles();
+  refreshFileList();
+  openTab(name);
+}
+
+function openTab(name) {
+  openFile = name;
+  if (!openTabs.includes(name)) openTabs.push(name);
+  editor.setValue(files[name] || "", -1);
+  refreshFileList();
+  updateTabs();
+  setModeFromFilename(name);
+}
+
+function closeTab(name) {
+  openTabs = openTabs.filter(t => t !== name);
+  if (openFile === name) {
+    openFile = openTabs.length > 0 ? openTabs[openTabs.length - 1] : null;
+    editor.setValue(openFile ? files[openFile] : "", -1);
+  }
+  updateTabs();
+  refreshFileList();
+}
+
+function updateTabs() {
+  let tabs = document.getElementById("tabs");
+  tabs.innerHTML = "";
+  openTabs.forEach(fname => {
+    let tab = document.createElement("div");
+    tab.className = "tab" + (fname === openFile ? " active" : "");
+    tab.onclick = () => openTab(fname);
+
+    let label = document.createElement("span");
+    label.textContent = fname;
+
+    let closeBtn = document.createElement("span");
+    closeBtn.textContent = "×";
+    closeBtn.className = "close-btn";
+    closeBtn.onclick = (e) => {
+      e.stopPropagation();
+      closeTab(fname);
+    };
+
+    tab.appendChild(label);
+    tab.appendChild(closeBtn);
+    tabs.appendChild(tab);
+  });
+}
+
+function setModeFromFilename(filename) {
+  if (!filename) return;
+  if (filename.endsWith(".html")) editor.session.setMode("ace/mode/html");
+  else if (filename.endsWith(".css")) editor.session.setMode("ace/mode/css");
+  else if (filename.endsWith(".js")) editor.session.setMode("ace/mode/javascript");
+  else if (filename.endsWith(".py")) editor.session.setMode("ace/mode/python");
+  else if (filename.endsWith(".json")) editor.session.setMode("ace/mode/json");
+  else editor.session.setMode("ace/mode/text");
+}
+
+editor.session.on("change", () => {
+  if (openFile) {
+    files[openFile] = editor.getValue();
+    saveFiles();
+  }
+});
+
+/* --- Console --- */
+function clearConsole() {
+  document.getElementById("console-output").innerHTML = "";
+}
+function toggleConsole() {
+  let c = document.getElementById("console");
+  c.style.display = (c.style.display === "flex") ? "none" : "flex";
+}
+
+/* --- Run Code --- */
+function runCode() {
+  if (!openFile) return;
+  let code = files[openFile];
+  let output = document.getElementById("console-output");
+  output.innerHTML = "";
+  document.getElementById("console").style.display = "flex";
+  document.getElementById("preview").style.display = "none";
+
+  if (openFile.endsWith(".js")) {
+    try {
+      // Save originals
+      const originalLog = console.log;
+      const originalWarn = console.warn;
+      const originalError = console.error;
+
+      // Override
+      console.log = function (...args) {
+        output.innerHTML += `<div class="log">${args.join(" ")}</div>`;
+        originalLog.apply(console, args);
+      };
+      console.warn = function (...args) {
+        output.innerHTML += `<div class="warn">${args.join(" ")}</div>`;
+        originalWarn.apply(console, args);
+      };
+      console.error = function (...args) {
+        output.innerHTML += `<div class="error">${args.join(" ")}</div>`;
+        originalError.apply(console, args);
+      };
+
+      let result = eval(code);
+      if (result !== undefined) {
+        output.innerHTML += `<div class="log">${result}</div>`;
+      }
+
+      // Restore
+      console.log = originalLog;
+      console.warn = originalWarn;
+      console.error = originalError;
+
+    } catch (err) {
+      output.innerHTML += `<div class="error">Error: ${err}</div>`;
+    }
+  } else if (openFile.endsWith(".py")) {
+    if (!pyodideReady) { output.innerHTML = "Pyodide not ready yet..."; return; }
+    (async () => {
+      try {
+        pyodide.runPython(`
+import sys
+class ConsoleWriter:
+    def __init__(self): self.buffer = ""
+    def write(self, s):
+        import js
+        js.document.getElementById("console-output").innerHTML += s
+    def flush(self): pass
+sys.stdout = ConsoleWriter()
+sys.stderr = ConsoleWriter()
+        `);
+        await pyodide.runPythonAsync(code);
+      } catch (err) {
+        output.innerHTML += `<div class="error">Error: ${err}</div>`;
+      }
+    })();
+  } else {
+    output.innerHTML = `<div class="warn">▶ Run works for .js or .py files</div>`;
+  }
+}
+
+/* --- Go Live --- */
+function goLive() {
+  if (!openFile || !openFile.endsWith(".html")) { alert("🌐 Go Live only works with HTML files"); return; }
+  let htmlBlob = new Blob([files[openFile]], { type: "text/html" });
+  let url = URL.createObjectURL(htmlBlob);
+  window.open(url, "_blank");
+}
+
+
+// function goLive() {
+//   if (!openFile || !openFile.endsWith(".html")) {
+//     alert("🌐 Go Live only works with HTML files");
+//     return;
+//   }
+
+//   let htmlBlob = new Blob([files[openFile]], { type: "text/html" });
+//   let url = URL.createObjectURL(htmlBlob);
+
+//   // Requires cordova-plugin-inappbrowser
+//   cordova.InAppBrowser.open(url, "_system");
+// }
+
+
+
+
+/* Init */
+refreshFileList();
+if (Object.keys(files).length > 0) openTab(Object.keys(files)[0]);
+</script>
+
+</body>
+</html>
