@@ -407,13 +407,15 @@ function goLive() {
 }
 function killConsole() { document.getElementById("console").style.display = "none"; }
 
-/* Sidebar toggle */
-document.getElementById("sidebar-toggle").onclick = () => {
+/* Sidebar toggle (works on mobile too) */
+const sidebarToggle = document.getElementById("sidebar-toggle");
+sidebarToggle.addEventListener("click", () => {
   document.getElementById("sidebar").classList.toggle("open");
-};
+});
+
 
 /* Keyboard bar */
-const symbols = ["{}","[]","()",";",":",","<",">","=","+","-","*","/","|","&","!","?","'","\"","`"];
+const symbols = ["{}","[]","()",";",":",".",",","<",">","=","+","-","*","/","|","&","!","?","'","\"","`"];
 const kb = document.getElementById('keyboard-bar');
 symbols.forEach(sym=>{
   let btn = document.createElement('button');
