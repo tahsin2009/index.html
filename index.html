@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Mobile Code IDE</title>
 
 <!-- ACE Editor -->
@@ -30,8 +30,8 @@
     display: flex;
     flex-direction: column;
     padding: 12px;
+    transition: left 0.3s ease;
   }
-
   #sidebar h3 {
     margin-bottom: 12px;
     font-size: 15px;
@@ -39,8 +39,6 @@
     color: #aaa;
     letter-spacing: 1px;
   }
-
-  /* File list scrolls naturally */
   #file-list {
     overflow-y: auto;
     flex-grow: 1;
@@ -57,8 +55,6 @@
   }
   #file-list li:hover { background: #2c313c; }
   #file-list li.active { background: #3e5a6d; color: #fff; }
-
-  /* Sidebar controls pinned at bottom */
   #sidebar-controls {
     display: flex;
     flex-direction: column;
@@ -71,19 +67,41 @@
     background: linear-gradient(145deg, #007acc, #005f99);
     color: #fff;
     border: none;
-    padding: 12px;
+    padding: 14px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     transition: all 0.2s ease-in-out;
     width: 100%;
   }
-  #sidebar-controls button:hover,
-  #sidebar button:hover {
-    background: linear-gradient(145deg, #0095ff, #007acc);
-    transform: translateY(-2px);
+  #sidebar-controls button:hover { background: linear-gradient(145deg, #0095ff, #007acc); }
+
+  /* Mobile Sidebar */
+  #sidebar-toggle {
+    display: none;
+    background: #007acc;
+    border: none;
+    color: #fff;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 18px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 20;
+    border-radius: 6px;
+  }
+  @media (max-width: 768px) {
+    #sidebar {
+      position: absolute;
+      top: 0; left: -100%;
+      height: 100%;
+      z-index: 15;
+    }
+    #sidebar.open { left: 0; }
+    #sidebar-toggle { display: block; }
   }
 
   /* New file bar */
@@ -101,27 +119,15 @@
     color: #fff;
     font-size: 14px;
   }
-  #new-file-bar button {
-    background: #007acc;
-    border: none;
-    color: #fff;
-    padding: 6px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 13px;
-  }
-  #new-file-bar button:hover { background: #0095ff; }
-  #new-file-error {
-    color: #f55;
-    font-size: 12px;
-    margin-top: 4px;
-  }
+  #new-file-error { color: #f55; font-size: 12px; margin-top: 4px; }
 
   /* Editor area */
   #editor-area {
     flex: 1;
     display: flex;
     flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
     background: #1e1e1e;
     border-left: 1px solid #333;
   }
@@ -132,9 +138,11 @@
     background: #252526;
     border-bottom: 1px solid #333;
     overflow-x: auto;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .tab {
-    padding: 8px 14px;
+    padding: 10px 16px;
     cursor: pointer;
     white-space: nowrap;
     display: flex;
@@ -142,6 +150,7 @@
     gap: 8px;
     transition: 0.2s;
     border-right: 1px solid #333;
+    flex-shrink: 0;
   }
   .tab:hover { background: #2d2f38; }
   .tab.active {
@@ -153,7 +162,7 @@
     color: #aaa;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.2s;
+    font-size: 16px;
   }
   .tab .close-btn:hover { color: #f55; }
 
@@ -173,7 +182,6 @@
     overflow-y: auto;
     display: none;
     flex-direction: column;
-    border-radius: 0 0 6px 6px;
   }
   #console-header {
     background: #161b22;
@@ -192,7 +200,6 @@
     border-radius: 4px;
     cursor: pointer;
     font-size: 12px;
-    transition: 0.2s;
   }
   #console-header button:hover { background: #f55; }
   #console pre {
@@ -206,22 +213,32 @@
   .log { color: #0f0; }
   .warn { color: #ff0; }
   .error { color: #f55; }
+  iframe { width: 100%; height: 100%; border: none; background: #fff; }
 
-  iframe {
-    width: 100%;
-    height: 100%;
+  /* Fullscreen editor */
+  #fullscreen-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 20;
+    background: #444;
+    color: #fff;
     border: none;
-    background: #fff;
+    padding: 10px 14px;
+    border-radius: 6px;
+    cursor: pointer;
   }
 </style>
 </head>
 <body>
 
+<button id="sidebar-toggle">☰</button>
+<button id="fullscreen-btn">⛶</button>
+
 <div id="sidebar">
   <h3>FILES</h3>
   <ul id="file-list"></ul>
 
-  <!-- Inline new file input -->
   <div id="new-file-bar">
     <input type="text" id="new-file-input" placeholder="Enter filename..." />
     <div style="display:flex; gap:6px;">
@@ -297,7 +314,6 @@ function refreshFileList() {
   });
 }
 
-/* --- New File System (no alerts/prompt) --- */
 function newFile() {
   document.getElementById("new-file-bar").style.display = "flex";
   document.getElementById("new-file-input").focus();
@@ -306,14 +322,8 @@ function confirmNewFile() {
   let name = document.getElementById("new-file-input").value.trim();
   let errorEl = document.getElementById("new-file-error");
 
-  if (!name) {
-    errorEl.textContent = "⚠ Please enter a file name";
-    return;
-  }
-  if (files[name]) {
-    errorEl.textContent = "⚠ File already exists!";
-    return;
-  }
+  if (!name) { errorEl.textContent = "⚠ Please enter a file name"; return; }
+  if (files[name]) { errorEl.textContent = "⚠ File already exists!"; return; }
 
   files[name] = "";
   saveFiles();
@@ -363,10 +373,7 @@ function updateTabs() {
     let closeBtn = document.createElement("span");
     closeBtn.textContent = "×";
     closeBtn.className = "close-btn";
-    closeBtn.onclick = (e) => {
-      e.stopPropagation();
-      closeTab(fname);
-    };
+    closeBtn.onclick = (e) => { e.stopPropagation(); closeTab(fname); };
 
     tab.appendChild(label);
     tab.appendChild(closeBtn);
@@ -455,6 +462,23 @@ function goLive() {
   let url = URL.createObjectURL(htmlBlob);
   window.open(url, "_blank");
 }
+
+/* Sidebar toggle for mobile */
+document.getElementById("sidebar-toggle").onclick = () => {
+  document.getElementById("sidebar").classList.toggle("open");
+};
+
+/* Fullscreen editor toggle */
+document.getElementById("fullscreen-btn").onclick = () => {
+  let sidebar = document.getElementById("sidebar");
+  let consoleEl = document.getElementById("console");
+  if (sidebar.style.display !== "none") {
+    sidebar.style.display = "none";
+    consoleEl.style.display = "none";
+  } else {
+    sidebar.style.display = "flex";
+  }
+};
 
 /* Init */
 refreshFileList();
