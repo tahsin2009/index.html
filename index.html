@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Mobile Code IDE</title>
+<title>Mobile Code IDE — Long-press fixed + Rename</title>
 
 <!-- ACE Editor -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.js"></script>
@@ -19,8 +19,6 @@
     height: 100vh;
     overflow: hidden;
   }
-
-  /* Sidebar */
   #sidebar {
     width: 18%;
     max-width: 240px;
@@ -32,208 +30,72 @@
     padding: 12px;
     transition: left 0.3s ease;
   }
-  #sidebar h3 {
-    margin-bottom: 12px;
-    font-size: 15px;
-    font-weight: bold;
-    color: #aaa;
-    letter-spacing: 1px;
-  }
-  #file-list {
-    overflow-y: auto;
-    flex-grow: 1;
-    margin-bottom: 10px;
-  }
-  #file-list li {
-    list-style: none;
-    padding: 8px;
-    cursor: pointer;
-    border-radius: 6px;
-    margin-bottom: 4px;
-    transition: 0.2s;
-    color: #ddd;
-  }
+  #sidebar h3 { margin-bottom: 12px; font-size: 15px; font-weight: bold; color: #aaa; letter-spacing: 1px; }
+  #file-list { overflow-y: auto; flex-grow: 1; margin-bottom: 10px; }
+  #file-list li { list-style: none; padding: 8px; cursor: pointer; border-radius: 6px; margin-bottom: 4px; transition: 0.2s; color: #ddd; user-select: none; -webkit-user-select:none; }
   #file-list li:hover { background: #2c313c; }
   #file-list li.active { background: #3e5a6d; color: #fff; }
-  #sidebar-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: auto;
-    width: 100%;
-  }
-  #sidebar-controls button,
-  #sidebar button {
+  #sidebar-controls { display: flex; flex-direction: column; gap: 10px; margin-top: auto; width: 100%; }
+  #sidebar-controls button, #sidebar button {
     background: linear-gradient(145deg, #007acc, #005f99);
-    color: #fff;
-    border: none;
-    padding: 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 500;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    transition: all 0.2s ease-in-out;
-    width: 100%;
+    color: #fff; border: none; padding: 14px; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 500;
   }
   #sidebar-controls button:hover { background: linear-gradient(145deg, #0095ff, #007acc); }
 
-  /* Mobile Sidebar */
-  #sidebar-toggle {
-    display: none;
-    background: #007acc;
-    border: none;
-    color: #fff;
-    padding: 10px 14px;
-    cursor: pointer;
-    font-size: 18px;
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 20;
-    border-radius: 6px;
-  }
+  #sidebar-toggle { display: none; background: #007acc; border: none; color: #fff; padding: 10px 14px; cursor: pointer; font-size: 18px; position: absolute; top: 10px; right:10px; z-index: 20; border-radius: 6px; }
   @media (max-width: 768px) {
-    #sidebar {
-      position: absolute;
-      top: 0; left: -100%;
-      height: 100%;
-      z-index: 15;
-    }
+    #sidebar { position: absolute; top: 0; left: -100%; height: 100%; z-index: 15; }
     #sidebar.open { left: 0; }
     #sidebar-toggle { display: block; }
   }
 
-  /* New file bar */
-  #new-file-bar {
-    display: none;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 10px;
-  }
-  #new-file-bar input {
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #444;
-    background: #2a2d34;
-    color: #fff;
-    font-size: 14px;
-  }
+  #new-file-bar { display: none; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  #new-file-bar input { padding: 8px; border-radius: 4px; border: 1px solid #444; background: #2a2d34; color: #fff; font-size: 14px; }
   #new-file-error { color: #f55; font-size: 12px; margin-top: 4px; }
 
-  /* Editor area */
-  #editor-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    overflow: hidden;
-    background: #1e1e1e;
-    border-left: 1px solid #333;
-  }
-
-  /* Tabs */
-  #tabs {
-    display: flex;
-    background: #252526;
-    border-bottom: 1px solid #333;
-    overflow-x: auto;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .tab {
-    padding: 10px 16px;
-    cursor: pointer;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: 0.2s;
-    border-right: 1px solid #333;
-    flex-shrink: 0;
-  }
+  #editor-area { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: #1e1e1e; border-left: 1px solid #333; }
+  #tabs { display: flex; background: #252526; border-bottom: 1px solid #333; overflow-x: auto; white-space: nowrap; flex-shrink: 0; }
+  .tab { padding: 10px 16px; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 8px; transition: 0.2s; border-right: 1px solid #333; flex-shrink: 0; }
   .tab:hover { background: #2d2f38; }
-  .tab.active {
-    background: #1e1e2f;
-    font-weight: bold;
-    color: #61dafb;
-  }
-  .tab .close-btn {
-    color: #aaa;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 16px;
-  }
+  .tab.active { background: #1e1e2f; font-weight: bold; color: #61dafb; }
+  .tab .close-btn { color: #aaa; font-weight: bold; cursor: pointer; font-size: 16px; }
   .tab .close-btn:hover { color: #f55; }
 
-  /* Editor */
-  #editor {
-    flex: 1;
-    min-height: 0;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-  }
+  #editor { flex: 1; min-height: 0; overflow-x: auto !important; overflow-y: hidden !important; }
 
-  /* Console & Preview */
-  #console, #preview {
-    background: #0d1117;
-    border-top: 1px solid #333;
-    height: 200px;
-    overflow-y: auto;
-    display: none;
-    flex-direction: column;
-  }
-  #console-header {
-    background: #161b22;
-    padding: 6px 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #61dafb;
-    font-size: 13px;
-  }
-  #console-header button {
-    background: #007acc;
-    border: none;
-    color: #fff;
-    padding: 4px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-  }
-  #console-header button:hover { background: #f55; }
-  #console pre {
-    margin: 0;
-    padding: 12px;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    flex: 1;
-    font-size: 13px;
-  }
-  .log { color: #0f0; }
-  .warn { color: #ff0; }
-  .error { color: #f55; }
+  #console, #preview { background: #0d1117; border-top: 1px solid #333; height: 200px; overflow-y: auto; display: none; flex-direction: column; }
+  #console-header { background: #161b22; padding: 6px 10px; display: flex; justify-content: space-between; align-items: center; color: #61dafb; font-size: 13px; }
+  #console-header button { background: #007acc; border: none; color: #fff; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+  #console pre { margin: 0; padding: 12px; white-space: pre-wrap; word-wrap: break-word; flex: 1; font-size: 13px; }
+  .log { color: #0f0; } .warn { color: #ff0; } .error { color: #f55; }
   iframe { width: 100%; height: 100%; border: none; background: #fff; }
 
-  /* Fullscreen editor */
-  #fullscreen-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 20;
-    background: #444;
-    color: #fff;
-    border: none;
-    padding: 10px 14px;
-    border-radius: 6px;
-    cursor: pointer;
+  #keyboard-bar { background: #2d2d2d; display: flex; flex-wrap: wrap; padding: 5px; }
+  #keyboard-bar button { flex: 1 0 8%; margin: 2px; padding: 8px; font-size: 16px; background: #3a3a3a; border: none; border-radius: 4px; color: #fff; cursor: pointer; }
+  #keyboard-bar button:active { background: #007acc; }
+
+  /* Options popup for long press */
+  #file-options {
+    position: fixed;
+    z-index: 9999;
+    background: #222;
+    border: 1px solid #444;
+    padding: 8px;
+    border-radius: 8px;
+    display: none;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.6);
+    min-width: 200px;
   }
+  #file-options .title { color:#ddd; font-size:13px; margin-bottom:6px; word-break:break-all; }
+  #file-options button { width: 100%; padding: 8px; margin: 4px 0; border-radius: 6px; border: none; background: #333; color: #fff; cursor: pointer; font-size:14px; text-align:left; }
+  #file-options .danger { background: #aa2222; }
+  #file-options input[type="text"] { width: 100%; padding: 6px; margin-bottom:8px; border-radius:6px; border:1px solid #444; background:#1d1d1d; color:#fff; }
+  #no-files { color:#888; font-size:13px; padding:8px; text-align:center; }
 </style>
 </head>
 <body>
 
 <button id="sidebar-toggle">☰</button>
-<button id="fullscreen-btn">⛶</button>
 
 <div id="sidebar">
   <h3>FILES</h3>
@@ -258,7 +120,8 @@
 <div id="editor-area">
   <div id="tabs"></div>
   <div id="editor"></div>
-  
+  <div id="keyboard-bar"></div>
+
   <div id="console">
     <div id="console-header">
       <span>Console Output</span>
@@ -270,12 +133,31 @@
   <div id="preview"></div>
 </div>
 
-<script>
-function killConsole() {
-  document.getElementById("console").style.display = "none";
-}
+<!-- File options popup with rename area -->
+<div id="file-options" aria-hidden="true">
+  <div class="title" id="file-options-title"></div>
 
-/* --- ACE Editor Setup --- */
+  <div id="file-options-buttons">
+    <button id="file-options-rename">Rename</button>
+    <button id="file-options-copy">Copy</button>
+    <button id="file-options-delete" class="danger">Delete</button>
+    <button id="file-options-cancel">Cancel</button>
+  </div>
+
+  <div id="file-options-rename-area" style="display:none;">
+    <input id="file-options-rename-input" type="text" />
+    <div style="display:flex; gap:8px;">
+      <button id="file-options-rename-save">Save</button>
+      <button id="file-options-rename-cancel">Cancel</button>
+    </div>
+    <div id="file-options-rename-error" style="color:#f55; font-size:13px; margin-top:6px; display:none;"></div>
+  </div>
+</div>
+
+<script>
+/* ----------------------
+   Editor + state setup
+   ---------------------- */
 let editor = ace.edit("editor");
 editor.setTheme("ace/theme/dracula");
 editor.session.setMode("ace/mode/javascript");
@@ -288,30 +170,105 @@ editor.setOptions({
   wrap: false
 });
 
-/* --- File Management --- */
-let files = JSON.parse(localStorage.getItem("files") || "{}");
+/* ------- Files state ------- */
+let files = {};
+try {
+  const stored = localStorage.getItem("files");
+  files = stored ? JSON.parse(stored) : {};
+  if (!files || typeof files !== 'object') files = {};
+} catch (err) {
+  files = {};
+  localStorage.removeItem("files");
+}
+
 let openTabs = [];
 let openFile = null;
 let pyodideReady = false;
 
+/* Long-press config */
+const LONG_PRESS_DURATION = 500; // ms — change here if you want 3000 for 3s
+
+/* Flags to avoid the release-click closing menu / opening the file */
+let _suppressClickAfterLongPress = false;
+let _ignoreNextDocumentClick = false;
+
+/* Pyodide (optional) */
 async function loadPyodideEnv() {
-  window.pyodide = await loadPyodide();
-  pyodideReady = true;
+  try {
+    window.pyodide = await loadPyodide();
+    pyodideReady = true;
+  } catch (e) {
+    console.warn("Pyodide failed to load:", e);
+  }
 }
 loadPyodideEnv();
 
-function saveFiles() { localStorage.setItem("files", JSON.stringify(files)); }
+function saveFiles() {
+  try { localStorage.setItem("files", JSON.stringify(files)); } catch (e) {}
+}
 
+/* ------- UI helpers ------- */
 function refreshFileList() {
-  let ul = document.getElementById("file-list");
+  const ul = document.getElementById("file-list");
   ul.innerHTML = "";
-  Object.keys(files).forEach(name => {
-    let li = document.createElement("li");
-    li.textContent = name;
-    li.className = (name === openFile ? "active" : "");
-    li.onclick = () => openTab(name);
-    ul.appendChild(li);
+
+  const keys = Object.keys(files);
+  if (keys.length === 0) {
+    const placeholder = document.createElement("div");
+    placeholder.id = "no-files";
+    placeholder.textContent = "No files — create one with + New File";
+    ul.appendChild(placeholder);
+    updateTabs();
+    return;
+  }
+
+  keys.forEach(name => {
+    (function(fname){
+      let li = document.createElement("li");
+      li.textContent = fname;
+      li.className = (fname === openFile ? "active" : "");
+      ul.appendChild(li);
+
+      // Click handler (suppressed if long-press flagged)
+      li.addEventListener('click', (e) => {
+        if (_suppressClickAfterLongPress) {
+          // ignore this click created by the release after long-press
+          _suppressClickAfterLongPress = false;
+          e.stopPropagation();
+          return;
+        }
+        openTab(fname);
+      });
+
+      // Long press behavior (mouse & touch)
+      let pressTimer = null;
+      function startPress(ev) {
+        // ensure any lingering flags are cleared here
+        clearTimeout(pressTimer);
+        pressTimer = setTimeout(() => {
+          // Show popup and set suppression flags so the release click won't close it
+          showFileOptions(fname, (ev.clientX || (ev.touches && ev.touches[0] && ev.touches[0].clientX)) || window.innerWidth/2,
+                                  (ev.clientY || (ev.touches && ev.touches[0] && ev.touches[0].clientY)) || window.innerHeight/2);
+          _suppressClickAfterLongPress = true;
+          _ignoreNextDocumentClick = true;
+        }, LONG_PRESS_DURATION);
+      }
+      function cancelPress() {
+        clearTimeout(pressTimer);
+      }
+
+      li.addEventListener("mousedown", startPress, {passive:true});
+      li.addEventListener("mouseup", cancelPress);
+      li.addEventListener("mouseleave", cancelPress);
+
+      li.addEventListener("touchstart", (ev) => startPress(ev), {passive:true});
+      li.addEventListener("touchend", cancelPress);
+      li.addEventListener("touchcancel", cancelPress);
+
+    })(name);
   });
+
+  updateTabs();
 }
 
 function newFile() {
@@ -341,24 +298,24 @@ function cancelNewFile() {
 }
 
 function openTab(name) {
+  if (!name || !files.hasOwnProperty(name)) return;
   openFile = name;
   if (!openTabs.includes(name)) openTabs.push(name);
   editor.setValue(files[name] || "", -1);
+  setModeFromFilename(name);
   refreshFileList();
   updateTabs();
-  setModeFromFilename(name);
 }
-
 function closeTab(name) {
   openTabs = openTabs.filter(t => t !== name);
   if (openFile === name) {
     openFile = openTabs.length > 0 ? openTabs[openTabs.length - 1] : null;
     editor.setValue(openFile ? files[openFile] : "", -1);
+    setModeFromFilename(openFile);
   }
   updateTabs();
   refreshFileList();
 }
-
 function updateTabs() {
   let tabs = document.getElementById("tabs");
   tabs.innerHTML = "";
@@ -380,7 +337,6 @@ function updateTabs() {
     tabs.appendChild(tab);
   });
 }
-
 function setModeFromFilename(filename) {
   if (!filename) return;
   if (filename.endsWith(".html")) editor.session.setMode("ace/mode/html");
@@ -391,6 +347,7 @@ function setModeFromFilename(filename) {
   else editor.session.setMode("ace/mode/text");
 }
 
+/* Save editor content */
 editor.session.on("change", () => {
   if (openFile) {
     files[openFile] = editor.getValue();
@@ -398,7 +355,7 @@ editor.session.on("change", () => {
   }
 });
 
-/* --- Run Code --- */
+/* Run code */
 function runCode() {
   if (!openFile) return;
   let code = files[openFile];
@@ -410,19 +367,9 @@ function runCode() {
   if (openFile.endsWith(".js")) {
     try {
       const originalLog = console.log, originalWarn = console.warn, originalError = console.error;
-
-      console.log = function (...args) {
-        output.innerHTML += `<div class="log">${args.join(" ")}</div>`;
-        originalLog.apply(console, args);
-      };
-      console.warn = function (...args) {
-        output.innerHTML += `<div class="warn">${args.join(" ")}</div>`;
-        originalWarn.apply(console, args);
-      };
-      console.error = function (...args) {
-        output.innerHTML += `<div class="error">${args.join(" ")}</div>`;
-        originalError.apply(console, args);
-      };
+      console.log = (...args) => { output.innerHTML += `<div class="log">${args.join(" ")}</div>`; originalLog.apply(console, args); };
+      console.warn = (...args) => { output.innerHTML += `<div class="warn">${args.join(" ")}</div>`; originalWarn.apply(console, args); };
+      console.error = (...args) => { output.innerHTML += `<div class="error">${args.join(" ")}</div>`; originalError.apply(console, args); };
 
       let result = eval(code);
       if (result !== undefined) output.innerHTML += `<div class="log">${result}</div>`;
@@ -435,16 +382,14 @@ function runCode() {
     if (!pyodideReady) { output.innerHTML = "Pyodide not ready yet..."; return; }
     (async () => {
       try {
-        pyodide.runPython(`
-import sys
+        pyodide.runPython(`import sys
 class ConsoleWriter:
-    def write(self, s):
-        import js
-        js.document.getElementById("console-output").innerHTML += s
-    def flush(self): pass
+  def write(self, s):
+    import js
+    js.document.getElementById("console-output").innerHTML += s
+  def flush(self): pass
 sys.stdout = ConsoleWriter()
-sys.stderr = ConsoleWriter()
-        `);
+sys.stderr = ConsoleWriter()`);
         await pyodide.runPythonAsync(code);
       } catch (err) {
         output.innerHTML += `<div class="error">Error: ${err}</div>`;
@@ -454,35 +399,199 @@ sys.stderr = ConsoleWriter()
     output.innerHTML = `<div class="warn">▶ Run works for .js or .py files</div>`;
   }
 }
-
-/* --- Go Live --- */
 function goLive() {
   if (!openFile || !openFile.endsWith(".html")) return;
   let htmlBlob = new Blob([files[openFile]], { type: "text/html" });
   let url = URL.createObjectURL(htmlBlob);
   window.open(url, "_blank");
 }
+function killConsole() { document.getElementById("console").style.display = "none"; }
 
-/* Sidebar toggle for mobile */
+/* Sidebar toggle */
 document.getElementById("sidebar-toggle").onclick = () => {
   document.getElementById("sidebar").classList.toggle("open");
 };
 
-/* Fullscreen editor toggle */
-document.getElementById("fullscreen-btn").onclick = () => {
-  let sidebar = document.getElementById("sidebar");
-  let consoleEl = document.getElementById("console");
-  if (sidebar.style.display !== "none") {
-    sidebar.style.display = "none";
-    consoleEl.style.display = "none";
-  } else {
-    sidebar.style.display = "flex";
+/* Keyboard bar */
+const symbols = ["{}","[]","()",";",":",","<",">","=","+","-","*","/","|","&","!","?","'","\"","`"];
+const kb = document.getElementById('keyboard-bar');
+symbols.forEach(sym=>{
+  let btn = document.createElement('button');
+  btn.textContent = sym;
+  btn.onclick = ()=>insertAtCursor(sym);
+  kb.appendChild(btn);
+});
+function insertAtCursor(text){ editor.insert(text); editor.focus(); }
+
+/* ---------- Long-press options UI & logic ---------- */
+const fileOptions = document.getElementById('file-options');
+const fileOptionsTitle = document.getElementById('file-options-title');
+
+const fileOptionsButtons = document.getElementById('file-options-buttons');
+const fileOptionsRenameBtn = document.getElementById('file-options-rename');
+const fileOptionsCopy = document.getElementById('file-options-copy');
+const fileOptionsDelete = document.getElementById('file-options-delete');
+const fileOptionsCancel = document.getElementById('file-options-cancel');
+
+const renameArea = document.getElementById('file-options-rename-area');
+const renameInput = document.getElementById('file-options-rename-input');
+const renameSave = document.getElementById('file-options-rename-save');
+const renameCancel = document.getElementById('file-options-rename-cancel');
+const renameError = document.getElementById('file-options-rename-error');
+
+let _optionsTargetName = null;
+
+function showFileOptions(name, x, y) {
+  _optionsTargetName = name;
+  fileOptionsTitle.textContent = name;
+  // reset UI state
+  fileOptionsButtons.style.display = '';
+  renameArea.style.display = 'none';
+  renameError.style.display = 'none';
+  renameError.textContent = '';
+  fileOptions.style.left = Math.min(window.innerWidth - 220, x) + 'px';
+  fileOptions.style.top = Math.min(window.innerHeight - 160, y) + 'px';
+  fileOptions.style.display = 'block';
+  fileOptions.setAttribute('aria-hidden', 'false');
+
+  // suppression flags so the release-click won't close the popup
+  _suppressClickAfterLongPress = true;
+  _ignoreNextDocumentClick = true;
+}
+
+function hideFileOptions() {
+  _optionsTargetName = null;
+  fileOptions.style.display = 'none';
+  fileOptions.setAttribute('aria-hidden', 'true');
+  // clear rename input
+  renameInput.value = '';
+  renameError.style.display = 'none';
+  renameError.textContent = '';
+}
+
+/* Copy */
+fileOptionsCopy.onclick = () => {
+  if (!_optionsTargetName) return;
+  const originalName = _optionsTargetName;
+  let newName = originalName + "_copy";
+  let counter = 1;
+  while (files[newName]) {
+    newName = originalName + "_copy" + counter;
+    counter++;
   }
+  files[newName] = files[originalName];
+  saveFiles();
+  refreshFileList();
+  openTab(newName);
+  hideFileOptions();
 };
 
+/* Delete */
+fileOptionsDelete.onclick = () => {
+  if (!_optionsTargetName) return;
+  const name = _optionsTargetName;
+  if (!confirm(`Delete file "${name}"? This cannot be undone.`)) { hideFileOptions(); return; }
+  delete files[name];
+  saveFiles();
+  openTabs = openTabs.filter(t => t !== name);
+  if (openFile === name) {
+    openFile = null;
+    const remaining = Object.keys(files);
+    if (remaining.length > 0) openTab(remaining[0]);
+    else {
+      editor.setValue("", -1);
+      updateTabs();
+      refreshFileList();
+    }
+  } else {
+    updateTabs();
+    refreshFileList();
+  }
+  hideFileOptions();
+};
+
+/* Cancel */
+fileOptionsCancel.onclick = () => hideFileOptions();
+
+/* Rename flow */
+fileOptionsRenameBtn.onclick = () => {
+  if (!_optionsTargetName) return;
+  // show rename UI inside popup
+  fileOptionsButtons.style.display = 'none';
+  renameArea.style.display = '';
+  renameInput.value = _optionsTargetName;
+  renameInput.focus();
+  renameInput.select();
+  renameError.style.display = 'none';
+  renameError.textContent = '';
+};
+
+renameCancel.onclick = () => {
+  // back to main buttons
+  renameArea.style.display = 'none';
+  fileOptionsButtons.style.display = '';
+  renameError.style.display = 'none';
+  renameError.textContent = '';
+};
+
+renameSave.onclick = () => {
+  if (!_optionsTargetName) return;
+  const oldName = _optionsTargetName;
+  const newNameRaw = renameInput.value.trim();
+  if (!newNameRaw) {
+    renameError.style.display = '';
+    renameError.textContent = "Name cannot be empty.";
+    return;
+  }
+  if (newNameRaw === oldName) {
+    // nothing changed
+    hideFileOptions();
+    return;
+  }
+  if (files[newNameRaw]) {
+    renameError.style.display = '';
+    renameError.textContent = "A file with that name already exists.";
+    return;
+  }
+
+  // perform rename
+  files[newNameRaw] = files[oldName];
+  delete files[oldName];
+  // update openTabs & openFile
+  openTabs = openTabs.map(n => n === oldName ? newNameRaw : n);
+  if (openFile === oldName) openFile = newNameRaw;
+
+  saveFiles();
+  refreshFileList();
+  openTab(newNameRaw);
+  hideFileOptions();
+};
+
+/* Outside click/esc handling
+   We ignore the very next document click after showing the popup (this prevents the release-click
+   from the long-press from immediately closing the popup). After that, clicks outside will close.
+*/
+window.addEventListener('click', (e) => {
+  if (_ignoreNextDocumentClick) {
+    _ignoreNextDocumentClick = false;
+    return; // swallow the very next click after long-press
+  }
+  if (fileOptions.style.display === 'block' && !fileOptions.contains(e.target)) {
+    hideFileOptions();
+  }
+});
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideFileOptions(); });
+
+/* Persist on unload */
+window.addEventListener('beforeunload', () => saveFiles());
+
 /* Init */
-refreshFileList();
-if (Object.keys(files).length > 0) openTab(Object.keys(files)[0]);
+function initApp() {
+  refreshFileList();
+  const keys = Object.keys(files);
+  if (keys.length > 0) openTab(keys[0]);
+}
+initApp();
 </script>
 
 </body>
