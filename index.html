@@ -1,600 +1,670 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Mobile Code IDE — Long-press fixed + Rename</title>
-
-<!-- ACE Editor -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.js"></script>
-<script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CodeShare — programming social feed (demo)</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: "Fira Code", monospace;
-    background: linear-gradient(135deg, #1e1e2f, #151521);
-    color: #eee;
-    display: flex;
-    height: 100vh;
-    overflow: hidden;
+  :root{
+    --bg: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    --card:#ffffff;
+    --muted:#777;
+    --accent:#111;
+    --glass: rgba(255,255,255,0.03);
+    --glow: 0 6px 18px rgba(0,0,0,0.25);
   }
-  #sidebar {
-    width: 18%;
-    max-width: 240px;
-    min-width: 150px;
-    background: #20232a;
-    border-right: 1px solid #727272;
-    display: flex;
-    flex-direction: column;
-    padding: 12px;
-    transition: left 0.3s ease;
+  html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+  body{
+    background:var(--bg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
   }
-  #sidebar h3 { margin-bottom: 12px; font-size: 15px; font-weight: bold; color: #aaa; letter-spacing: 1px; }
-  #file-list { overflow-y: auto; flex-grow: 1; margin-bottom: 10px; }
-  #file-list li { list-style: none; padding: 8px; cursor: pointer; border-radius: 6px; margin-bottom: 4px; transition: 0.2s; color: #ddd; user-select: none; -webkit-user-select:none; }
-  #file-list li:hover { background: #2c313c; }
-  #file-list li.active { background: #3e5a6d; color: #fff; }
-  #sidebar-controls { display: flex; flex-direction: column; gap: 10px; margin-top: auto; width: 100%; }
-  #sidebar-controls button, #sidebar button {
-    background: linear-gradient(145deg, #007acc, #005f99);
-    color: #fff; border: none; padding: 14px; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 500;
+  .phone{
+    width:380px;
+    height:780px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.05));
+    border-radius:18px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    border: 8px solid var(--bg);
   }
-  #sidebar-controls button:hover { background: linear-gradient(145deg, #0095ff, #007acc); }
-
-  #sidebar-toggle { display: none; background: #007acc; border: none; color: #fff; padding: 10px 14px; cursor: pointer; font-size: 18px; position: absolute; top: 10px; right:10px; z-index: 20; border-radius: 6px; }
-  @media (max-width: 768px) {
-    #sidebar { position: absolute; top: 0; left: -100%; height: 100%; z-index: 15; }
-    #sidebar.open { left: 0; }
-    #sidebar-toggle { display: block; }
+  header.appbar{
+    padding:10px 14px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:space-between;
+    background:transparent;
+  }
+  .tabs{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .tab{
+    font-size:13px;
+    color:#eee;
+    padding:6px 8px;
+    border-radius:8px;
+    cursor:pointer;
+    opacity:0.9;
+  }
+  .tab.active{
+    background:var(--card);
+    color:var(--accent);
+    box-shadow: var(--glow);
+    font-weight:600;
+  }
+  .main{
+    flex:1;
+    background: #fff;
+    border-top-left-radius:20px;
+    border-top-right-radius:20px;
+    padding:14px;
+    overflow:auto;
+  }
+  /* Upload page layout */
+  .upload-area{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    align-items:center;
+  }
+  .drop{
+    width:100%;
+    height:220px;
+    border-radius:10px;
+    border:2px dashed #ddd;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#666;
+    background:#fafafa;
+    position:relative;
+  }
+  .drop img, .drop video{ max-width:100%; max-height:100%; border-radius:8px; object-fit:cover; }
+  .input, .textarea{
+    width:100%;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid #e3e3e3;
+    font-size:14px;
+  }
+  .small-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:#f3f3f3;
+    border-radius:8px;
+    padding:8px 12px;
+    cursor:pointer;
+    border:1px solid #ddd;
+  }
+  .post-btn{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    background:var(--accent);
+    color:#fff;
+    font-weight:700;
+    border:none;
+    cursor:pointer;
   }
 
-  #new-file-bar { display: none; flex-direction: column; gap: 6px; margin-bottom: 10px; }
-  #new-file-bar input { padding: 8px; border-radius: 4px; border: 1px solid #444; background: #2a2d34; color: #fff; font-size: 14px; }
-  #new-file-error { color: #f55; font-size: 12px; margin-top: 4px; }
-
-  #editor-area { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: #1e1e1e; border-left: 1px solid #333; }
-  #tabs { display: flex; background: #252526; border-bottom: 1px solid #333; overflow-x: auto; white-space: nowrap; flex-shrink: 0; }
-  .tab { padding: 10px 16px; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 8px; transition: 0.2s; border-right: 1px solid #333; flex-shrink: 0; }
-  .tab:hover { background: #2d2f38; }
-  .tab.active { background: #1e1e2f; font-weight: bold; color: #61dafb; }
-  .tab .close-btn { color: #aaa; font-weight: bold; cursor: pointer; font-size: 16px; }
-  .tab .close-btn:hover { color: #f55; }
-
-  #editor { flex: 1; min-height: 0; overflow-x: auto !important; overflow-y: hidden !important; }
-
-  #console, #preview { background: #0d1117; border-top: 1px solid #333; height: 200px; overflow-y: auto; display: none; flex-direction: column; }
-  #console-header { background: #161b22; padding: 6px 10px; display: flex; justify-content: space-between; align-items: center; color: #61dafb; font-size: 13px; }
-  #console-header button { background: #007acc; border: none; color: #fff; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-  #console pre { margin: 0; padding: 12px; white-space: pre-wrap; word-wrap: break-word; flex: 1; font-size: 13px; }
-  .log { color: #0f0; } .warn { color: #ff0; } .error { color: #f55; }
-  iframe { width: 100%; height: 100%; border: none; background: #fff; }
-
-  #keyboard-bar { background: #2d2d2d; display: flex; flex-wrap: wrap; padding: 5px; }
-  #keyboard-bar button { flex: 1 0 8%; margin: 2px; padding: 8px; font-size: 16px; background: #3a3a3a; border: none; border-radius: 4px; color: #fff; cursor: pointer; }
-  #keyboard-bar button:active { background: #007acc; }
-
-  /* Options popup for long press */
-  #file-options {
-    position: fixed;
-    z-index: 9999;
-    background: #222;
-    border: 1px solid #444;
-    padding: 8px;
-    border-radius: 8px;
-    display: none;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.6);
-    min-width: 200px;
+  /* Feed cards */
+  .post{
+    background:transparent;
+    border-radius:12px;
+    padding:12px;
+    margin-bottom:12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    border:1px solid #f0f0f0;
   }
-  #file-options .title { color:#ddd; font-size:13px; margin-bottom:6px; word-break:break-all; }
-  #file-options button { width: 100%; padding: 8px; margin: 4px 0; border-radius: 6px; border: none; background: #333; color: #fff; cursor: pointer; font-size:14px; text-align:left; }
-  #file-options .danger { background: #aa2222; }
-  #file-options input[type="text"] { width: 100%; padding: 6px; margin-bottom:8px; border-radius:6px; border:1px solid #444; background:#1d1d1d; color:#fff; }
-  #no-files { color:#888; font-size:13px; padding:8px; text-align:center; }
+  .meta{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin-bottom:8px;
+  }
+  .avatar{
+    width:38px;height:38px;border-radius:50%;background:#ddd;display:flex;align-items:center;justify-content:center;font-weight:700;color:#555;
+  }
+  .username{font-weight:700;font-size:14px}
+  .posted-time{font-size:12px;color:var(--muted)}
+  .post-img{width:100%;height:auto;border-radius:10px;margin:8px 0;max-height:360px;object-fit:cover}
+  .actions{display:flex;gap:12px;align-items:center;margin-top:6px}
+  .action{cursor:pointer;display:flex;gap:8px;align-items:center;color:#444;font-size:13px}
+  .counter{font-weight:600}
+  .desc{color:#333;margin-top:8px;white-space:pre-wrap}
+  .code-block{background:#0f1720;color:#e6f2ff;padding:10px;border-radius:8px;font-family:monospace;font-size:13px;overflow:auto;margin-top:8px}
+
+  /* profile */
+  .profile-card{display:flex;gap:12px;align-items:center;padding:12px;border-radius:10px;background:#fafafa;border:1px solid #eee;margin-bottom:12px}
+  .profile-hero{height:120px;background:#2e2e2e;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px}
+  .small-muted{font-size:13px;color:var(--muted);}
+
+  /* comments & auth popup as mobile bottom sheet */
+.modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: flex-end; /* bottom sheet */
+  justify-content: center;
+  padding: 0;
+  z-index: 1000;
+}
+.modal .card {
+  width: 100%;
+  max-height: 85vh;
+  background: #fff;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+  overflow-y: auto;
+  animation: slideUp .25s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+  .comments-list{max-height:300px;overflow:auto;margin-bottom:8px}
+  .comment{padding:8px;border-bottom:1px solid #f0f0f0}
+
+  /* small helpers */
+  .muted{color:var(--muted);}
+  .row{display:flex;gap:8px;align-items:center;}
+  footer.bottom-nav{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 6px;background:transparent;}
+  .icon-btn{background:transparent;border:none;cursor:pointer;color:#fff}
+  .danger{color:crimson}
+  @media (max-width:420px){
+    .phone{width:92vw;height:92vh}
+  }
 </style>
 </head>
 <body>
+  <div class="phone" role="application" aria-label="CodeShare demo app">
+    <header class="appbar">
+      <div class="tabs" id="tabs">
+        <div class="tab active" data-page="feed">feed</div>
+        <div class="tab" data-page="upload">upload</div>
+        <div class="tab" data-page="saved">saved</div>
+        <div class="tab" data-page="profile">profile</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div id="currentUserName" style="color:#fff;font-weight:600">Guest</div>
+      </div>
+    </header>
 
-<button id="sidebar-toggle">☰</button>
+    <main class="main" id="main">
+      <!-- Feed page -->
+      <section id="feedPage">
+        <div id="feedList"></div>
+      </section>
 
-<div id="sidebar">
-  <h3>FILES</h3>
-  <ul id="file-list"></ul>
+      <!-- Upload page -->
+      <section id="uploadPage" style="display:none">
+        <div class="upload-area">
+          <div class="drop" id="dropZone">
+            <div id="dropText">Click to upload image or video</div>
+            <img id="previewImg" style="display:none"/>
+            <video id="previewVid" style="display:none" controls></video>
+          </div>
+          <input id="fileInput" type="file" accept="image/*,video/*" style="display:none"/>
+          <input id="desc" class="input" placeholder="add post description"/>
+          <textarea id="sourceCode" class="textarea" rows="4" placeholder="add source code (optional)"></textarea>
+          <label class="small-btn"><input id="codePublic" type="checkbox"/> Make source code public</label>
+          <button class="post-btn" id="postBtn">Post</button>
+        </div>
+      </section>
 
-  <div id="new-file-bar">
-    <input type="text" id="new-file-input" placeholder="Enter filename..." />
-    <div style="display:flex; gap:6px;">
-      <button onclick="confirmNewFile()">✔</button>
-      <button onclick="cancelNewFile()">✖</button>
-    </div>
-    <div id="new-file-error"></div>
+      <!-- Saved page -->
+      <section id="savedPage" style="display:none">
+        <h3>Saved posts</h3>
+        <div id="savedList"></div>
+      </section>
+
+      <!-- Profile page -->
+      <section id="profilePage" style="display:none">
+        <div class="profile-card">
+          <div style="flex:1">
+            <div class="username" id="profileName">Guest</div>
+            <div class="small-muted" id="profileEmail">Not signed in</div>
+            <div style="margin-top:8px;">
+              <button id="btnLogout" class="small-btn">Log out</button>
+              <button id="btnLogin" class="small-btn">Sign up / Login</button>
+            </div>
+          </div>
+          <div style="width:84px;text-align:center">
+            <div class="avatar" id="profileAvatar">G</div>
+          </div>
+        </div>
+        <div>
+          <h4>Your posts</h4>
+          <div id="myPosts"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bottom-nav">
+      <div style="color:#fff;font-size:12px">CodeShare — demo</div>
+      <div style="color:#fff;font-size:12px">Local only</div>
+    </footer>
   </div>
 
-  <div id="sidebar-controls">
-    <button onclick="runCode()">▶ Run</button>
-    <button onclick="goLive()">🌐 Go Live</button>
-    <button onclick="newFile()">+ New File</button>
-  </div>
-</div>
-
-<div id="editor-area">
-  <div id="tabs"></div>
-  <div id="editor"></div>
-  <div id="keyboard-bar"></div>
-
-  <div id="console">
-    <div id="console-header">
-      <span>Console Output</span>
-      <button onclick="killConsole()">Kill Terminal</button>
-    </div>
-    <pre id="console-output"></pre>
-  </div>
-
-  <div id="preview"></div>
-</div>
-
-<!-- File options popup with rename area -->
-<div id="file-options" aria-hidden="true">
-  <div class="title" id="file-options-title"></div>
-
-  <div id="file-options-buttons">
-    <button id="file-options-rename">Rename</button>
-    <button id="file-options-copy">Copy</button>
-    <button id="file-options-delete" class="danger">Delete</button>
-    <button id="file-options-cancel">Cancel</button>
-  </div>
-
-  <div id="file-options-rename-area" style="display:none;">
-    <input id="file-options-rename-input" type="text" />
-    <div style="display:flex; gap:8px;">
-      <button id="file-options-rename-save">Save</button>
-      <button id="file-options-rename-cancel">Cancel</button>
-    </div>
-    <div id="file-options-rename-error" style="color:#f55; font-size:13px; margin-top:6px; display:none;"></div>
-  </div>
-</div>
+  <!-- simple modal container -->
+  <div id="modalRoot" style="display:none"></div>
 
 <script>
-/* ----------------------
-   Editor + state setup
-   ---------------------- */
-let editor = ace.edit("editor");
-editor.setTheme("ace/theme/dracula");
-editor.session.setMode("ace/mode/javascript");
-editor.setOptions({
-  fontSize: "14px",
-  enableBasicAutocompletion: true,
-  enableLiveAutocompletion: true,
-  enableSnippets: true,
-  showPrintMargin: false,
-  wrap: false
-});
+/* ---------------------------
+  Simple front-end demo app
+  - Local persistence via localStorage
+  - Replace storage calls with calls to your backend (Firebase) to enable real multi-user online usage
+--------------------------- */
 
-/* ------- Files state ------- */
-let files = {};
-try {
-  const stored = localStorage.getItem("files");
-  files = stored ? JSON.parse(stored) : {};
-  if (!files || typeof files !== 'object') files = {};
-} catch (err) {
-  files = {};
-  localStorage.removeItem("files");
+const APPKEY = 'codeshare_v1';
+const local = {
+  get(){ try { return JSON.parse(localStorage.getItem(APPKEY)||'{}') } catch(e){ return {} } },
+  set(obj){ localStorage.setItem(APPKEY, JSON.stringify(obj)); }
+};
+
+let state = {
+  user: null, // {id,name,email}
+  data: null // loaded storage
+};
+
+function init(){
+  // load state
+  state.data = local.get();
+  if(!state.data.posts) state.data.posts = []; // array of posts
+  if(!state.data.users) state.data.users = []; // array of users
+  if(!state.data.saved) state.data.saved = {}; // map userId->array of postIds
+
+  // UI events
+  setupTabs();
+  document.getElementById('dropZone').addEventListener('click',()=>document.getElementById('fileInput').click());
+  document.getElementById('fileInput').addEventListener('change', handleFile);
+  document.getElementById('postBtn').addEventListener('click', handlePost);
+  document.getElementById('btnLogin').addEventListener('click', showAuth);
+  document.getElementById('btnLogout').addEventListener('click', logout);
+
+  // initial render
+  renderFeed();
+  renderProfile();
+  renderSaved();
+
+  // set default guest user
+  setUserFromStorage();
 }
 
-let openTabs = [];
-let openFile = null;
-let pyodideReady = false;
-
-/* Long-press config */
-const LONG_PRESS_DURATION = 500; // ms — change here if you want 3000 for 3s
-
-/* Flags to avoid the release-click closing menu / opening the file */
-let _suppressClickAfterLongPress = false;
-let _ignoreNextDocumentClick = false;
-
-/* Pyodide (optional) */
-async function loadPyodideEnv() {
-  try {
-    window.pyodide = await loadPyodide();
-    pyodideReady = true;
-  } catch (e) {
-    console.warn("Pyodide failed to load:", e);
+function setUserFromStorage(){
+  const uid = localStorage.getItem('codeshare_current_user');
+  if(uid){
+    const u = state.data.users.find(x=>x.id===uid);
+    if(u) { state.user = u; }
   }
-}
-loadPyodideEnv();
-
-function saveFiles() {
-  try { localStorage.setItem("files", JSON.stringify(files)); } catch (e) {}
+  updateUserUI();
 }
 
-/* ------- UI helpers ------- */
-function refreshFileList() {
-  const ul = document.getElementById("file-list");
-  ul.innerHTML = "";
+function updateUserUI(){
+  document.getElementById('currentUserName').textContent = state.user ? state.user.name : 'Guest';
+  document.getElementById('profileName').textContent = state.user ? state.user.name : 'Guest';
+  document.getElementById('profileEmail').textContent = state.user ? state.user.email : 'Not signed in';
+  document.getElementById('profileAvatar').textContent = state.user ? (state.user.name[0]||'U').toUpperCase() : 'G';
+  // toggle auth buttons
+  document.getElementById('btnLogin').style.display = state.user ? 'none' : 'inline-flex';
+  document.getElementById('btnLogout').style.display = state.user ? 'inline-flex' : 'none';
+  renderMyPosts();
+}
 
-  const keys = Object.keys(files);
-  if (keys.length === 0) {
-    const placeholder = document.createElement("div");
-    placeholder.id = "no-files";
-    placeholder.textContent = "No files — create one with + New File";
-    ul.appendChild(placeholder);
-    updateTabs();
+function setupTabs(){
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click', (e)=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      const page = e.currentTarget.dataset.page;
+      showPage(page);
+    })
+  })
+}
+
+function showPage(page){
+  ['feed','upload','saved','profile'].forEach(p=>{
+    document.getElementById(p+'Page').style.display = p===page ? '' : 'none';
+  });
+  if(page==='feed') renderFeed();
+  if(page==='saved') renderSaved();
+  if(page==='profile') renderProfile();
+}
+
+function handleFile(e){
+  const f = e.target.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    const url = reader.result;
+    // detect image or video
+    if(f.type.startsWith('image/')){
+      document.getElementById('previewImg').src = url;
+      document.getElementById('previewImg').style.display = '';
+      document.getElementById('previewVid').style.display = 'none';
+      document.getElementById('dropZone').dataset.upload = url;
+    } else if(f.type.startsWith('video/')){
+      document.getElementById('previewVid').src = url;
+      document.getElementById('previewVid').style.display = '';
+      document.getElementById('previewImg').style.display = 'none';
+      document.getElementById('dropZone').dataset.upload = url;
+    } else {
+      alert('Unsupported file type. Please upload image or video.');
+    }
+  };
+  reader.readAsDataURL(f);
+}
+
+function handlePost(){
+  const url = document.getElementById('dropZone').dataset.upload;
+  const desc = document.getElementById('desc').value.trim();
+  const code = document.getElementById('sourceCode').value.trim();
+  const publicCode = document.getElementById('codePublic').checked;
+  if(!state.user){
+    alert('Please sign up / login to post.');
+    showAuth();
     return;
   }
+  if(!url){
+    alert('Choose an image or video first.');
+    return;
+  }
+  const post = {
+    id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,8),
+    userId: state.user.id,
+    userName: state.user.name,
+    avatarLetter: (state.user.name[0]||'U').toUpperCase(),
+    createdAt: Date.now(),
+    media: url,
+    mediaType: url.startsWith('data:video') ? 'video' : 'image',
+    description: desc,
+    sourceCode: code,
+    sourcePublic: publicCode,
+    likes: [],
+    comments: []
+  };
+  state.data.posts.unshift(post);
+  saveData();
+  // reset upload UI
+  document.getElementById('dropZone').dataset.upload = '';
+  document.getElementById('previewImg').style.display = 'none';
+  document.getElementById('previewVid').style.display = 'none';
+  document.getElementById('desc').value = '';
+  document.getElementById('sourceCode').value = '';
+  document.getElementById('codePublic').checked = false;
+  alert('Posted!');
+  showPage('feed');
+  document.querySelector('.tab[data-page="feed"]').click();
+}
 
-  keys.forEach(name => {
-    (function(fname){
-      let li = document.createElement("li");
-      li.textContent = fname;
-      li.className = (fname === openFile ? "active" : "");
-      ul.appendChild(li);
+function saveData(){
+  local.set(state.data);
+}
 
-      // Click handler (suppressed if long-press flagged)
-      li.addEventListener('click', (e) => {
-        if (_suppressClickAfterLongPress) {
-          // ignore this click created by the release after long-press
-          _suppressClickAfterLongPress = false;
-          e.stopPropagation();
-          return;
-        }
-        openTab(fname);
-      });
-
-      // Long press behavior (mouse & touch)
-      let pressTimer = null;
-      function startPress(ev) {
-        // ensure any lingering flags are cleared here
-        clearTimeout(pressTimer);
-        pressTimer = setTimeout(() => {
-          // Show popup and set suppression flags so the release click won't close it
-          showFileOptions(fname, (ev.clientX || (ev.touches && ev.touches[0] && ev.touches[0].clientX)) || window.innerWidth/2,
-                                  (ev.clientY || (ev.touches && ev.touches[0] && ev.touches[0].clientY)) || window.innerHeight/2);
-          _suppressClickAfterLongPress = true;
-          _ignoreNextDocumentClick = true;
-        }, LONG_PRESS_DURATION);
-      }
-      function cancelPress() {
-        clearTimeout(pressTimer);
-      }
-
-      li.addEventListener("mousedown", startPress, {passive:true});
-      li.addEventListener("mouseup", cancelPress);
-      li.addEventListener("mouseleave", cancelPress);
-
-      li.addEventListener("touchstart", (ev) => startPress(ev), {passive:true});
-      li.addEventListener("touchend", cancelPress);
-      li.addEventListener("touchcancel", cancelPress);
-
-    })(name);
+function renderFeed(){
+  const feed = document.getElementById('feedList');
+  feed.innerHTML = '';
+  if(state.data.posts.length===0){
+    feed.innerHTML = '<div style="padding:18px;color:#666">No posts yet — create one from the upload tab.</div>';
+    return;
+  }
+  state.data.posts.forEach(post=>{
+    const el = document.createElement('div');
+    el.className = 'post';
+    el.innerHTML = `
+      <div class="meta">
+        <div class="avatar" aria-hidden="true">${escapeHtml(post.avatarLetter||post.userName[0]||'U')}</div>
+        <div style="flex:1">
+          <div class="row"><div class="username">${escapeHtml(post.userName)}</div><div style="margin-left:8px" class="posted-time muted">${timeAgo(post.createdAt)}</div></div>
+        </div>
+        <div><button class="small-btn" data-id="${post.id}" title="Options">⋯</button></div>
+      </div>
+      ${post.mediaType==='image' ? `<img class="post-img" src="${post.media}" />` : `<video class="post-img" src="${post.media}" controls></video>`}
+      <div class="desc">${escapeHtml(post.description||'')}</div>
+      ${post.sourceCode && post.sourcePublic ? `<pre class="code-block">${escapeHtml(post.sourceCode)}</pre>` : ''}
+      <div class="actions">
+        <div class="action likeBtn" data-id="${post.id}">❤️ <span class="counter">${post.likes.length}</span></div>
+        <div class="action commentBtn" data-id="${post.id}">💬 <span class="counter">${post.comments.length}</span></div>
+        <div class="action saveBtn" data-id="${post.id}">${isSaved(post.id) ? '🔖 saved' : '🔖 save'}</div>
+        ${state.user && state.user.id===post.userId ? `<div class="action danger delBtn" data-id="${post.id}">🗑️ delete</div>` : ''}
+      </div>
+    `;
+    feed.appendChild(el);
   });
 
-  updateTabs();
+  // wire actions
+  document.querySelectorAll('.likeBtn').forEach(btn=>btn.addEventListener('click', e=>{
+    const id = e.currentTarget.dataset.id;
+    toggleLike(id);
+  }));
+  document.querySelectorAll('.commentBtn').forEach(btn=>btn.addEventListener('click', e=>{
+    const id = e.currentTarget.dataset.id;
+    openComments(id);
+  }));
+  document.querySelectorAll('.saveBtn').forEach(btn=>btn.addEventListener('click', e=>{
+    const id = e.currentTarget.dataset.id;
+    toggleSave(id);
+    renderFeed();
+    renderSaved();
+  }));
+  document.querySelectorAll('.delBtn').forEach(btn=>btn.addEventListener('click', e=>{
+    const id = e.currentTarget.dataset.id;
+    if(confirm('Delete this post?')) {
+      state.data.posts = state.data.posts.filter(p=>p.id!==id);
+      saveData();
+      renderFeed(); renderMyPosts(); renderSaved();
+    }
+  }));
 }
 
-function newFile() {
-  document.getElementById("new-file-bar").style.display = "flex";
-  document.getElementById("new-file-input").focus();
-}
-function confirmNewFile() {
-  let name = document.getElementById("new-file-input").value.trim();
-  let errorEl = document.getElementById("new-file-error");
-
-  if (!name) { errorEl.textContent = "⚠ Please enter a file name"; return; }
-  if (files[name]) { errorEl.textContent = "⚠ File already exists!"; return; }
-
-  files[name] = "";
-  saveFiles();
-  refreshFileList();
-  openTab(name);
-
-  document.getElementById("new-file-bar").style.display = "none";
-  document.getElementById("new-file-input").value = "";
-  errorEl.textContent = "";
-}
-function cancelNewFile() {
-  document.getElementById("new-file-bar").style.display = "none";
-  document.getElementById("new-file-input").value = "";
-  document.getElementById("new-file-error").textContent = "";
+function toggleLike(postId){
+  if(!state.user){ alert('Please login to like.'); showAuth(); return; }
+  const p = state.data.posts.find(x=>x.id===postId);
+  if(!p) return;
+  const idx = p.likes.indexOf(state.user.id);
+  if(idx===-1) p.likes.push(state.user.id);
+  else p.likes.splice(idx,1);
+  saveData();
+  renderFeed();
 }
 
-function openTab(name) {
-  if (!name || !files.hasOwnProperty(name)) return;
-  openFile = name;
-  if (!openTabs.includes(name)) openTabs.push(name);
-  editor.setValue(files[name] || "", -1);
-  setModeFromFilename(name);
-  refreshFileList();
-  updateTabs();
+function isSaved(postId){
+  if(!state.user) return false;
+  const arr = state.data.saved[state.user.id]||[];
+  return arr.includes(postId);
 }
-function closeTab(name) {
-  openTabs = openTabs.filter(t => t !== name);
-  if (openFile === name) {
-    openFile = openTabs.length > 0 ? openTabs[openTabs.length - 1] : null;
-    editor.setValue(openFile ? files[openFile] : "", -1);
-    setModeFromFilename(openFile);
-  }
-  updateTabs();
-  refreshFileList();
+
+function toggleSave(postId){
+  if(!state.user){ alert('Please login to save.'); showAuth(); return; }
+  const arr = state.data.saved[state.user.id] || (state.data.saved[state.user.id]=[]);
+  const idx = arr.indexOf(postId);
+  if(idx===-1) arr.push(postId);
+  else arr.splice(idx,1);
+  saveData();
+  renderSaved();
 }
-function updateTabs() {
-  let tabs = document.getElementById("tabs");
-  tabs.innerHTML = "";
-  openTabs.forEach(fname => {
-    let tab = document.createElement("div");
-    tab.className = "tab" + (fname === openFile ? " active" : "");
-    tab.onclick = () => openTab(fname);
 
-    let label = document.createElement("span");
-    label.textContent = fname;
-
-    let closeBtn = document.createElement("span");
-    closeBtn.textContent = "×";
-    closeBtn.className = "close-btn";
-    closeBtn.onclick = (e) => { e.stopPropagation(); closeTab(fname); };
-
-    tab.appendChild(label);
-    tab.appendChild(closeBtn);
-    tabs.appendChild(tab);
+function renderSaved(){
+  const box = document.getElementById('savedList');
+  box.innerHTML = '';
+  if(!state.user){ box.innerHTML = '<div style="padding:8px;color:#666">Login to see saved posts.</div>'; return; }
+  const arr = state.data.saved[state.user.id]||[];
+  if(arr.length===0){ box.innerHTML = '<div style="padding:8px;color:#666">You have no saved posts.</div>'; return; }
+  arr.forEach(id=>{
+    const p = state.data.posts.find(x=>x.id===id);
+    if(!p) return;
+    const div = document.createElement('div');
+    div.className='post';
+    div.innerHTML = `
+      <div class="meta">
+        <div class="avatar">${escapeHtml(p.avatarLetter||p.userName[0]||'U')}</div>
+        <div style="flex:1"><div class="username">${escapeHtml(p.userName)}</div><div class="posted-time muted">${timeAgo(p.createdAt)}</div></div>
+      </div>
+      ${p.mediaType==='image' ? `<img class="post-img" src="${p.media}" />` : `<video class="post-img" src="${p.media}" controls></video>`}
+      <div class="desc">${escapeHtml(p.description||'')}</div>
+    `;
+    box.appendChild(div);
   });
 }
-function setModeFromFilename(filename) {
-  if (!filename) return;
-  if (filename.endsWith(".html")) editor.session.setMode("ace/mode/html");
-  else if (filename.endsWith(".css")) editor.session.setMode("ace/mode/css");
-  else if (filename.endsWith(".js")) editor.session.setMode("ace/mode/javascript");
-  else if (filename.endsWith(".py")) editor.session.setMode("ace/mode/python");
-  else if (filename.endsWith(".json")) editor.session.setMode("ace/mode/json");
-  else editor.session.setMode("ace/mode/text");
+
+function renderProfile(){
+  // profile info is updated in updateUserUI
+  renderMyPosts();
 }
 
-/* Save editor content */
-editor.session.on("change", () => {
-  if (openFile) {
-    files[openFile] = editor.getValue();
-    saveFiles();
-  }
-});
-
-/* Run code */
-function runCode() {
-  if (!openFile) return;
-  let code = files[openFile];
-  let output = document.getElementById("console-output");
-  output.innerHTML = "";
-  document.getElementById("console").style.display = "flex";
-  document.getElementById("preview").style.display = "none";
-
-  if (openFile.endsWith(".js")) {
-    try {
-      const originalLog = console.log, originalWarn = console.warn, originalError = console.error;
-      console.log = (...args) => { output.innerHTML += `<div class="log">${args.join(" ")}</div>`; originalLog.apply(console, args); };
-      console.warn = (...args) => { output.innerHTML += `<div class="warn">${args.join(" ")}</div>`; originalWarn.apply(console, args); };
-      console.error = (...args) => { output.innerHTML += `<div class="error">${args.join(" ")}</div>`; originalError.apply(console, args); };
-
-      let result = eval(code);
-      if (result !== undefined) output.innerHTML += `<div class="log">${result}</div>`;
-
-      console.log = originalLog; console.warn = originalWarn; console.error = originalError;
-    } catch (err) {
-      output.innerHTML += `<div class="error">Error: ${err}</div>`;
-    }
-  } else if (openFile.endsWith(".py")) {
-    if (!pyodideReady) { output.innerHTML = "Pyodide not ready yet..."; return; }
-    (async () => {
-      try {
-        pyodide.runPython(`import sys
-class ConsoleWriter:
-  def write(self, s):
-    import js
-    js.document.getElementById("console-output").innerHTML += s
-  def flush(self): pass
-sys.stdout = ConsoleWriter()
-sys.stderr = ConsoleWriter()`);
-        await pyodide.runPythonAsync(code);
-      } catch (err) {
-        output.innerHTML += `<div class="error">Error: ${err}</div>`;
-      }
-    })();
-  } else {
-    output.innerHTML = `<div class="warn">▶ Run works for .js or .py files</div>`;
-  }
-}
-function goLive() {
-  if (!openFile || !openFile.endsWith(".html")) return;
-  let htmlBlob = new Blob([files[openFile]], { type: "text/html" });
-  let url = URL.createObjectURL(htmlBlob);
-  window.open(url, "_blank");
-}
-function killConsole() { document.getElementById("console").style.display = "none"; }
-
-/* Sidebar toggle (works on mobile too) */
-const sidebarToggle = document.getElementById("sidebar-toggle");
-sidebarToggle.addEventListener("click", () => {
-  document.getElementById("sidebar").classList.toggle("open");
-});
-
-
-/* Keyboard bar */
-const symbols = ["{}"];
-const kb = document.getElementById('keyboard-bar');
-symbols.forEach(sym=>{
-  let btn = document.createElement('button');
-  btn.textContent = sym;
-  btn.onclick = ()=>insertAtCursor(sym);
-  kb.appendChild(btn);
-});
-function insertAtCursor(text){ editor.insert(text); editor.focus(); }
-
-/* ---------- Long-press options UI & logic ---------- */
-const fileOptions = document.getElementById('file-options');
-const fileOptionsTitle = document.getElementById('file-options-title');
-
-const fileOptionsButtons = document.getElementById('file-options-buttons');
-const fileOptionsRenameBtn = document.getElementById('file-options-rename');
-const fileOptionsCopy = document.getElementById('file-options-copy');
-const fileOptionsDelete = document.getElementById('file-options-delete');
-const fileOptionsCancel = document.getElementById('file-options-cancel');
-
-const renameArea = document.getElementById('file-options-rename-area');
-const renameInput = document.getElementById('file-options-rename-input');
-const renameSave = document.getElementById('file-options-rename-save');
-const renameCancel = document.getElementById('file-options-rename-cancel');
-const renameError = document.getElementById('file-options-rename-error');
-
-let _optionsTargetName = null;
-
-function showFileOptions(name, x, y) {
-  _optionsTargetName = name;
-  fileOptionsTitle.textContent = name;
-  // reset UI state
-  fileOptionsButtons.style.display = '';
-  renameArea.style.display = 'none';
-  renameError.style.display = 'none';
-  renameError.textContent = '';
-  fileOptions.style.left = Math.min(window.innerWidth - 220, x) + 'px';
-  fileOptions.style.top = Math.min(window.innerHeight - 160, y) + 'px';
-  fileOptions.style.display = 'block';
-  fileOptions.setAttribute('aria-hidden', 'false');
-
-  // suppression flags so the release-click won't close the popup
-  _suppressClickAfterLongPress = true;
-  _ignoreNextDocumentClick = true;
+function renderMyPosts(){
+  const container = document.getElementById('myPosts');
+  container.innerHTML = '';
+  if(!state.user){ container.innerHTML = '<div style="padding:8px;color:#666">Login to see your posts.</div>'; return; }
+  const mine = state.data.posts.filter(p=>p.userId===state.user.id);
+  if(mine.length===0) { container.innerHTML = '<div style="padding:8px;color:#666">You have not posted anything yet.</div>'; return; }
+  mine.forEach(p=>{
+    const d = document.createElement('div');
+    d.className='post';
+    d.innerHTML = `<div class="row" style="justify-content:space-between"><div><strong>${escapeHtml(p.description||'Untitled')}</strong><div class="muted">${timeAgo(p.createdAt)}</div></div><div><button class="small-btn delMy" data-id="${p.id}">Delete</button></div></div>`;
+    container.appendChild(d);
+  });
+  document.querySelectorAll('.delMy').forEach(b=>b.addEventListener('click',e=>{
+    if(!confirm('Delete this post?')) return;
+    const id=e.currentTarget.dataset.id;
+    state.data.posts = state.data.posts.filter(p=>p.id!==id);
+    saveData();
+    renderMyPosts(); renderFeed(); renderSaved();
+  }));
 }
 
-function hideFileOptions() {
-  _optionsTargetName = null;
-  fileOptions.style.display = 'none';
-  fileOptions.setAttribute('aria-hidden', 'true');
-  // clear rename input
-  renameInput.value = '';
-  renameError.style.display = 'none';
-  renameError.textContent = '';
+/* Comments modal */
+function openComments(postId){
+  const post = state.data.posts.find(x=>x.id===postId);
+  if(!post) return;
+  const modalRoot = document.getElementById('modalRoot');
+  modalRoot.style.display = 'block';
+  modalRoot.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="card">
+        <h3>Comments</h3>
+        <div class="comments-list">
+          ${post.comments.length===0 ? '<div style="padding:8px;color:#666">No comments yet</div>' : post.comments.map(c=>`<div class="comment"><strong>${escapeHtml(c.name)}</strong> <div class="muted">${timeAgo(c.at)}</div><div>${escapeHtml(c.text)}</div></div>`).join('')}
+        </div>
+        <div style="display:flex;gap:8px">
+          <input id="commentText" placeholder="Write a comment" class="input" style="flex:1"/>
+          <button id="sendComment" class="small-btn">Send</button>
+        </div>
+        <div style="text-align:right;margin-top:8px"><button id="closeModal" class="small-btn">Close</button></div>
+      </div>
+    </div>
+  `;
+  document.getElementById('closeModal').addEventListener('click', closeModal);
+  document.getElementById('sendComment').addEventListener('click', ()=>{
+    const txt = document.getElementById('commentText').value.trim();
+    if(!txt){ alert('Write something'); return; }
+    const cm = { name: state.user ? state.user.name : 'Guest', text: txt, at: Date.now() };
+    post.comments.push(cm);
+    saveData();
+    closeModal();
+    openComments(postId);
+    renderFeed();
+  });
+}
+function closeModal(){
+  const modalRoot = document.getElementById('modalRoot');
+  modalRoot.style.display = 'none';
+  modalRoot.innerHTML='';
 }
 
-/* Copy */
-fileOptionsCopy.onclick = () => {
-  if (!_optionsTargetName) return;
-  const originalName = _optionsTargetName;
-  let newName = originalName + "_copy";
-  let counter = 1;
-  while (files[newName]) {
-    newName = originalName + "_copy" + counter;
-    counter++;
-  }
-  files[newName] = files[originalName];
-  saveFiles();
-  refreshFileList();
-  openTab(newName);
-  hideFileOptions();
-};
-
-/* Delete */
-fileOptionsDelete.onclick = () => {
-  if (!_optionsTargetName) return;
-  const name = _optionsTargetName;
-  if (!confirm(`Delete file "${name}"? This cannot be undone.`)) { hideFileOptions(); return; }
-  delete files[name];
-  saveFiles();
-  openTabs = openTabs.filter(t => t !== name);
-  if (openFile === name) {
-    openFile = null;
-    const remaining = Object.keys(files);
-    if (remaining.length > 0) openTab(remaining[0]);
-    else {
-      editor.setValue("", -1);
-      updateTabs();
-      refreshFileList();
-    }
-  } else {
-    updateTabs();
-    refreshFileList();
-  }
-  hideFileOptions();
-};
-
-/* Cancel */
-fileOptionsCancel.onclick = () => hideFileOptions();
-
-/* Rename flow */
-fileOptionsRenameBtn.onclick = () => {
-  if (!_optionsTargetName) return;
-  // show rename UI inside popup
-  fileOptionsButtons.style.display = 'none';
-  renameArea.style.display = '';
-  renameInput.value = _optionsTargetName;
-  renameInput.focus();
-  renameInput.select();
-  renameError.style.display = 'none';
-  renameError.textContent = '';
-};
-
-renameCancel.onclick = () => {
-  // back to main buttons
-  renameArea.style.display = 'none';
-  fileOptionsButtons.style.display = '';
-  renameError.style.display = 'none';
-  renameError.textContent = '';
-};
-
-renameSave.onclick = () => {
-  if (!_optionsTargetName) return;
-  const oldName = _optionsTargetName;
-  const newNameRaw = renameInput.value.trim();
-  if (!newNameRaw) {
-    renameError.style.display = '';
-    renameError.textContent = "Name cannot be empty.";
-    return;
-  }
-  if (newNameRaw === oldName) {
-    // nothing changed
-    hideFileOptions();
-    return;
-  }
-  if (files[newNameRaw]) {
-    renameError.style.display = '';
-    renameError.textContent = "A file with that name already exists.";
-    return;
-  }
-
-  // perform rename
-  files[newNameRaw] = files[oldName];
-  delete files[oldName];
-  // update openTabs & openFile
-  openTabs = openTabs.map(n => n === oldName ? newNameRaw : n);
-  if (openFile === oldName) openFile = newNameRaw;
-
-  saveFiles();
-  refreshFileList();
-  openTab(newNameRaw);
-  hideFileOptions();
-};
-
-/* Outside click/esc handling
-   We ignore the very next document click after showing the popup (this prevents the release-click
-   from the long-press from immediately closing the popup). After that, clicks outside will close.
-*/
-window.addEventListener('click', (e) => {
-  if (_ignoreNextDocumentClick) {
-    _ignoreNextDocumentClick = false;
-    return; // swallow the very next click after long-press
-  }
-  if (fileOptions.style.display === 'block' && !fileOptions.contains(e.target)) {
-    hideFileOptions();
-  }
-});
-window.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideFileOptions(); });
-
-/* Persist on unload */
-window.addEventListener('beforeunload', () => saveFiles());
-
-/* Init */
-function initApp() {
-  refreshFileList();
-  const keys = Object.keys(files);
-  if (keys.length > 0) openTab(keys[0]);
+/* Simple auth (signup/login) stored locally. Replace with Firebase auth in production. */
+function showAuth(){
+  const modalRoot = document.getElementById('modalRoot');
+  modalRoot.style.display = 'block';
+  modalRoot.innerHTML = `
+    <div class="modal">
+      <div class="card">
+        <h3>Sign up / Login</h3>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <input id="authName" class="input" placeholder="Name" />
+          <input id="authEmail" class="input" placeholder="Email" />
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button id="cancelAuth" class="small-btn">Cancel</button>
+          <button id="doSignup" class="small-btn">Sign up</button>
+          <button id="doLogin" class="small-btn">Login</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('cancelAuth').addEventListener('click', closeModal);
+  document.getElementById('doSignup').addEventListener('click', ()=>{
+    const name = document.getElementById('authName').value.trim();
+    const email = document.getElementById('authEmail').value.trim();
+    if(!name||!email){ alert('Name and email required'); return; }
+    // create user
+    const id = 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+    const u = { id, name, email };
+    state.data.users.push(u);
+    saveData();
+    localStorage.setItem('codeshare_current_user', id);
+    setUserFromStorage();
+    closeModal();
+  });
+  document.getElementById('doLogin').addEventListener('click', ()=>{
+    const name = document.getElementById('authName').value.trim();
+    const email = document.getElementById('authEmail').value.trim();
+    if(!email){ alert('Email required to login'); return; }
+    const user = state.data.users.find(x=>x.email.toLowerCase()===email.toLowerCase());
+    if(!user){ alert('No account with that email. Sign up first.'); return; }
+    localStorage.setItem('codeshare_current_user', user.id);
+    setUserFromStorage();
+    closeModal();
+  });
 }
-initApp();
+
+function logout(){
+  localStorage.removeItem('codeshare_current_user');
+  state.user = null;
+  updateUserUI();
+}
+
+/* Utility helpers */
+function timeAgo(ts){
+  const sec = Math.floor((Date.now() - ts)/1000);
+  if(sec<60) return `${sec}s`;
+  if(sec<3600) return `${Math.floor(sec/60)}m`;
+  if(sec<86400) return `${Math.floor(sec/3600)}h`;
+  return `${Math.floor(sec/86400)}d`;
+}
+function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]); }
+
+/* Boot */
+init();
+
+/* ---------------------------
+  NOTES for hooking a real backend (Firebase example)
+  - Replace local.get / local.set / localStorage logic with:
+    - Firestore collections: posts, users, saved
+    - Use Firebase Authentication for users (email/password)
+  - Example (pseudo):
+    // when creating a post:
+    const docRef = await firestore.collection('posts').add({ ...postData });
+    // when liking:
+    await firestore.collection('posts').doc(postId).update({ likes: firebase.firestore.FieldValue.arrayUnion(userId) });
+  - For media upload: use Firebase Storage. Upload the file and get a public URL, store that URL in Firestore post document.
+  - Replace showAuth / logout with firebase.auth() signIn and signUp flows.
+--------------------------- */
+
 </script>
-
 </body>
 </html>
