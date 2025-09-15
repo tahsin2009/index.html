@@ -4,6 +4,18 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>CodeShare — programming social feed (demo)</title>
+
+<!-- Prism.js syntax highlighting -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<!-- Load more languages if needed -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+
+
+
 <style>
   :root{
     --bg: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
@@ -479,7 +491,8 @@ function renderFeed(){
       <div class="desc">${escapeHtml(post.description||'')}</div>
       ${post.sourceCode && post.sourcePublic ? `
   <div>
-    <pre class="code-block" id="code-${post.id}">${escapeHtml(post.sourceCode)}</pre>
+    <pre class="code-block" id="code-${post.id}"><code class="language-javascript">${escapeHtml(post.sourceCode)}</code></pre>
+    
     <button class="show-code-btn" data-id="${post.id}">Show source code</button>
   </div>
 ` : ''}
@@ -693,12 +706,37 @@ function showAuth(){
   });
 }
 
-function logout(){
-  localStorage.removeItem('codeshare_current_user');
-  state.user = null;
-  updateUserUI();
-}
+// function logout(){
+//   localStorage.removeItem('codeshare_current_user');
+//   state.user = null;
+//   updateUserUI();
+// }
 
+
+
+/* ---------- 1. Logout confirmation ---------- */
+function  logout(){
+  const modalRoot = document.getElementById('modalRoot');
+  modalRoot.style.display = 'block';
+  modalRoot.innerHTML = `
+    <div class="modal">
+      <div class="card">
+        <h3>Confirm Logout</h3>
+        <p>Do you really want to log out?</p>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+          <button id="cancelLogout" class="small-btn">Cancel</button>
+          <button id="doLogout" class="small-btn danger">Log out</button>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('cancelLogout').addEventListener('click', closeModal);
+  document.getElementById('doLogout').addEventListener('click', ()=>{
+    localStorage.removeItem('codeshare_current_user');
+    state.user = null;
+    updateUserUI();
+    closeModal();
+  });
+}
 
 
 /* Utility helpers */
