@@ -211,6 +211,24 @@
   overflow-y: auto;
   animation: slideUp .25s ease;
 }
+
+.code-wrap .code-block {
+  border-radius: 6px;
+  padding: 10px;
+  background: #0f0f0f;  /* adjust to match your theme */
+  color: #f8f8f2;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+.toggle-code {
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+
+
+
 @keyframes slideUp {
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
@@ -572,28 +590,164 @@ function toggleSave(postId){
   renderSaved();
 }
 
+// Replace your old renderSaved() with this robust version
 function renderSaved(){
   const box = document.getElementById('savedList');
+  if(!box){
+    console.error('renderSaved: no element with id "savedList" found');
+    return;
+  }
+
   box.innerHTML = '';
-  if(!state.user){ box.innerHTML = '<div style="padding:8px;color:#666">Login to see saved posts.</div>'; return; }
-  const arr = state.data.saved[state.user.id]||[];
-  if(arr.length===0){ box.innerHTML = '<div style="padding:8px;color:#666">You have no saved posts.</div>'; return; }
-  arr.forEach(id=>{
-    const p = state.data.posts.find(x=>x.id===id);
+
+  if(!state.user){
+    const msg = document.createElement('div');
+    msg.style.padding = '8px';
+    msg.style.color = '#666';
+    msg.textContent = 'Login to see saved posts.';
+    box.appendChild(msg);
+    return;
+  }
+
+  const arr = (state.data && state.data.saved && state.data.saved[state.user.id]) || [];
+  if(arr.length === 0){
+    const msg = document.createElement('div');
+    msg.style.padding = '8px';
+    msg.style.color = '#666';
+    msg.textContent = 'You have no saved posts.';
+    box.appendChild(msg);
+    return;
+  }
+
+  arr.forEach(id => {
+    const p = (state.data && state.data.posts || []).find(x => x.id === id);
     if(!p) return;
-    const div = document.createElement('div');
-    div.className='post';
-    div.innerHTML = `
-      <div class="meta">
-        <div class="avatar">${escapeHtml(p.avatarLetter||p.userName[0]||'U')}</div>
-        <div style="flex:1"><div class="username">${escapeHtml(p.userName)}</div><div class="posted-time muted">${timeAgo(p.createdAt)}</div></div>
-      </div>
-      ${p.mediaType==='image' ? `<img class="post-img" src="${p.media}" />` : `<video class="post-img" src="${p.media}" controls></video>`}
-      <div class="desc">${escapeHtml(p.description||'')}</div>
-    `;
-    box.appendChild(div);
+
+    const postEl = document.createElement('div');
+    postEl.className = 'post';
+
+    // Meta
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar';
+    avatar.textContent = p.avatarLetter || (p.userName && p.userName[0]) || 'U';
+    const right = document.createElement('div');
+    right.style.flex = '1';
+    const uname = document.createElement('div');
+    uname.className = 'username';
+    uname.textContent = p.userName || 'Unknown';
+    const postedTime = document.createElement('div');
+    postedTime.className = 'posted-time muted';
+    postedTime.textContent = typeof timeAgo === 'function' ? timeAgo(p.createdAt) : (new Date(p.createdAt || Date.now())).toLocaleString();
+    right.appendChild(uname);
+    right.appendChild(postedTime);
+    meta.appendChild(avatar);
+    meta.appendChild(right);
+    postEl.appendChild(meta);
+
+    // Media (image or video)
+    if(p.mediaType === 'image'){
+      const img = document.createElement('img');
+      img.className = 'post-img';
+      img.src = p.media || '';
+      img.alt = p.description || '';
+      postEl.appendChild(img);
+    } else if(p.media){
+      const vid = document.createElement('video');
+      vid.className = 'post-img';
+      vid.src = p.media;
+      vid.controls = true;
+      postEl.appendChild(vid);
+    }
+
+    // Description
+    const desc = document.createElement('div');
+    desc.className = 'desc';
+    desc.textContent = p.description || '';
+    postEl.appendChild(desc);
+
+    // Source code area (if present)
+    if(p.sourceCode){
+      const canView = p.sourcePublic || (state.user && state.user.id === p.userId);
+
+      if(canView){
+        // Button to show/hide
+        const btn = document.createElement('button');
+        btn.className = 'toggle-code';
+        btn.dataset.id = p.id;
+        btn.type = 'button';
+        btn.textContent = 'Show source code';
+        postEl.appendChild(btn);
+
+        // Hidden wrapper for code
+        const codeWrap = document.createElement('div');
+        codeWrap.className = 'code-wrap';
+        codeWrap.id = `code-wrap-${p.id}`;
+        codeWrap.style.display = 'none'; // hidden initially
+        codeWrap.style.marginTop = '8px';
+
+        const pre = document.createElement('pre');
+        pre.className = 'code-block';
+        pre.style.maxHeight = '360px';
+        pre.style.overflow = 'auto';
+
+        const code = document.createElement('code');
+        // set language if available on post (fallback to javascript)
+        const lang = p.sourceLang || 'javascript';
+        code.className = `language-${lang}`;
+        // Use textContent so the code is inserted safely (no HTML)
+        code.textContent = p.sourceCode;
+
+        pre.appendChild(code);
+        codeWrap.appendChild(pre);
+        postEl.appendChild(codeWrap);
+      } else {
+        const note = document.createElement('div');
+        note.className = 'small-muted';
+        note.style.marginTop = '8px';
+        note.textContent = 'Source code is private';
+        postEl.appendChild(note);
+      }
+    }
+
+    box.appendChild(postEl);
   });
+
+  // Attach a single delegated click listener (only once)
+  if(!box._hasToggleListener){
+    box.addEventListener('click', function(e){
+      const btn = e.target.closest && e.target.closest('.toggle-code');
+      if(!btn) return;
+      const id = btn.dataset.id;
+      const wrap = document.getElementById(`code-wrap-${id}`);
+      if(!wrap) return;
+
+      const isHidden = wrap.style.display === 'none' || getComputedStyle(wrap).display === 'none';
+      if(isHidden){
+        wrap.style.display = 'block';
+        btn.textContent = 'Hide source code';
+        // Highlight if Prism is available
+        try {
+          if(window.Prism && typeof Prism.highlightElement === 'function'){
+            const codeEl = wrap.querySelector('code');
+            if(codeEl) Prism.highlightElement(codeEl);
+          } else if(window.Prism && typeof Prism.highlightAll === 'function'){
+            Prism.highlightAll();
+          }
+        } catch(err){
+          // ignore Prism errors
+          console.warn('Prism highlighting failed', err);
+        }
+      } else {
+        wrap.style.display = 'none';
+        btn.textContent = 'Show source code';
+      }
+    });
+    box._hasToggleListener = true;
+  }
 }
+
 
 function renderProfile(){
   // profile info is updated in updateUserUI
