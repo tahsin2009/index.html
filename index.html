@@ -140,7 +140,34 @@
   .action{cursor:pointer;display:flex;gap:8px;align-items:center;color:#444;font-size:13px}
   .counter{font-weight:600}
   .desc{color:#333;margin-top:8px;white-space:pre-wrap}
-  .code-block{background:#0f1720;color:#e6f2ff;padding:10px;border-radius:8px;font-family:monospace;font-size:13px;overflow:auto;margin-top:8px}
+  .code-block {
+  background:#0f1720;
+  color:#e6f2ff;
+  padding:10px;
+  border-radius:8px;
+  font-family:monospace;
+  font-size:13px;
+  overflow:auto;
+  margin-top:8px;
+  max-height:120px; /* default collapsed height */
+  position:relative;
+}
+
+.code-block.expanded {
+  max-height:none; /* allow full height */
+}
+
+.show-code-btn {
+  margin-top:6px;
+  background:#f3f3f3;
+  border:1px solid #ddd;
+  border-radius:6px;
+  padding:6px 10px;
+  font-size:13px;
+  cursor:pointer;
+  display:inline-block;
+}
+
 
   /* profile */
   .profile-card{display:flex;gap:12px;align-items:center;padding:12px;border-radius:10px;background:#fafafa;border:1px solid #eee;margin-bottom:12px}
@@ -297,6 +324,21 @@ function init(){
   document.getElementById('btnLogout').addEventListener('click', logout);
 
   // initial render
+
+document.querySelectorAll('.show-code-btn').forEach(btn => {
+  btn.addEventListener('click', e => {
+    const id = e.currentTarget.dataset.id;
+    const block = document.getElementById(`code-${id}`);
+    block.classList.toggle('expanded');
+    e.currentTarget.textContent = block.classList.contains('expanded')
+      ? 'Hide source code'
+      : 'Show source code';
+  });
+});
+
+
+
+  
   renderFeed();
   renderProfile();
   renderSaved();
@@ -435,7 +477,13 @@ function renderFeed(){
       </div>
       ${post.mediaType==='image' ? `<img class="post-img" src="${post.media}" />` : `<video class="post-img" src="${post.media}" controls></video>`}
       <div class="desc">${escapeHtml(post.description||'')}</div>
-      ${post.sourceCode && post.sourcePublic ? `<pre class="code-block">${escapeHtml(post.sourceCode)}</pre>` : ''}
+      ${post.sourceCode && post.sourcePublic ? `
+  <div>
+    <pre class="code-block" id="code-${post.id}">${escapeHtml(post.sourceCode)}</pre>
+    <button class="show-code-btn" data-id="${post.id}">Show source code</button>
+  </div>
+` : ''}
+
       <div class="actions">
         <div class="action likeBtn" data-id="${post.id}">❤️ <span class="counter">${post.likes.length}</span></div>
         <div class="action commentBtn" data-id="${post.id}">💬 <span class="counter">${post.comments.length}</span></div>
@@ -445,6 +493,19 @@ function renderFeed(){
     `;
     feed.appendChild(el);
   });
+
+
+  document.querySelectorAll('.show-code-btn').forEach(btn => {
+  btn.addEventListener('click', e => {
+    const id = e.currentTarget.dataset.id;
+    const block = document.getElementById(`code-${id}`);
+    block.classList.toggle('expanded');
+    e.currentTarget.textContent = block.classList.contains('expanded')
+      ? 'Hide source code'
+      : 'Show source code';
+  });
+});
+
 
   // wire actions
   document.querySelectorAll('.likeBtn').forEach(btn=>btn.addEventListener('click', e=>{
@@ -637,6 +698,8 @@ function logout(){
   state.user = null;
   updateUserUI();
 }
+
+
 
 /* Utility helpers */
 function timeAgo(ts){
