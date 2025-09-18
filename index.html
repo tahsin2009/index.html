@@ -165,6 +165,21 @@
   position:relative;
 }
 
+
+.desc {
+  color:#333;
+  margin-top:8px;
+  white-space:pre-wrap;
+  max-height: 60px;       /* default collapsed height */
+  overflow: hidden;
+  position: relative;
+}
+.desc.expanded {
+  max-height: none;       /* full height when expanded */
+}
+
+
+
 .code-block.expanded {
   max-height:none; /* allow full height */
 }
@@ -506,7 +521,11 @@ function renderFeed(){
         <div><button class="small-btn" data-id="${post.id}" title="Options">⋯</button></div>
       </div>
       ${post.mediaType==='image' ? `<img class="post-img" src="${post.media}" />` : `<video class="post-img" src="${post.media}" controls></video>`}
-      <div class="desc">${escapeHtml(post.description||'')}</div>
+      <div class="desc" id="desc-${post.id}">${escapeHtml(post.description||'')}</div>
+${post.description && post.description.length > 100 ? `
+   <button class="show-desc-btn" data-id="${post.id}">Show description</button>
+` : ''}
+
       ${post.sourceCode && post.sourcePublic ? `
   <div>
     <pre class="code-block" id="code-${post.id}"><code class="language-javascript">${escapeHtml(post.sourceCode)}</code></pre>
@@ -536,6 +555,20 @@ function renderFeed(){
       : 'Show source code';
   });
 });
+
+
+document.querySelectorAll('.show-desc-btn').forEach(btn => {
+  btn.addEventListener('click', e => {
+    const id = e.currentTarget.dataset.id;
+    const block = document.getElementById(`desc-${id}`);
+    block.classList.toggle('expanded');
+    e.currentTarget.textContent = block.classList.contains('expanded')
+      ? 'Hide description'
+      : 'Show description';
+  });
+});
+
+
 
 
   // wire actions
