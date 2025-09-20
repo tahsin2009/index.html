@@ -2,103 +2,118 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🐍 Learn Python</title>
   <style>
-   body {
+  body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #FAF7F3);
-  color: #000000;   /* black text */
+  background: #FAF7F3;
+  color: #000;
   margin: 0;
   padding: 0;
+  font-size: 18px; /* bigger for readability */
+  line-height: 1.6;
 }
 
+header {
+  background: #FAF7F3;
+  text-align: center;
+  padding: 16px;
+  font-size: 22px; /* readable on phones */
+  font-weight: bold;
+  color: #4cafef;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
 
-    header {
-      background: #FAF7F3;
-      text-align: center;
-      padding: 20px;
-      font-size: 26px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      color: #4cafef;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    }
-
-   .page {
+.page {
   display: none;
-  padding: 15px;
-  margin: 0;
+  padding: 16px;
   width: 100%;
-  max-width: 100%;   /* no fixed constraint */
+  margin: 0;
   box-sizing: border-box;
 }
+
 .page.active {
   display: block;
 }
 
-/* Lesson list - full width stacked */
+/* Lesson list - full width, stacked */
 .lesson-list {
   display: block;
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
 .lesson-card {
-  padding: 16px;
-  border-bottom: 1px solid #ddd;
+  padding: 18px;
+  border-bottom: 1px solid #ccc;
   font-size: 18px;
   cursor: pointer;
 }
 
-/* Lesson content - fill page */
+/* Lesson content full screen */
 .lesson {
   width: 100%;
-  padding: 15px;
-  box-sizing: border-box;
-  border-radius: 0;
-  background: none;
-  box-shadow: none;
+  padding: 16px;
   margin: 0;
+  box-sizing: border-box;
+  font-size: 18px;
 }
 
 /* Code blocks */
 pre {
-  background: #f7f7f7;
+  background: #f4f4f4;
   padding: 12px;
   border-radius: 6px;
   overflow-x: auto;
-  font-size: 14px;
+  font-size: 16px;
 }
 
-/* Buttons - mobile friendly */
+/* Buttons */
 button {
   background: #4caf50;
   color: white;
   border: none;
-  padding: 14px 18px;
+  padding: 14px 20px;
   font-size: 18px;
   cursor: pointer;
   border-radius: 6px;
-  margin: 8px 0;
-  width: 48%; /* side by side */
+  margin: 10px 0;
+  width: auto; /* no forced full width */
+  flex: 1;
 }
 
 button:hover {
   background: #45a049;
 }
 
+/* Navigation buttons row */
+/* Navigation buttons row */
 .nav-buttons {
   display: flex;
-  justify-content: space-between;
-  gap: 4%;
+  justify-content: space-between; /* pushes one left, one right */
+  align-items: center;
   margin-top: 20px;
 }
 
+/* Buttons */
+.nav-buttons button {
+  flex: 0 0 auto;   /* don’t stretch */
+  min-width: 120px; /* consistent size */
+  padding: 14px 20px;
+  font-size: 18px;
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
 
-    .nav-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
+.nav-buttons button:hover {
+  background: #45a049;
+}
+
+
+
   </style>
 </head>
 <body>
