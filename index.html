@@ -1,667 +1,200 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>CodeShare — programming social feed (demo) - No Media, Multiple Source Codes</title>
-
-<!-- Prism.js syntax highlighting -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
-
-<style>
-  :root{
-    --bg: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    --card:#ffffff;
-    --muted:#777;
-    --accent:#111;
-    --glass: rgba(255,255,255,0.03);
-    --glow: 0 6px 18px rgba(0,0,0,0.25);
-  }
-  html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
-  body{
-    background:var(--bg);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:24px;
-  }
-  .phone{
-    width:380px;
-    height:780px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.05));
-    border-radius:18px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-    border: 8px solid var(--bg);
-  }
-  header.appbar{
-    padding:10px 14px;
-    display:flex;
-    gap:10px;
-    align-items:center;
-    justify-content:space-between;
-    background:transparent;
-  }
-  .tabs{
-    display:flex;
-    gap:8px;
-    align-items:center;
-  }
-  .tab{
-    font-size:13px;
-    color:#eee;
-    padding:6px 8px;
-    border-radius:8px;
-    cursor:pointer;
-    opacity:0.9;
-  }
-  .tab.active{
-    background:var(--card);
-    color:var(--accent);
-    box-shadow: var(--glow);
-    font-weight:600;
-  }
-  .main{
-    flex:1;
-    background: #fff;
-    border-top-left-radius:20px;
-    border-top-right-radius:20px;
-    padding:14px;
-    overflow:auto;
-  }
-  .upload-area{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    align-items:center;
-  }
-  .input, .textarea{
-    width:100%;
-    padding:10px 12px;
-    border-radius:8px;
-    border:1px solid #e3e3e3;
-    font-size:14px;
-  }
-  .small-btn{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    background:#f3f3f3;
-    border-radius:8px;
-    padding:8px 12px;
-    cursor:pointer;
-    border:1px solid #ddd;
-  }
-  .post-btn{
-    width:100%;
-    padding:12px;
-    border-radius:10px;
-    background:var(--accent);
-    color:#fff;
-    font-weight:700;
-    border:none;
-    cursor:pointer;
-  }
-
-  .post{
-    background:transparent;
-    border-radius:12px;
-    padding:12px;
-    margin-bottom:12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-    border:1px solid #f0f0f0;
-  }
-  .meta{
-    display:flex;
-    gap:10px;
-    align-items:center;
-    margin-bottom:8px;
-  }
-  .avatar{
-    width:38px;height:38px;border-radius:50%;background:#ddd;display:flex;align-items:center;justify-content:center;font-weight:700;color:#555;
-  }
-  .username{font-weight:700;font-size:14px}
-  .posted-time{font-size:12px;color:var(--muted)}
-  .actions{display:flex;gap:12px;align-items:center;margin-top:6px}
-  .action{cursor:pointer;display:flex;gap:8px;align-items:center;color:#444;font-size:13px}
-  .counter{font-weight:600}
-  .desc{color:#333;margin-top:8px;white-space:pre-wrap}
-  .code-block {
-  background:#0f1720;
-  color:#e6f2ff;
-  padding:10px;
-  border-radius:8px;
-  font-family:monospace;
-  font-size:13px;
-  overflow:auto;
-  margin-top:8px;
-  max-height:120px; /* default collapsed height */
-  position:relative;
-}
-
-.desc {
-  color:#333;
-  margin-top:8px;
-  white-space:pre-wrap;
-  max-height: 60px;       /* default collapsed height */
-  overflow: hidden;
-  position: relative;
-}
-.desc.expanded {
-  max-height: none;       /* full height when expanded */
-}
-
-
-.code-block.expanded {
-  max-height:none; /* allow full height */
-}
-
-.show-code-btn {
-  margin-top:6px;
-  background:#f3f3f3;
-  border:1px solid #ddd;
-  border-radius:6px;
-  padding:6px 10px;
-  font-size:13px;
-  cursor:pointer;
-  display:inline-block;
-}
-
-.profile-card{display:flex;gap:12px;align-items:center;padding:12px;border-radius:10px;background:#fafafa;border:1px solid #eee;margin-bottom:12px}
-.profile-hero{height:120px;background:#2e2e2e;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px}
-.small-muted{font-size:13px;color:var(--muted);}
-
-.modal {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.45);
-  display: flex;
-  align-items: flex-end; /* bottom sheet */
-  justify-content: center;
+  <meta charset="UTF-8">
+  <title>🐍 Learn Python</title>
+  <style>
+   body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #FAF7F3);
+  color: #000000;   /* black text */
+  margin: 0;
   padding: 0;
-  z-index: 1000;
-}
-.modal .card {
-  width: 100%;
-  max-height: 85vh;
-  background: #fff;
-  border-top-left-radius: 18px;
-  border-top-right-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
-  overflow-y: auto;
-  animation: slideUp .25s ease;
 }
 
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-.comments-list{max-height:300px;overflow:auto;margin-bottom:8px}
-.comment{padding:8px;border-bottom:1px solid #f0f0f0}
 
-.muted{color:var(--muted);}
-.row{display:flex;gap:8px;align-items:center;}
-footer.bottom-nav{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 6px;background:transparent;}
-.icon-btn{background:transparent;border:none;cursor:pointer;color:#fff}
-.danger{color:crimson}
-@media (max-width:420px){
-  .phone{width:92vw;height:92vh}
+    header {
+      background: #FAF7F3;
+      text-align: center;
+      padding: 20px;
+      font-size: 26px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #4cafef;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+
+    .page {
+      display: none;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .page.active {
+      display: block;
+    }
+.lesson-list {
+  display: block;   /* stack items vertically */
+  margin-top: 30px;
 }
-</style>
+
+.lesson-card {
+  background: none;   /* remove card background */
+  box-shadow: none;   /* remove shadow */
+  padding: 10px 0;    /* space between */
+  border-bottom: 1px solid #ccc; /* line under each lesson */
+  text-align: left;
+  cursor: pointer;
+  font-size: 18px;
+}
+.lesson-card:hover {
+  background: #f5f5f5; /* subtle hover effect */
+  transform: none;     /* remove lift effect */
+}
+
+
+    .lesson {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      margin-top: 20px;
+    }
+
+    pre {
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 10px;
+      overflow-x: auto;
+    }
+
+    button {
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 8px;
+      margin: 10px;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #45a049;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-  <div class="phone" role="application" aria-label="CodeShare demo app">
-    <header class="appbar">
-      <div class="tabs" id="tabs">
-        <div class="tab active" data-page="feed">feed</div>
-        <div class="tab" data-page="upload">upload</div>
-        <div class="tab" data-page="saved">saved</div>
-        <div class="tab" data-page="profile">profile</div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <div id="currentUserName" style="color:#fff;font-weight:600">Guest</div>
-      </div>
-    </header>
 
-    <main class="main" id="main">
-      <!-- Feed page -->
-      <section id="feedPage">
-        <div id="feedList"></div>
-      </section>
+<header>🐍 Learn Python Step by Step</header>
 
-      <!-- Upload page -->
-      <section id="uploadPage" style="display:none">
-        <div class="upload-area">
-          <textarea id="desc" class="textarea" rows="4" placeholder="add post description"></textarea>
+<!-- Page 1: Lesson List -->
+<div class="page active" id="home">
+  <h2>Select a Lesson</h2>
+  <div class="lesson-list" id="lessonList"></div>
+</div>
 
-
-          <div style="width:100%">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-              <strong>Source code files</strong>
-              <button id="addCodeBtn" class="small-btn" type="button">Add another source</button>
-            </div>
-            <div id="codeList" style="display:flex;flex-direction:column;gap:8px;width:100%">
-              <!-- code entry template will be inserted here -->
-            </div>
-            <div style="font-size:12px;color:#666;margin-top:4px">Each source entry can be toggled public/private when posted.</div>
-          </div>
-
-          <button class="post-btn" id="postBtn">Post</button>
-        </div>
-      </section>
-
-      <!-- Saved page -->
-      <section id="savedPage" style="display:none">
-        <h3>Saved posts</h3>
-        <div id="savedList"></div>
-      </section>
-
-      <!-- Profile page -->
-      <section id="profilePage" style="display:none">
-        <div class="profile-card">
-          <div style="flex:1">
-            <div class="username" id="profileName">Guest</div>
-            <div class="small-muted" id="profileEmail">Not signed in</div>
-            <div style="margin-top:8px;">
-              <button id="btnLogout" class="small-btn">Log out</button>
-              <button id="btnLogin" class="small-btn">Sign up / Login</button>
-            </div>
-          </div>
-          <div style="width:84px;text-align:center">
-            <div class="avatar" id="profileAvatar">G</div>
-          </div>
-        </div>
-        <div>
-          <h4>Your posts</h4>
-          <div id="myPosts"></div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="bottom-nav">
-      <div style="color:#fff;font-size:12px">CodeShare — demo</div>
-      <div style="color:#fff;font-size:12px">Local only</div>
-    </footer>
+<!-- Page 2: Lesson Content -->
+<div class="page" id="lessonPage">
+  <div class="lesson" id="lessonContent"></div>
+  <div class="nav-buttons">
+    <button onclick="prevLesson()">⬅ Previous</button>
+    <button onclick="nextLesson()">Next ➡</button>
   </div>
-
-  <!-- simple modal container -->
-  <div id="modalRoot" style="display:none"></div>
+  <button onclick="goHome()">🏠 Back to Lessons</button>
+</div>
 
 <script>
-/* Modified demo app
-   - Removed image/video upload entirely
-   - Upload supports multiple source-code entries per post
-   - Each code entry can be marked public/private
-   - Posts store sourceCodes: array of {id, code, public, lang}
-*/
+  // Example lessons (you can add many more, even big ones)
+  const lessons = [
+    {title: "Introduction to Python", content: `
+      Python is a beginner-friendly programming language.
+      It is widely used in web development, data science, AI, and more.
+      <pre><code>print("Hello, World!")</code></pre>
+    `},
+    {title: "Variables", content: `
+      Variables store data in Python.
+      <pre><code>x = 5
+y = "Hello"
+print(x, y)</code></pre>
+    `},
+    {title: "If Statements", content: `
+      Conditional statements allow you to run code only when a condition is true.
+      <pre><code>age = 18
+if age >= 18:
+    print("You are an adult")</code></pre>
+    `},
+    {title: "Loops", content: `
+      Loops let you repeat actions multiple times.
+      <pre><code>for i in range(5):
+    print(i)</code></pre>
+    `},
+    {title: "Functions", content: `
+      Functions are reusable blocks of code.
+      <pre><code>def greet(name):
+    return "Hello " + name
 
+print(greet("Alice"))</code></pre>
+    `}
+    // ➡ Add lessons up to 15 or even 100 here!
+  ];
 
-function showAlert(message) {
-  const modalRoot = document.getElementById('modalRoot');
-  modalRoot.style.display = 'block';
-  modalRoot.innerHTML = `
-    <div class="modal">
-      <div class="card">
-        <p>${escapeHtml(message)}</p>
-        <div style="text-align:right;margin-top:12px">
-          <button id="closeAlert" class="small-btn">OK</button>
-        </div>
-      </div>
-    </div>`;
-  document.getElementById('closeAlert').addEventListener('click', closeModal);
-}
+  let currentLesson = 0;
 
-function showConfirm(message, onConfirm) {
-  const modalRoot = document.getElementById('modalRoot');
-  modalRoot.style.display = 'block';
-  modalRoot.innerHTML = `
-    <div class="modal">
-      <div class="card">
-        <p>${escapeHtml(message)}</p>
-        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-          <button id="cancelConfirm" class="small-btn">Cancel</button>
-          <button id="okConfirm" class="small-btn danger">OK</button>
-        </div>
-      </div>
-    </div>`;
-  document.getElementById('cancelConfirm').addEventListener('click', closeModal);
-  document.getElementById('okConfirm').addEventListener('click', () => {
-    closeModal();
-    if (onConfirm) onConfirm();
+  // Generate lesson list dynamically
+  const lessonListDiv = document.getElementById("lessonList");
+  lessons.forEach((lesson, index) => {
+    const div = document.createElement("div");
+    div.className = "lesson-card";
+    div.innerText = "Lesson " + (index+1) + ": " + lesson.title;
+    div.onclick = () => openLesson(index);
+    lessonListDiv.appendChild(div);
   });
-}
 
-
-
-
-const APPKEY = 'codeshare_v2_no_media';
-const local = {
-  get(){ try { return JSON.parse(localStorage.getItem(APPKEY)||'{}') } catch(e){ return {} } },
-  set(obj){ localStorage.setItem(APPKEY, JSON.stringify(obj)); }
-};
-
-let state = { user: null, data: null };
-
-function init(){
-  state.data = local.get();
-  if(!state.data.posts) state.data.posts = [];
-  if(!state.data.users) state.data.users = [];
-  if(!state.data.saved) state.data.saved = {};
-
-  setupTabs();
-  document.getElementById('addCodeBtn').addEventListener('click', addCodeEntry);
-  document.getElementById('postBtn').addEventListener('click', handlePost);
-  document.getElementById('btnLogin').addEventListener('click', showAuth);
-  document.getElementById('btnLogout').addEventListener('click', logout);
-
-  // seed one code entry by default
-  addCodeEntry();
-
-  renderFeed(); renderProfile(); renderSaved();
-  setUserFromStorage();
-}
-
-function setUserFromStorage(){
-  const uid = localStorage.getItem('codeshare_current_user');
-  if(uid){ const u = state.data.users.find(x=>x.id===uid); if(u) state.user = u; }
-  updateUserUI();
-}
-
-function updateUserUI(){
-  document.getElementById('currentUserName').textContent = state.user ? state.user.name : 'Guest';
-  document.getElementById('profileName').textContent = state.user ? state.user.name : 'Guest';
-  document.getElementById('profileEmail').textContent = state.user ? state.user.email : 'Not signed in';
-  document.getElementById('profileAvatar').textContent = state.user ? (state.user.name[0]||'U').toUpperCase() : 'G';
-  document.getElementById('btnLogin').style.display = state.user ? 'none' : 'inline-flex';
-  document.getElementById('btnLogout').style.display = state.user ? 'inline-flex' : 'none';
-  renderMyPosts();
-}
-
-function setupTabs(){
-  document.querySelectorAll('.tab').forEach(t=>{
-    t.addEventListener('click', (e)=>{
-      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-      e.currentTarget.classList.add('active');
-      const page = e.currentTarget.dataset.page; showPage(page);
-    })
-  })
-}
-
-function showPage(page){
-  ['feed','upload','saved','profile'].forEach(p=>{ document.getElementById(p+'Page').style.display = p===page ? '' : 'none'; });
-  if(page==='feed') renderFeed();
-  if(page==='saved') renderSaved();
-  if(page==='profile') renderProfile();
-}
-
-/* --- Upload code entries --- */
-let codeEntryCounter = 0;
-function addCodeEntry(initialText=''){
-  const list = document.getElementById('codeList');
-  const id = 'codeEntry_' + (++codeEntryCounter);
-  const wrapper = document.createElement('div');
-  wrapper.style.display='flex'; wrapper.style.flexDirection='column'; wrapper.style.gap='6px'; wrapper.id = id;
-  wrapper.innerHTML = `
-    <textarea class="textarea code-input" data-entry-id="${id}" rows="6" placeholder="Paste source code here...">${escapeHtml(initialText)}</textarea>
-    <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
-      <div style="display:flex;gap:8px;align-items:center">
-        <label class="small-btn"><input type="checkbox" class="code-public" /> Public</label>
-        <select class="code-lang small-btn" style="padding:6px;border-radius:6px;border:1px solid #ddd">
-          <option value="javascript">JavaScript</option>
-          <option value="python">Python</option>
-          <option value="css">CSS</option>
-          <option value="markup">HTML</option>
-        </select>
-      </div>
-      <div>
-        <button type="button" class="small-btn remove-code">Remove</button>
-      </div>
-    </div>
-  `;
-  list.appendChild(wrapper);
-
-  // attach remove handler
-  wrapper.querySelector('.remove-code').addEventListener('click', ()=>{ wrapper.remove(); });
-}
-
-function collectCodeEntries(){
-  const arr = [];
-  document.querySelectorAll('#codeList .code-input').forEach(tx=>{
-    const codeText = tx.value.trim();
-    if(!codeText) return;
-    const parent = tx.closest('div');
-    const publicChk = parent.querySelector('.code-public');
-    const langSel = parent.querySelector('.code-lang') || { value: 'javascript' };
-    arr.push({ id: 'c_'+Date.now()+'_'+Math.random().toString(36).slice(2,6), code: codeText, public: !!publicChk.checked, lang: langSel.value });
-  });
-  return arr;
-}
-function handlePost(){
-  if(!state.user){
-    showAlert('Please sign up / login to post.');
-    return;
-  }
-  const desc = document.getElementById('desc').value.trim();
-  const codes = collectCodeEntries();
-  if(codes.length===0 && !desc){
-    showAlert('Please add at least one source code or a description.');
-    return;
+  function openLesson(index) {
+    currentLesson = index;
+    document.getElementById("home").classList.remove("active");
+    document.getElementById("lessonPage").classList.add("active");
+    showLesson();
   }
 
-  const post = {
-    id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,8),
-    userId: state.user.id,
-    userName: state.user.name,
-    avatarLetter: (state.user.name[0]||'U').toUpperCase(),
-    createdAt: Date.now(),
-    description: desc,
-    sourceCodes: codes,
-    likes: [],
-    comments: []
-  };
-
-  state.data.posts.unshift(post);
-  saveData();
-
-  document.getElementById('desc').value = '';
-  document.getElementById('codeList').innerHTML = '';
-  addCodeEntry();
-
-  showAlert('Posted successfully!');
-  showPage('feed');
-  document.querySelector('.tab[data-page="feed"]').click();
-}
-
-
-function saveData(){ local.set(state.data); }
-
-/* --- Rendering --- */
-function renderFeed(){
-  const feed = document.getElementById('feedList'); feed.innerHTML='';
-  if(state.data.posts.length===0){ feed.innerHTML = '<div style="padding:18px;color:#666">No posts yet — create one from the upload tab.</div>'; return; }
-
-  state.data.posts.forEach(post=>{
-    const el = document.createElement('div'); el.className='post';
-    // build code blocks HTML
-    let codesHtml = '';
-    if(post.sourceCodes && post.sourceCodes.length){
-      post.sourceCodes.forEach((c, idx)=>{
-        if(c.public || (state.user && state.user.id===post.userId)){
-          codesHtml += `\n  <div style="margin-top:8px">\n    <pre class="code-block" id="code-${post.id}-${idx}" style="max-height:220px;overflow:auto"><code class="language-${escapeHtml(c.lang||'javascript')}">${escapeHtml(c.code)}</code></pre>\n    <button class="show-code-btn" data-id="${post.id}-${idx}">Show source code</button>\n  </div>`;
-        } else {
-          codesHtml += `<div class="small-muted" style="margin-top:8px">Source code (private)</div>`;
-        }
-      });
-    }
-
-    el.innerHTML = `
-      <div class="meta">
-        <div class="avatar" aria-hidden="true">${escapeHtml(post.avatarLetter||post.userName[0]||'U')}</div>
-        <div style="flex:1">
-          <div class="row"><div class="username">${escapeHtml(post.userName)}</div><div style="margin-left:8px" class="posted-time muted">${timeAgo(post.createdAt)}</div></div>
-        </div>
-        <div><button class="small-btn" data-id="${post.id}" title="Options">⋯</button></div>
-      </div>
-     <div class="desc" id="desc-${post.id}">${(post.description||'')
-  .replace(/&/g,"&amp;")
-  .replace(/</g,"&lt;")
-  .replace(/>/g,"&gt;")
-  .replace(/"/g,"&quot;")
-  .replace(/'/g,"&#39;")
-  .replace(/\n/g,"<br>")}</div>
-
-      ${post.description && post.description.length>100 ? `<button class="show-desc-btn" data-id="${post.id}">Show description</button>` : ''}
-      ${codesHtml}
-      <div class="actions">
-        <div class="action likeBtn" data-id="${post.id}">❤️ <span class="counter">${post.likes.length}</span></div>
-        <div class="action commentBtn" data-id="${post.id}">💬 <span class="counter">${post.comments.length}</span></div>
-        <div class="action saveBtn" data-id="${post.id}">${isSaved(post.id) ? '🔖 saved' : '🔖 save'}</div>
-        ${state.user && state.user.id===post.userId ? `<div class="action danger delBtn" data-id="${post.id}">🗑️ delete</div>` : ''}
-      </div>
+  function showLesson() {
+    const lesson = lessons[currentLesson];
+    document.getElementById("lessonContent").innerHTML = `
+      <h2>Lesson ${currentLesson+1}: ${lesson.title}</h2>
+      <p>${lesson.content}</p>
     `;
-    feed.appendChild(el);
-  });
+  }
 
-  // wire code toggle buttons
-  document.querySelectorAll('.show-code-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-      const id = e.currentTarget.dataset.id; // format postId-idx
-      const [postId, idx] = id.split('-');
-      const block = document.getElementById(`code-${postId}-${idx}`);
-      if(!block) return;
-      block.classList.toggle('expanded');
-      e.currentTarget.textContent = block.classList.contains('expanded') ? 'Hide source code' : 'Show source code';
-    });
-  });
-
-  document.querySelectorAll('.show-desc-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-      const id = e.currentTarget.dataset.id;
-      const block = document.getElementById(`desc-${id}`);
-      block.classList.toggle('expanded');
-      e.currentTarget.textContent = block.classList.contains('expanded') ? 'Hide description' : 'Show description';
-    });
-  });
-
-  // wire actions
-  document.querySelectorAll('.likeBtn').forEach(btn=>btn.addEventListener('click', e=>{ toggleLike(e.currentTarget.dataset.id); }));
-  document.querySelectorAll('.commentBtn').forEach(btn=>btn.addEventListener('click', e=>{ openComments(e.currentTarget.dataset.id); }));
-  document.querySelectorAll('.saveBtn').forEach(btn=>btn.addEventListener('click', e=>{ toggleSave(e.currentTarget.dataset.id); renderFeed(); renderSaved(); }));
-  document.querySelectorAll('.delBtn').forEach(btn=>btn.addEventListener('click', e=>{ const id=e.currentTarget.dataset.id; if(confirm('Delete this post?')){ state.data.posts = state.data.posts.filter(p=>p.id!==id); saveData(); renderFeed(); renderMyPosts(); renderSaved(); } }));
-}
-
-function toggleLike(postId){ if(!state.user){ alert('Please login to like.'); showAuth(); return; } const p = state.data.posts.find(x=>x.id===postId); if(!p) return; const idx = p.likes.indexOf(state.user.id); if(idx===-1) p.likes.push(state.user.id); else p.likes.splice(idx,1); saveData(); renderFeed(); }
-
-function isSaved(postId){ if(!state.user) return false; const arr = state.data.saved[state.user.id]||[]; return arr.includes(postId); }
-function toggleSave(postId){ if(!state.user){ alert('Please login to save.'); showAuth(); return; } const arr = state.data.saved[state.user.id] || (state.data.saved[state.user.id]=[]); const idx = arr.indexOf(postId); if(idx===-1) arr.push(postId); else arr.splice(idx,1); saveData(); renderSaved(); }
-
-function renderSaved(){
-  const box = document.getElementById('savedList'); box.innerHTML='';
-  if(!state.user){ box.innerHTML = '<div style="padding:8px;color:#666">Login to see saved posts.</div>'; return; }
-  const arr = state.data.saved[state.user.id] || [];
-  if(arr.length===0){ box.innerHTML = '<div style="padding:8px;color:#666">You have no saved posts.</div>'; return; }
-  arr.forEach(id=>{
-    const p = state.data.posts.find(x=>x.id===id); if(!p) return;
-    const postEl = document.createElement('div'); postEl.className='post';
-    const meta = document.createElement('div'); meta.className='meta';
-    const avatar = document.createElement('div'); avatar.className='avatar'; avatar.textContent = p.avatarLetter || (p.userName && p.userName[0]) || 'U';
-    const right = document.createElement('div'); right.style.flex='1'; const uname = document.createElement('div'); uname.className='username'; uname.textContent = p.userName || 'Unknown'; const postedTime = document.createElement('div'); postedTime.className='posted-time muted'; postedTime.textContent = typeof timeAgo === 'function' ? timeAgo(p.createdAt) : (new Date(p.createdAt||Date.now())).toLocaleString(); right.appendChild(uname); right.appendChild(postedTime); meta.appendChild(avatar); meta.appendChild(right); postEl.appendChild(meta);
-
-    const desc = document.createElement('div'); desc.className='desc'; desc.textContent = p.description || ''; postEl.appendChild(desc);
-
-    if(p.sourceCodes && p.sourceCodes.length){
-      p.sourceCodes.forEach((c, idx)=>{
-        if(c.public || (state.user && state.user.id===p.userId)){
-          const btn = document.createElement('button'); btn.className='toggle-code'; btn.dataset.id = p.id + '-' + idx; btn.type='button'; btn.textContent = 'Show source code'; postEl.appendChild(btn);
-          const codeWrap = document.createElement('div'); codeWrap.className='code-wrap'; codeWrap.id = `code-wrap-${p.id}-${idx}`; codeWrap.style.display='none'; codeWrap.style.marginTop='8px'; const pre = document.createElement('pre'); pre.className='code-block'; pre.style.maxHeight='360px'; pre.style.overflow='auto'; const code = document.createElement('code'); code.className = `language-${c.lang||'javascript'}`; code.textContent = c.code; pre.appendChild(code); codeWrap.appendChild(pre); postEl.appendChild(codeWrap);
-        } else {
-          const note = document.createElement('div'); note.className='small-muted'; note.style.marginTop='8px'; note.textContent = 'Source code is private'; postEl.appendChild(note);
-        }
-      });
+  function nextLesson() {
+    if (currentLesson < lessons.length - 1) {
+      currentLesson++;
+      showLesson();
+    } else {
+      alert("🎉 You finished all lessons!");
     }
-
-    box.appendChild(postEl);
-  });
-
-  if(!box._hasToggleListener){
-    box.addEventListener('click', function(e){
-      const btn = e.target.closest && e.target.closest('.toggle-code'); if(!btn) return; const id = btn.dataset.id; const [postId, idx] = id.split('-'); const wrap = document.getElementById(`code-wrap-${postId}-${idx}`); if(!wrap) return; const isHidden = wrap.style.display === 'none' || getComputedStyle(wrap).display === 'none'; if(isHidden){ wrap.style.display = 'block'; btn.textContent = 'Hide source code'; try{ if(window.Prism && typeof Prism.highlightElement === 'function'){ const codeEl = wrap.querySelector('code'); if(codeEl) Prism.highlightElement(codeEl); } else if(window.Prism && typeof Prism.highlightAll === 'function'){ Prism.highlightAll(); } }catch(err){ console.warn('Prism highlighting failed', err); } } else { wrap.style.display = 'none'; btn.textContent = 'Show source code'; } });
-    box._hasToggleListener = true;
-  }
-}
-
-function renderProfile(){ renderMyPosts(); }
-function renderMyPosts() {
-  const container = document.getElementById('myPosts');
-  container.innerHTML = '';
-
-  if (!state.user) {
-    container.innerHTML = '<div style="padding:8px;color:#666">Login to see your posts.</div>';
-    return;
   }
 
-  const mine = state.data.posts.filter(p => p.userId === state.user.id);
-  if (mine.length === 0) {
-    container.innerHTML = '<div style="padding:8px;color:#666">You have not posted anything yet.</div>';
-    return;
+  function prevLesson() {
+    if (currentLesson > 0) {
+      currentLesson--;
+      showLesson();
+    } else {
+      alert("This is the first lesson!");
+    }
   }
 
-  mine.forEach(p => {
-    const d = document.createElement('div');
-    d.className = 'post';
-
-    d.innerHTML = `
-      <div>
-        <div class="username">${escapeHtml(p.description || 'Untitled')}</div>
-        <div class="muted" style="margin-top:4px">${timeAgo(p.createdAt)}</div>
-        <div style="margin-top:10px;">
-          <button class="small-btn delMy" data-id="${p.id}">Delete</button>
-        </div>
-      </div>
-    `;
-
-    container.appendChild(d);
-  });
-
-  // Delete button handler
-  document.querySelectorAll('.delMy').forEach(b =>
-    b.addEventListener('click', e => {
-      if (!confirm('Delete this post?')) return;
-      const id = e.currentTarget.dataset.id;
-      state.data.posts = state.data.posts.filter(p => p.id !== id);
-      saveData();
-      renderMyPosts();
-      renderFeed();
-      renderSaved();
-    })
-  );
-}
-
-/* Comments modal (unchanged) */
-function openComments(postId){ const post = state.data.posts.find(x=>x.id===postId); if(!post) return; const modalRoot = document.getElementById('modalRoot'); modalRoot.style.display = 'block'; modalRoot.innerHTML = `\n    <div class="modal" role="dialog" aria-modal="true">\n      <div class="card">\n        <h3>Comments</h3>\n        <div class="comments-list">\n          ${post.comments.length===0 ? '<div style="padding:8px;color:#666">No comments yet</div>' : post.comments.map(c=>`<div class="comment"><strong>${escapeHtml(c.name)}</strong> <div class="muted">${timeAgo(c.at)}</div><div>${escapeHtml(c.text)}</div></div>`).join('')}\n        </div>\n        <div style="display:flex;gap:8px">\n          <input id="commentText" placeholder="Write a comment" class="input" style="flex:1"/>\n          <button id="sendComment" class="small-btn">Send</button>\n        </div>\n        <div style="text-align:right;margin-top:8px"><button id="closeModal" class="small-btn">Close</button></div>\n      </div>\n    </div>\n  `; document.getElementById('closeModal').addEventListener('click', closeModal); document.getElementById('sendComment').addEventListener('click', ()=>{ const txt = document.getElementById('commentText').value.trim(); if(!txt){ alert('Write something'); return; } const cm = { name: state.user ? state.user.name : 'Guest', text: txt, at: Date.now() }; post.comments.push(cm); saveData(); closeModal(); openComments(postId); renderFeed(); }); }
-function closeModal(){ const modalRoot = document.getElementById('modalRoot'); modalRoot.style.display = 'none'; modalRoot.innerHTML=''; }
-
-/* Simple auth (unchanged) */
-function showAuth(){ const modalRoot = document.getElementById('modalRoot'); modalRoot.style.display = 'block'; modalRoot.innerHTML = `\n    <div class="modal">\n      <div class="card">\n        <h3>Sign up / Login</h3>\n        <div style="display:flex;gap:8px;margin-bottom:8px">\n          <input id="authName" class="input" placeholder="Name" />\n          <input id="authEmail" class="input" placeholder="Email" />\n        </div>\n        <div style="display:flex;gap:8px;justify-content:flex-end">\n          <button id="cancelAuth" class="small-btn">Cancel</button>\n          <button id="doSignup" class="small-btn">Sign up</button>\n          <button id="doLogin" class="small-btn">Login</button>\n        </div>\n      </div>\n    </div>\n  `; document.getElementById('cancelAuth').addEventListener('click', closeModal); document.getElementById('doSignup').addEventListener('click', ()=>{ const name = document.getElementById('authName').value.trim(); const email = document.getElementById('authEmail').value.trim(); if(!name||!email){ alert('Name and email required'); return; } const id = 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); const u = { id, name, email }; state.data.users.push(u); saveData(); localStorage.setItem('codeshare_current_user', id); setUserFromStorage(); closeModal(); }); document.getElementById('doLogin').addEventListener('click', ()=>{ const name = document.getElementById('authName').value.trim(); const email = document.getElementById('authEmail').value.trim(); if(!email){ alert('Email required to login'); return; } const user = state.data.users.find(x=>x.email.toLowerCase()===email.toLowerCase()); if(!user){ alert('No account with that email. Sign up first.'); return; } localStorage.setItem('codeshare_current_user', user.id); setUserFromStorage(); closeModal(); }); }
-
-function logout(){ const modalRoot = document.getElementById('modalRoot'); modalRoot.style.display = 'block'; modalRoot.innerHTML = `\n    <div class="modal">\n      <div class="card">\n        <h3>Confirm Logout</h3>\n        <p>Do you really want to log out?</p>\n        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">\n          <button id="cancelLogout" class="small-btn">Cancel</button>\n          <button id="doLogout" class="small-btn danger">Log out</button>\n        </div>\n      </div>\n    </div>`; document.getElementById('cancelLogout').addEventListener('click', closeModal); document.getElementById('doLogout').addEventListener('click', ()=>{ localStorage.removeItem('codeshare_current_user'); state.user = null; updateUserUI(); closeModal(); }); }
-
-/* Helpers */
-function timeAgo(ts){ const sec = Math.floor((Date.now() - ts)/1000); if(sec<60) return `${sec}s`; if(sec<3600) return `${Math.floor(sec/60)}m`; if(sec<86400) return `${Math.floor(sec/3600)}h`; return `${Math.floor(sec/86400)}d`; }
-function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>\"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;', '"':'&quot;',"'":'&#39;' })[c]); }
-
-init();
+  function goHome() {
+    document.getElementById("lessonPage").classList.remove("active");
+    document.getElementById("home").classList.add("active");
+  }
 </script>
+
 </body>
 </html>
