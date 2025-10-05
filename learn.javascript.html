@@ -1,0 +1,4677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn html</title>
+  <style>
+  body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #FAF7F3;
+  color: #000;
+  margin: 0;
+  padding: 0;
+  font-size: 18px; /* bigger for readability */
+  line-height: 1.6;
+}
+
+header {
+  background: #FAF7F3;
+  text-align: center;
+  padding: 16px;
+  font-size: 22px; /* readable on phones */
+  font-weight: bold;
+  color: #4cafef;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.page {
+  display: none;
+  padding: 16px;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.page.active {
+  display: block;
+}
+
+/* Lesson list - full width, stacked */
+.lesson-list {
+  display: block;
+  margin-top: 16px;
+}
+
+.lesson-card {
+  padding: 18px;
+  border-bottom: 1px solid #ccc;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Lesson content full screen */
+.lesson {
+  width: 100%;
+  padding: 16px;
+  margin: 0;
+  box-sizing: border-box;
+  font-size: 18px;
+}
+
+/* Code blocks */
+pre {
+  background: #f4f4f4;
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 16px;
+}
+
+/* Buttons */
+button {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 14px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 6px;
+  margin: 10px 0;
+  width: auto; /* no forced full width */
+  flex: 1;
+}
+
+button:hover {
+  background: #45a049;
+}
+
+/* Navigation buttons row */
+/* Navigation buttons row */
+.nav-buttons {
+  display: flex;
+  justify-content: space-between; /* pushes one left, one right */
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* Buttons */
+.nav-buttons button {
+  flex: 0 0 auto;   /* don’t stretch */
+  min-width: 120px; /* consistent size */
+  padding: 14px 20px;
+  font-size: 18px;
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.nav-buttons button:hover {
+  background: #45a049;
+}
+
+
+
+  </style>
+</head>
+<body>
+
+<header>Learn JavaScript Step by Step</header>
+
+<!-- Page 1: Lesson List -->
+<div class="page active" id="home">
+  <h2>Select a Lesson</h2>
+  <div class="lesson-list" id="lessonList"></div>
+</div>
+
+<!-- Page 2: Lesson Content -->
+<div class="page" id="lessonPage">
+  <div class="lesson" id="lessonContent"></div>
+  <div class="nav-buttons">
+    <button onclick="prevLesson()">⬅ Previous</button>
+    <button onclick="nextLesson()">Next ➡</button>
+  </div>
+  <button onclick="goHome()">🏠 Back to Lessons</button>
+</div>
+
+<script>
+  // Example lessons (you can add many more, even big ones)
+  const lessons = [
+    {title: "Introduction to JavaScript ", content: `<article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>🌍 What Is JavaScript?</h2>
+  <p>
+    JavaScript (often abbreviated as JS) is a <strong>high-level, dynamic programming language</strong> 
+    that is one of the core technologies of the web, alongside 
+    <strong>HTML</strong> and <strong>CSS</strong>. 
+    While HTML defines structure and CSS styles the content, JavaScript adds 
+    <strong>interactivity and logic</strong>.
+  </p>
+
+  <p>
+    JavaScript was created in <strong>1995 by Brendan Eich</strong> at Netscape. 
+    It started as a simple scripting language for web browsers but has now grown into 
+    a powerful, multi-paradigm language used for:
+  </p>
+
+  <ul>
+    <li><strong>Frontend development</strong> – Creating interactive user interfaces.</li>
+    <li><strong>Backend development</strong> – With Node.js, JS powers servers.</li>
+    <li><strong>Mobile apps</strong> – Using frameworks like React Native.</li>
+    <li><strong>Game development</strong> – Browser-based games with libraries like Phaser.</li>
+    <li><strong>Machine learning & AI</strong> – TensorFlow.js and Brain.js bring ML to the browser.</li>
+  </ul>
+
+  <h2>📜 A Brief History of JavaScript</h2>
+  <ul>
+    <li>1995 – Brendan Eich creates JavaScript in just 10 days.</li>
+    <li>1997 – JavaScript becomes standardized by <strong>ECMA</strong>, leading to <strong>ECMAScript</strong>.</li>
+    <li>2009 – Node.js is released, bringing JavaScript to servers.</li>
+    <li>2015 – ECMAScript 6 (ES6/ES2015) introduces major features like classes, arrow functions, modules.</li>
+    <li>Today – JavaScript is the world’s most popular language (used by 98% of websites).</li>
+  </ul>
+
+  <h2>💡 Why Learn JavaScript?</h2>
+  <ul>
+    <li>It’s everywhere: browsers, servers, mobile apps, IoT devices.</li>
+    <li>Easy to get started – no compiler needed, just a browser.</li>
+    <li>Huge ecosystem – frameworks like React, Angular, Vue.</li>
+    <li>High demand – JS developers are some of the most sought-after programmers.</li>
+  </ul>
+
+  <h2>⚡ Setting Up Your Environment</h2>
+  <p>
+    You don’t need anything fancy to write JavaScript. A simple text editor and a web browser are enough. 
+    Let’s look at different options:
+  </p>
+
+  <h3>1️⃣ Web Browser Console</h3>
+  <p>
+    Every browser (Chrome, Firefox, Edge, Safari) has a built-in developer console.  
+    Open it with:
+  </p>
+  <ul>
+    <li>Chrome/Edge: <code>Ctrl + Shift + J</code> (Windows) or <code>Cmd + Option + J</code> (Mac).</li>
+    <li>Firefox: <code>Ctrl + Shift + K</code>.</li>
+  </ul>
+  <p>You can type JavaScript directly here:</p>
+  <pre><code>console.log("Hello, JavaScript!");</code></pre>
+
+  <h3>2️⃣ Text Editor (Recommended)</h3>
+  <p>
+    Use <a href="https://code.visualstudio.com" target="_blank">Visual Studio Code</a>.  
+    Install extensions like:
+  </p>
+  <ul>
+    <li><strong>JavaScript (ES6) code snippets</strong></li>
+    <li><strong>Prettier</strong> for auto-formatting</li>
+    <li><strong>Live Server</strong> to run pages quickly</li>
+  </ul>
+
+  <h3>3️⃣ Node.js (Optional for Backend)</h3>
+  <p>
+    Install <a href="https://nodejs.org/" target="_blank">Node.js</a> to run JS outside the browser.  
+    After installation, run:
+  </p>
+  <pre><code>node -v
+npm -v</code></pre>
+  <p>This checks Node.js and npm (package manager) are installed.</p>
+
+  <h2>🚀 Writing Your First JavaScript Program</h2>
+  <p>Let’s start with the classic “Hello, World!” example.</p>
+
+  <h3>Using Inline JavaScript</h3>
+  <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;My First JS&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Hello, JavaScript!&lt;/h1&gt;
+  
+  &lt;script&gt;
+    console.log("Hello, World!");
+    alert("Welcome to JavaScript!");
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+  <h3>Using External JavaScript</h3>
+  <p>
+    It’s best practice to separate JS into its own file:
+  </p>
+  <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;External JS&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;External Script Example&lt;/h1&gt;
+  &lt;script src="script.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+  <pre><code>// script.js
+console.log("Hello from external JavaScript!");
+</code></pre>
+
+  <h2>📝 JavaScript Basics</h2>
+  <h3>1️⃣ Comments</h3>
+  <p>Used to explain code. Ignored by the browser.</p>
+  <pre><code>// This is a single-line comment
+
+/*
+ This is a multi-line comment
+ It can span multiple lines
+*/
+</code></pre>
+
+  <h3>2️⃣ Statements & Semicolons</h3>
+  <p>Each line of JS is a statement. Semicolons (<code>;</code>) are optional but recommended.</p>
+  <pre><code>let x = 10;
+let y = 20;
+console.log(x + y);</code></pre>
+
+  <h3>3️⃣ Case Sensitivity</h3>
+  <p>JavaScript is case-sensitive: <code>myVar</code> and <code>myvar</code> are different.</p>
+
+  <h3>4️⃣ Printing Output</h3>
+  <ul>
+    <li><code>console.log()</code> → logs to console.</li>
+    <li><code>alert()</code> → popup alert.</li>
+    <li><code>document.write()</code> → writes directly to page.</li>
+  </ul>
+
+  <pre><code>console.log("This is console output");
+alert("Popup alert");
+document.write("Written to the page!");</code></pre>
+
+  <h2>🔢 Variables in JavaScript</h2>
+  <p>
+    Variables store data. In JS, we declare them using <code>var</code>, <code>let</code>, or <code>const</code>.
+  </p>
+
+  <h3>1️⃣ var</h3>
+  <p>
+    Old way, function-scoped. Avoid in modern JS unless necessary.
+  </p>
+  <pre><code>var name = "Alice";
+console.log(name);</code></pre>
+
+  <h3>2️⃣ let</h3>
+  <p>
+    Block-scoped, modern replacement for <code>var</code>.
+  </p>
+  <pre><code>let age = 25;
+age = 26; // can be updated
+console.log(age);</code></pre>
+
+  <h3>3️⃣ const</h3>
+  <p>
+    Constant, block-scoped, cannot be reassigned.
+  </p>
+  <pre><code>const PI = 3.14159;
+console.log(PI);</code></pre>
+
+  <h2>📊 Data Types in JavaScript</h2>
+  <h3>1️⃣ Primitive Types</h3>
+  <ul>
+    <li><strong>String</strong> – text (<code>"Hello"</code>)</li>
+    <li><strong>Number</strong> – integers/floats (<code>42</code>, <code>3.14</code>)</li>
+    <li><strong>Boolean</strong> – true/false</li>
+    <li><strong>Undefined</strong> – variable declared but not assigned</li>
+    <li><strong>Null</strong> – intentional empty value</li>
+    <li><strong>Symbol</strong> – unique identifiers</li>
+    <li><strong>BigInt</strong> – very large numbers</li>
+  </ul>
+
+  <pre><code>let name = "Bob";       // String
+let age = 30;           // Number
+let isAdmin = true;     // Boolean
+let city;               // Undefined
+let empty = null;       // Null
+let big = 12345678901234567890n; // BigInt</code></pre>
+
+  <h3>2️⃣ Objects (Non-Primitive)</h3>
+  <p>
+    Objects hold collections of key-value pairs.
+  </p>
+  <pre><code>let person = {
+  name: "Alice",
+  age: 25,
+  isStudent: true
+};
+console.log(person.name); // Alice</code></pre>
+
+  <h2>⚙️ Operators</h2>
+  <ul>
+    <li><strong>Arithmetic:</strong> <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code></li>
+    <li><strong>Comparison:</strong> <code>==</code>, <code>===</code>, <code>!=</code>, <code>!==</code>, <code>&gt;</code>, <code>&lt;</code></li>
+    <li><strong>Logical:</strong> <code>&amp;&amp;</code>, <code>||</code>, <code>!</code></li>
+    <li><strong>Assignment:</strong> <code>=</code>, <code>+=</code>, <code>-=</code></li>
+  </ul>
+
+  <pre><code>let a = 10;
+let b = 3;
+console.log(a + b); // 13
+console.log(a % b); // 1
+console.log(a > b); // true
+console.log(a === 10 && b === 3); // true</code></pre>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Write a script that prints your name, age, and favorite hobby using <code>console.log()</code>.</li>
+    <li>Declare variables using <code>let</code> and <code>const</code>. Try reassigning them and observe errors.</li>
+    <li>Create a variable with <code>null</code> and another with <code>undefined</code>. Print both.</li>
+    <li>Do basic arithmetic with numbers and log the results.</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li>JavaScript makes web pages interactive and dynamic.</li>
+    <li>Created in 1995, now the most popular programming language worldwide.</li>
+    <li>Runs in browsers and servers (Node.js).</li>
+    <li>We use <code>var</code>, <code>let</code>, and <code>const</code> to declare variables.</li>
+    <li>Data types include primitive (string, number, boolean, null, undefined, symbol, bigint) and non-primitive (objects).</li>
+    <li>Operators allow math, comparisons, and logic.</li>
+  </ul>
+
+  <p>
+    🎉 Congratulations! You’ve written your first JavaScript code and learned the basics.  
+    In the next lesson, we’ll explore <strong>Variables & Data Types in Depth</strong>.
+  </p>
+</article>
+
+    `},
+    {title: " Variables & Data Types", content: `
+    
+    
+
+    <article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>🔑 Introduction</h2>
+  <p>
+    In the previous lesson, we learned the basics of JavaScript and wrote our very first 
+    program. Now, it’s time to dive deeper into one of the most essential topics: 
+    <strong>variables and data types</strong>. Without variables, we wouldn’t be able to 
+    store, update, or retrieve information in our programs.  
+  </p>
+  <p>
+    In this lesson, we will cover:
+  </p>
+  <ul>
+    <li>What are variables?</li>
+    <li>The difference between <code>var</code>, <code>let</code>, and <code>const</code>.</li>
+    <li>Rules and best practices for naming variables.</li>
+    <li>JavaScript data types (primitive and reference types).</li>
+    <li>Type conversion (explicit and implicit).</li>
+    <li>Working with <code>typeof</code>.</li>
+    <li>Common pitfalls and gotchas.</li>
+    <li>Lots of examples and mini challenges.</li>
+  </ul>
+
+  <h2>📦 What Is a Variable?</h2>
+  <p>
+    A <strong>variable</strong> is like a container in which we store data. 
+    You can think of it as a box with a label: the label is the variable name, 
+    and the content inside is the value.
+  </p>
+
+  <pre><code>let message = "Hello, World!";
+console.log(message); // Output: Hello, World!</code></pre>
+
+  <p>
+    In this example, <code>message</code> is the variable name, 
+    and <code>"Hello, World!"</code> is the value it stores.
+  </p>
+
+  <h2>🔄 Declaring Variables</h2>
+  <p>
+    In JavaScript, there are three keywords to declare variables:
+  </p>
+  <ul>
+    <li><code>var</code> – The old way (function-scoped).</li>
+    <li><code>let</code> – Modern, block-scoped.</li>
+    <li><code>const</code> – Block-scoped, cannot be reassigned.</li>
+  </ul>
+
+  <h3>1️⃣ var</h3>
+  <p>
+    Introduced in early JavaScript. It has <strong>function scope</strong>, 
+    meaning it’s visible throughout a function, not just inside blocks.
+  </p>
+  <pre><code>var name = "Alice";
+console.log(name); // Alice
+
+var name = "Bob"; // Redeclaration allowed
+console.log(name); // Bob</code></pre>
+
+  <p><strong>⚠️ Problem:</strong> Using <code>var</code> can cause bugs due to 
+  <em>hoisting</em> and redeclaration. That’s why modern JS prefers <code>let</code> and <code>const</code>.</p>
+
+  <h3>2️⃣ let</h3>
+  <p>
+    Introduced in ES6 (2015). Block-scoped, meaning it only works inside the 
+    block where it’s defined.
+  </p>
+  <pre><code>let age = 20;
+age = 21; // Reassignment is allowed
+console.log(age); // 21
+
+// let age = 25; ❌ Error: Cannot redeclare variable</code></pre>
+
+  <h3>3️⃣ const</h3>
+  <p>
+    Also introduced in ES6. Used when you want to declare constants – values 
+    that never change. It is block-scoped and <strong>cannot be reassigned</strong>.
+  </p>
+  <pre><code>const PI = 3.14159;
+console.log(PI);
+
+// PI = 3; ❌ Error: Assignment to constant variable</code></pre>
+
+  <h3>🧩 Example – var vs let vs const</h3>
+  <pre><code>{
+  var x = 10; // function-scoped
+  let y = 20; // block-scoped
+  const z = 30; // block-scoped
+}
+console.log(x); // ✅ Works
+// console.log(y); // ❌ Error
+// console.log(z); // ❌ Error</code></pre>
+
+  <h2>📝 Rules for Naming Variables</h2>
+  <ul>
+    <li>Must start with a letter, underscore <code>_</code>, or dollar sign <code>$</code>.</li>
+    <li>Cannot start with a number.</li>
+    <li>Case-sensitive (<code>myVar</code> ≠ <code>myvar</code>).</li>
+    <li>No reserved keywords (e.g., <code>let</code>, <code>const</code>, <code>if</code>).</li>
+    <li>Use <strong>camelCase</strong> for best practice (<code>firstName</code>).</li>
+  </ul>
+
+  <pre><code>// ✅ Valid
+let firstName = "Alice";
+let _score = 100;
+let $price = 9.99;
+
+// ❌ Invalid
+// let 1number = 5;
+// let const = 10;</code></pre>
+
+  <h2>📊 Data Types in JavaScript</h2>
+  <p>
+    JavaScript is a <strong>dynamically typed</strong> language, 
+    meaning you don’t need to declare the data type of a variable; 
+    it’s determined automatically.
+  </p>
+
+  <h3>Primitive Types (7 total)</h3>
+  <ul>
+    <li><strong>String</strong> – text.</li>
+    <li><strong>Number</strong> – integers & decimals.</li>
+    <li><strong>Boolean</strong> – true/false.</li>
+    <li><strong>Undefined</strong> – variable declared but not assigned.</li>
+    <li><strong>Null</strong> – intentional empty value.</li>
+    <li><strong>Symbol</strong> – unique identifiers.</li>
+    <li><strong>BigInt</strong> – large integers beyond 2⁵³ - 1.</li>
+  </ul>
+
+  <h3>Reference Types (Non-Primitive)</h3>
+  <ul>
+    <li><strong>Objects</strong></li>
+    <li><strong>Arrays</strong></li>
+    <li><strong>Functions</strong></li>
+  </ul>
+
+  <h2>🔤 Strings</h2>
+  <pre><code>let name = "Alice"; // Double quotes
+let city = 'Paris'; // Single quotes
+let greeting = Hello, ${name}!; // Template literals
+console.log(greeting); // Hello, Alice!</code></pre>
+
+  <h2>🔢 Numbers</h2>
+  <pre><code>let age = 30;
+let price = 19.99;
+let infinity = Infinity;
+let notANumber = NaN;</code></pre>
+
+  <h2>✔️ Boolean</h2>
+  <pre><code>let isLoggedIn = true;
+let isAdmin = false;</code></pre>
+
+  <h2>🌀 Undefined vs Null</h2>
+  <pre><code>let score;
+console.log(score); // undefined
+
+let user = null;
+console.log(user); // null</code></pre>
+
+  <h2>🔑 Symbols</h2>
+  <pre><code>let id1 = Symbol("id");
+let id2 = Symbol("id");
+console.log(id1 === id2); // false (unique)</code></pre>
+
+  <h2>🧮 BigInt</h2>
+  <pre><code>let bigNumber = 123456789012345678901234567890n;
+console.log(bigNumber);</code></pre>
+
+  <h2>📦 Objects</h2>
+  <pre><code>let person = {
+  name: "Alice",
+  age: 25,
+  isStudent: true
+};
+console.log(person.name);</code></pre>
+
+  <h2>📚 Arrays</h2>
+  <pre><code>let colors = ["red", "green", "blue"];
+console.log(colors[1]); // green</code></pre>
+
+  <h2>⚙️ typeof Operator</h2>
+  <pre><code>console.log(typeof "Hello");   // string
+console.log(typeof 42);        // number
+console.log(typeof true);      // boolean
+console.log(typeof undefined); // undefined
+console.log(typeof null);      // object (quirk in JS!)
+console.log(typeof Symbol());  // symbol
+console.log(typeof 123n);      // bigint</code></pre>
+
+  <h2>🔄 Type Conversion</h2>
+  <h3>Explicit Conversion</h3>
+  <pre><code>let str = String(123);   // "123"
+let num = Number("456"); // 456
+let bool = Boolean(0);   // false</code></pre>
+
+  <h3>Implicit Conversion (Type Coercion)</h3>
+  <pre><code>console.log("5" + 1);  // "51" (string concatenation)
+console.log("5" - 1);  // 4 (number subtraction)
+console.log(true + 1); // 2</code></pre>
+
+  <h2>⚠️ Common Pitfalls</h2>
+  <ul>
+    <li><code>null</code> is an object (historical bug in JS).</li>
+    <li>Numbers can behave strangely due to floating-point math:  
+      <pre><code>console.log(0.1 + 0.2); // 0.30000000000000004</code></pre></li>
+    <li>Using <code>==</code> vs <code>===</code>:  
+      <pre><code>console.log(5 == "5");  // true
+console.log(5 === "5"); // false</code></pre></li>
+  </ul>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Create variables for your name, age, and favorite color. Print them.</li>
+    <li>Try redeclaring a <code>let</code> variable. What happens?</li>
+    <li>Use template literals to create a sentence using multiple variables.</li>
+    <li>Convert a string into a number using <code>Number()</code>.</li>
+    <li>Check the type of each variable using <code>typeof</code>.</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li>Variables store data using <code>var</code>, <code>let</code>, and <code>const</code>.</li>
+    <li>JavaScript has 7 primitive types and non-primitive types like objects, arrays, and functions.</li>
+    <li><code>typeof</code> helps identify a variable’s type.</li>
+    <li>Type conversion can be explicit or implicit (beware of coercion!).</li>
+    <li>Always prefer <code>let</code> and <code>const</code> for clean, modern code.</li>
+  </ul>
+
+  <p>
+    🎉 You now have a strong understanding of JavaScript variables and data types.  
+    In the next lesson, we’ll explore <strong>Operators & Expressions</strong> in detail.
+  </p>
+</article>
+
+
+ `},
+    {title: "Operators & Expressions", content: `<article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>⚡ Introduction</h2>
+  <p>
+    In the last lesson, we learned about <strong>variables and data types</strong> in JavaScript. 
+    Now that we can store data, the next step is to perform <strong>operations</strong> on that data. 
+    This is where <em>operators</em> and <em>expressions</em> come in.
+  </p>
+  <p>
+    In this lesson, we’ll cover:
+  </p>
+  <ul>
+    <li>What are operators and expressions?</li>
+    <li>Types of operators in JavaScript.</li>
+    <li>Arithmetic, assignment, comparison, and logical operators.</li>
+    <li>Bitwise, string, and conditional (ternary) operators.</li>
+    <li>Operator precedence and associativity.</li>
+    <li>Common pitfalls and best practices.</li>
+    <li>Plenty of real-world examples and exercises.</li>
+  </ul>
+
+  <h2>📘 What Are Operators and Expressions?</h2>
+  <p>
+    An <strong>operator</strong> is a special symbol or keyword used to perform operations 
+    on values (operands).  
+    An <strong>expression</strong> is a combination of values and operators that evaluates to a result.
+  </p>
+
+  <pre><code>let x = 10;
+let y = 5;
+let sum = x + y; // '+' is an operator, 'x + y' is an expression
+console.log(sum); // 15</code></pre>
+
+  <h2>🔢 Arithmetic Operators</h2>
+  <p>
+    Arithmetic operators are used to perform basic mathematical operations.
+  </p>
+  <ul>
+    <li><code>+</code> : Addition</li>
+    <li><code>-</code> : Subtraction</li>
+    <li><code>*</code> : Multiplication</li>
+    <li><code>/</code> : Division</li>
+    <li><code>%</code> : Modulus (remainder)</li>
+    <li><code>**</code> : Exponentiation</li>
+    <li><code>++</code> : Increment</li>
+    <li><code>--</code> : Decrement</li>
+  </ul>
+
+  <pre><code>let a = 12, b = 5;
+
+console.log(a + b); // 17
+console.log(a - b); // 7
+console.log(a * b); // 60
+console.log(a / b); // 2.4
+console.log(a % b); // 2
+console.log(a ** b); // 248832
+
+let c = 10;
+c++;
+console.log(c); // 11
+
+c--;
+console.log(c); // 10</code></pre>
+
+  <h3>⚠️ Division in JavaScript</h3>
+  <p>
+    Division in JavaScript always results in a floating-point number, even if the numbers divide evenly:
+  </p>
+  <pre><code>console.log(10 / 2); // 5
+console.log(10 / 3); // 3.333...</code></pre>
+
+  <h2>📝 Assignment Operators</h2>
+  <p>
+    Assignment operators assign values to variables. The most common one is <code>=</code>, 
+    but there are compound operators as well.
+  </p>
+
+  <ul>
+    <li><code>=</code> : Assign</li>
+    <li><code>+=</code> : Add and assign</li>
+    <li><code>-=</code> : Subtract and assign</li>
+    <li><code>*=</code> : Multiply and assign</li>
+    <li><code>/=</code> : Divide and assign</li>
+    <li><code>%=</code> : Modulus and assign</li>
+    <li><code>**=</code> : Exponent and assign</li>
+  </ul>
+
+  <pre><code>let x = 10;
+x += 5; // x = x + 5
+console.log(x); // 15
+
+x -= 3; // x = x - 3
+console.log(x); // 12
+
+x *= 2; // x = x * 2
+console.log(x); // 24
+
+x /= 4; // x = x / 4
+console.log(x); // 6
+
+x %= 5; // x = x % 5
+console.log(x); // 1</code></pre>
+
+  <h2>⚖️ Comparison Operators</h2>
+  <p>
+    Comparison operators compare two values and return a <code>boolean</code> 
+    (<code>true</code> or <code>false</code>).
+  </p>
+  <ul>
+    <li><code>==</code> : Equal to (loose, allows type coercion)</li>
+    <li><code>===</code> : Strictly equal to (no type coercion)</li>
+    <li><code>!=</code> : Not equal to (loose)</li>
+    <li><code>!==</code> : Strictly not equal</li>
+    <li><code>&gt;</code> : Greater than</li>
+    <li><code>&lt;</code> : Less than</li>
+    <li><code>&gt;=</code> : Greater than or equal to</li>
+    <li><code>&lt;=</code> : Less than or equal to</li>
+  </ul>
+
+  <pre><code>console.log(5 == "5");   // true (loose equality)
+console.log(5 === "5");  // false (strict equality)
+console.log(10 != "10"); // false
+console.log(10 !== "10"); // true
+console.log(8 > 5);      // true
+console.log(3 &lt; 2);      // false
+console.log(5 &gt;= 5);     // true
+console.log(7 &lt;= 10);    // true</code></pre>
+
+  <h3>⚠️ Loose vs Strict Equality</h3>
+  <p>
+    Always prefer <code>===</code> and <code>!==</code> to avoid unexpected results from 
+    type coercion.
+  </p>
+  <pre><code>console.log(false == 0);  // true
+console.log(false === 0); // false</code></pre>
+
+  <h2>🔀 Logical Operators</h2>
+  <p>
+    Logical operators are used to combine conditions.
+  </p>
+  <ul>
+    <li><code>&amp;&amp;</code> : Logical AND (true if both are true)</li>
+    <li><code>||</code> : Logical OR (true if at least one is true)</li>
+    <li><code>!</code> : Logical NOT (negates value)</li>
+  </ul>
+
+  <pre><code>let isStudent = true;
+let isMember = false;
+
+console.log(isStudent &amp;&amp; isMember); // false
+console.log(isStudent || isMember); // true
+console.log(!isStudent);            // false</code></pre>
+
+  <h2>🧩 String Operators</h2>
+  <p>
+    The <code>+</code> operator is also used for string concatenation.
+  </p>
+  <pre><code>let firstName = "Alice";
+let lastName = "Smith";
+let fullName = firstName + " " + lastName;
+console.log(fullName); // Alice Smith</code></pre>
+
+  <h3>Using <code>+=</code> with Strings</h3>
+  <pre><code>let message = "Hello";
+message += " World!";
+console.log(message); // Hello World!</code></pre>
+
+  <h2>🎭 Ternary (Conditional) Operator</h2>
+  <p>
+    The ternary operator <code>?</code> is a shorthand for <code>if...else</code>.
+  </p>
+  <pre><code>let age = 18;
+let status = (age &gt;= 18) ? "Adult" : "Minor";
+console.log(status); // Adult</code></pre>
+
+  <h2>🔧 Bitwise Operators</h2>
+  <p>
+    Bitwise operators work at the binary (bit) level. These are rarely used in everyday 
+    web development but important for understanding low-level operations.
+  </p>
+  <ul>
+    <li><code>&amp;</code> : AND</li>
+    <li><code>|</code> : OR</li>
+    <li><code>^</code> : XOR</li>
+    <li><code>~</code> : NOT</li>
+    <li><code>&lt;&lt;</code> : Left shift</li>
+    <li><code>&gt;&gt;</code> : Right shift</li>
+  </ul>
+
+  <pre><code>console.log(5 &amp; 1);  // 1  (0101 &amp; 0001 = 0001)
+console.log(5 | 1);  // 5  (0101 | 0001 = 0101)
+console.log(5 ^ 1);  // 4  (0101 ^ 0001 = 0100)
+console.log(~5);     // -6
+console.log(5 &lt;&lt; 1); // 10
+console.log(5 &gt;&gt; 1); // 2</code></pre>
+
+  <h2>📊 Operator Precedence</h2>
+  <p>
+    Operator precedence determines the order in which operations are performed.  
+    Multiplication/division come before addition/subtraction, similar to mathematics.
+  </p>
+
+  <pre><code>console.log(5 + 3 * 2); // 11 (3*2 first, then +5)
+console.log((5 + 3) * 2); // 16 (parentheses change order)</code></pre>
+
+  <p>
+    <strong>Associativity</strong> decides order when operators have the same precedence.  
+    For example, <code>=</code> is right-associative, so:
+  </p>
+  <pre><code>let a = b = c = 5;
+console.log(a, b, c); // 5 5 5</code></pre>
+
+  <h2>⚠️ Common Pitfalls</h2>
+  <ul>
+    <li>Using <code>==</code> instead of <code>===</code>.</li>
+    <li>Floating-point math inaccuracies:  
+      <pre><code>console.log(0.1 + 0.2); // 0.30000000000000004</code></pre></li>
+    <li>Confusing <code>+</code> for both addition and string concatenation:  
+      <pre><code>console.log("5" + 1); // "51" (string concatenation)</code></pre></li>
+  </ul>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Create two variables <code>a</code> and <code>b</code>. Perform all arithmetic operations.</li>
+    <li>Write a program that checks if a number is even or odd using the modulus operator.</li>
+    <li>Use the ternary operator to assign "Pass" or "Fail" based on a score.</li>
+    <li>Try combining comparison and logical operators to check multiple conditions.</li>
+    <li>Experiment with <code>===</code> vs <code>==</code> and see the difference.</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li>Operators perform actions, expressions evaluate to values.</li>
+    <li>Arithmetic, assignment, comparison, logical, string, and ternary are most common.</li>
+    <li>Bitwise operators exist but are less commonly used in web apps.</li>
+    <li>Operator precedence and associativity determine evaluation order.</li>
+    <li>Always use <code>===</code> and <code>!==</code> for comparisons.</li>
+  </ul>
+
+  <p>
+    🎉 Congratulations! You’ve mastered JavaScript operators and expressions.  
+    In the next lesson, we’ll cover <strong>Control Flow</strong> with 
+    <code>if</code>, <code>else</code>, and <code>switch</code>.
+  </p>
+</article>
+
+    `},
+    {title: " Control Flow in JavaScript", content: `<article>
+  
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>⚡ Introduction</h2>
+  <p>
+    So far, we’ve learned how to work with <strong>variables</strong>, <strong>data types</strong>, 
+    and <strong>operators</strong>. But real programs need more than storing values and calculating results— 
+    they need to <strong>make decisions</strong>. For example:
+  </p>
+  <ul>
+    <li>Should a website show the login page or the dashboard?</li>
+    <li>Is a student’s grade “Pass” or “Fail”?</li>
+    <li>Which option in a dropdown menu did the user select?</li>
+  </ul>
+  <p>
+    This is where <em>control flow</em> comes in. Control flow is the order in which individual 
+    statements, instructions, or functions are executed or evaluated in a program.
+  </p>
+  <p>
+    In JavaScript, the primary tools for controlling flow are:
+  </p>
+  <ul>
+    <li><strong>Conditional statements</strong> (<code>if</code>, <code>else if</code>, <code>else</code>)</li>
+    <li><strong>Switch statements</strong> (<code>switch</code>)</li>
+    <li><strong>Loops</strong> (we’ll cover loops in the next lessons)</li>
+  </ul>
+
+  <h2>🔑 The <code>if</code> Statement</h2>
+  <p>
+    The <code>if</code> statement allows us to run a block of code only if a condition is true.
+  </p>
+
+  <pre><code>let age = 20;
+
+if (age &gt;= 18) {
+  console.log("You are an adult.");
+}</code></pre>
+
+  <p>
+    In this case, since <code>age</code> is 20, which is greater than 18, the condition 
+    evaluates to <code>true</code>, so the message prints.
+  </p>
+
+  <h2>🧩 The <code>else</code> Clause</h2>
+  <p>
+    Sometimes we want to do one thing if the condition is true, and another if it’s false. 
+    That’s where <code>else</code> comes in.
+  </p>
+
+  <pre><code>let age = 15;
+
+if (age &gt;= 18) {
+  console.log("You are an adult.");
+} else {
+  console.log("You are a minor.");
+}</code></pre>
+
+  <p>
+    Output: <code>You are a minor.</code>
+  </p>
+
+  <h2>🔗 The <code>else if</code> Ladder</h2>
+  <p>
+    What if we have multiple conditions to check? We use <code>else if</code>.
+  </p>
+
+  <pre><code>let score = 85;
+
+if (score &gt;= 90) {
+  console.log("Grade: A");
+} else if (score &gt;= 80) {
+  console.log("Grade: B");
+} else if (score &gt;= 70) {
+  console.log("Grade: C");
+} else {
+  console.log("Grade: F");
+}</code></pre>
+
+  <p>
+    Since the score is 85, the output is <code>Grade: B</code>.
+  </p>
+
+  <h3>✅ Best Practices for If-Else</h3>
+  <ul>
+    <li>Put the most likely condition first for efficiency.</li>
+    <li>Avoid deeply nested <code>if</code> structures—consider <code>switch</code> for clarity.</li>
+    <li>Use braces <code>{ }</code> even for single-line conditions (for readability and safety).</li>
+  </ul>
+
+  <h2>🔄 Nested If Statements</h2>
+  <p>
+    You can place one <code>if</code> inside another. This is called nesting.
+  </p>
+
+  <pre><code>let user = "admin";
+let isLoggedIn = true;
+
+if (isLoggedIn) {
+  if (user === "admin") {
+    console.log("Welcome, admin!");
+  } else {
+    console.log("Welcome, user!");
+  }
+} else {
+  console.log("Please log in first.");
+}</code></pre>
+
+  <p>
+    While nesting is useful, it can make code harder to read if overused.
+  </p>
+
+  <h2>🎭 Truthy and Falsy Values</h2>
+  <p>
+    In JavaScript, conditions don’t always evaluate to just <code>true</code> or <code>false</code>. 
+    Values are automatically converted to <strong>truthy</strong> or <strong>falsy</strong>.
+  </p>
+  <p><strong>Falsy values:</strong> <code>false</code>, <code>0</code>, <code>""</code> (empty string), <code>null</code>, <code>undefined</code>, <code>NaN</code></p>
+  <p>Everything else is <strong>truthy</strong>.</p>
+
+  <pre><code>if ("hello") {
+  console.log("This runs because 'hello' is truthy.");
+}
+
+if (0) {
+  console.log("This will NOT run, because 0 is falsy.");
+}</code></pre>
+
+  <h2>🧮 Using Logical Operators in Conditions</h2>
+  <p>
+    Logical operators (<code>&amp;&amp;</code>, <code>||</code>, <code>!</code>) are commonly used in 
+    <code>if</code> statements.
+  </p>
+
+  <pre><code>let age = 25;
+let hasTicket = true;
+
+if (age &gt;= 18 &amp;&amp; hasTicket) {
+  console.log("You can enter the concert.");
+}
+
+if (age &lt; 18 || !hasTicket) {
+  console.log("You cannot enter.");
+}</code></pre>
+
+  <h2>🔀 The <code>switch</code> Statement</h2>
+  <p>
+    The <code>switch</code> statement is an alternative to multiple <code>else if</code>. 
+    It’s often cleaner when checking one variable against many possible values.
+  </p>
+
+  <pre><code>let day = "Tuesday";
+
+switch (day) {
+  case "Monday":
+    console.log("Start of the week!");
+    break;
+  case "Tuesday":
+    console.log("Second day of the week.");
+    break;
+  case "Friday":
+    console.log("Almost weekend!");
+    break;
+  default:
+    console.log("Just another day.");
+}</code></pre>
+
+  <p>
+    Since <code>day</code> is "Tuesday", the output is <code>Second day of the week.</code>
+  </p>
+
+  <h3>🔑 The <code>break</code> Statement</h3>
+  <p>
+    Without <code>break</code>, JavaScript continues executing the next cases (called 
+    <strong>fall-through</strong> behavior).
+  </p>
+
+  <pre><code>let color = "red";
+
+switch (color) {
+  case "red":
+    console.log("Color is red");
+  case "blue":
+    console.log("Color is blue");
+  default:
+    console.log("Unknown color");
+}</code></pre>
+
+  <p>
+    Output:
+  </p>
+  <pre><code>Color is red
+Color is blue
+Unknown color</code></pre>
+
+  <p>
+    To prevent this, always use <code>break</code> unless fall-through is intentional.
+  </p>
+
+  <h2>🌀 Grouping Cases in Switch</h2>
+  <p>
+    Sometimes multiple cases share the same output. You can group them.
+  </p>
+
+  <pre><code>let fruit = "apple";
+
+switch (fruit) {
+  case "apple":
+  case "banana":
+  case "mango":
+    console.log("This is a fruit.");
+    break;
+  default:
+    console.log("Not a fruit.");
+}</code></pre>
+
+  <h2>⚖️ When to Use If-Else vs Switch</h2>
+  <ul>
+    <li>Use <code>if-else</code> for range checks or complex conditions.</li>
+    <li>Use <code>switch</code> when comparing one variable to many exact values.</li>
+  </ul>
+
+  <h2>🛠️ Real-World Example: Login System</h2>
+  <pre><code>let username = "admin";
+let password = "1234";
+
+if (username === "admin" &amp;&amp; password === "1234") {
+  console.log("Login successful!");
+} else if (username === "admin") {
+  console.log("Wrong password.");
+} else {
+  console.log("User not found.");
+}</code></pre>
+
+  <h2>⚠️ Common Mistakes</h2>
+  <ul>
+    <li>Forgetting <code>break</code> in <code>switch</code> cases.</li>
+    <li>Using <code>==</code> instead of <code>===</code> in conditions.</li>
+    <li>Not handling the <code>default</code> case in a <code>switch</code>.</li>
+    <li>Relying too much on nested <code>if</code>, which makes code messy.</li>
+  </ul>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Write a program that checks if a number is positive, negative, or zero using <code>if-else</code>.</li>
+    <li>Use <code>if-else if</code> to assign grades based on a score.</li>
+    <li>Write a <code>switch</code> program that prints the name of a day when given a number (1–7).</li>
+    <li>Create a nested <code>if</code> that checks login: is user logged in? If yes, is the role admin or user?</li>
+    <li>Practice grouping cases in <code>switch</code> for months (e.g., Jan, Mar, May → 31 days).</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li><code>if</code>, <code>else if</code>, <code>else</code> are used for decision making.</li>
+    <li><code>switch</code> is better for multiple exact matches.</li>
+    <li>Truthy and falsy values affect conditions.</li>
+    <li>Logical operators help combine conditions.</li>
+    <li>Use <code>===</code> for accurate comparisons, and always include <code>break</code> in switches.</li>
+  </ul>
+
+  <p>
+    🎉 Awesome work! You now understand how to control program flow with conditions.  
+    Next up: <strong>Lesson 5: Loops in JavaScript (for, while, do-while)</strong> — 
+    where we’ll repeat actions efficiently.
+  </p>
+</article>
+
+    `},
+
+
+    {title: "Loops in JavaScript", content: `
+     <article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>⚡ Introduction</h2>
+  <p>
+    Imagine you are asked to print the numbers <code>1</code> to <code>100</code>. Without loops, 
+    you would need to write <code>console.log()</code> one hundred times! That would be repetitive, 
+    boring, and impossible to maintain. This is why programming languages like JavaScript 
+    provide <strong>loops</strong>.
+  </p>
+  <p>
+    A <strong>loop</strong> allows us to repeat a block of code multiple times until a condition is met. 
+    Loops help reduce repetition, make code cleaner, and solve problems that involve 
+    <em>iteration</em> (repeating tasks).
+  </p>
+  <p>
+    In JavaScript, the most common loops are:
+  </p>
+  <ul>
+    <li><code>for</code> loop</li>
+    <li><code>while</code> loop</li>
+    <li><code>do...while</code> loop</li>
+  </ul>
+
+  <h2>🔄 The <code>for</code> Loop</h2>
+  <p>
+    The <code>for</code> loop is used when you know <em>exactly</em> how many times you want to repeat code.
+    Its structure has three parts:
+  </p>
+  <pre><code>for (initialization; condition; update) {
+  // code block
+}</code></pre>
+
+  <ul>
+    <li><strong>Initialization</strong> → runs once before the loop starts (e.g., <code>let i = 0</code>)</li>
+    <li><strong>Condition</strong> → checked before every iteration (loop continues if <code>true</code>)</li>
+    <li><strong>Update</strong> → executed after each iteration (e.g., <code>i++</code>)</li>
+  </ul>
+
+  <h3>✅ Example 1: Print numbers 1–5</h3>
+  <pre><code>for (let i = 1; i &lt;= 5; i++) {
+  console.log("Number:", i);
+}</code></pre>
+  <p>Output:</p>
+  <pre><code>Number: 1
+Number: 2
+Number: 3
+Number: 4
+Number: 5</code></pre>
+
+  <h3>✅ Example 2: Sum of numbers 1–10</h3>
+  <pre><code>let sum = 0;
+
+for (let i = 1; i &lt;= 10; i++) {
+  sum += i;
+}
+
+console.log("Sum =", sum);</code></pre>
+  <p>Output: <code>Sum = 55</code></p>
+
+  <h2>🌀 Nested <code>for</code> Loops</h2>
+  <p>
+    Loops can be placed inside other loops. These are called nested loops and are often 
+    used for working with 2D structures like grids or tables.
+  </p>
+  <h3>✅ Example: Multiplication Table</h3>
+  <pre><code>for (let i = 1; i &lt;= 3; i++) {
+  for (let j = 1; j &lt;= 3; j++) {
+    console.log(i + " x " + j + " = " + (i * j));
+  }
+}</code></pre>
+
+  <h2>🔄 The <code>while</code> Loop</h2>
+  <p>
+    A <code>while</code> loop repeats as long as a condition is true. 
+    Unlike <code>for</code>, the number of iterations may not be known beforehand.
+  </p>
+  <pre><code>while (condition) {
+  // code block
+}</code></pre>
+
+  <h3>✅ Example: Count 1–5 with while</h3>
+  <pre><code>let i = 1;
+
+while (i &lt;= 5) {
+  console.log(i);
+  i++;
+}</code></pre>
+
+  <h3>✅ Example: Guessing Game (simplified)</h3>
+  <pre><code>let secret = 7;
+let guess = 0;
+
+while (guess !== secret) {
+  guess = Math.floor(Math.random() * 10) + 1;
+  console.log("Guess:", guess);
+}
+
+console.log("You guessed it!");</code></pre>
+
+  <h2>🔄 The <code>do...while</code> Loop</h2>
+  <p>
+    The <code>do...while</code> loop is similar to <code>while</code>, except it guarantees 
+    the block runs at least once, even if the condition is false.
+  </p>
+  <pre><code>do {
+  // code block
+} while (condition);</code></pre>
+
+  <h3>✅ Example: Run once even if condition is false</h3>
+  <pre><code>let count = 10;
+
+do {
+  console.log("Count:", count);
+  count++;
+} while (count &lt; 5);</code></pre>
+  <p>
+    Output: <code>Count: 10</code> (even though condition was false initially).
+  </p>
+
+  <h2>⚡ Loop Control Statements</h2>
+  <h3>🔹 The <code>break</code> Statement</h3>
+  <p>
+    Used to exit a loop immediately.
+  </p>
+  <pre><code>for (let i = 1; i &lt;= 10; i++) {
+  if (i === 5) {
+    break;
+  }
+  console.log(i);
+}</code></pre>
+  <p>Output: <code>1 2 3 4</code></p>
+
+  <h3>🔹 The <code>continue</code> Statement</h3>
+  <p>
+    Skips the current iteration and jumps to the next one.
+  </p>
+  <pre><code>for (let i = 1; i &lt;= 5; i++) {
+  if (i === 3) {
+    continue;
+  }
+  console.log(i);
+}</code></pre>
+  <p>Output: <code>1 2 4 5</code></p>
+
+  <h2>🧩 Infinite Loops (⚠️ Dangerous!)</h2>
+  <p>
+    If the condition never becomes false, a loop can run forever. 
+    These are called <em>infinite loops</em>, and they can crash your program.
+  </p>
+  <pre><code>// Be careful! Infinite loop example:
+while (true) {
+  console.log("Running forever...");
+}</code></pre>
+
+  <h2>📚 Real-World Examples of Loops</h2>
+  <h3>1️⃣ Iterating over an Array</h3>
+  <pre><code>let fruits = ["apple", "banana", "mango"];
+
+for (let i = 0; i &lt; fruits.length; i++) {
+  console.log(fruits[i]);
+}</code></pre>
+
+  <h3>2️⃣ Searching for an Element</h3>
+  <pre><code>let numbers = [1, 3, 5, 7, 9];
+let found = false;
+
+for (let i = 0; i &lt; numbers.length; i++) {
+  if (numbers[i] === 7) {
+    found = true;
+    break;
+  }
+}
+
+console.log(found ? "Found!" : "Not Found!");</code></pre>
+
+  <h3>3️⃣ Form Validation</h3>
+  <pre><code>let inputs = ["name", "", "email"];
+let allFilled = true;
+
+for (let i = 0; i &lt; inputs.length; i++) {
+  if (inputs[i] === "") {
+    allFilled = false;
+    break;
+  }
+}
+
+console.log(allFilled ? "Form is complete" : "Form is incomplete");</code></pre>
+
+  <h2>⚖️ Choosing Between for, while, and do-while</h2>
+  <ul>
+    <li>Use <strong>for</strong> → when you know how many times you want to loop.</li>
+    <li>Use <strong>while</strong> → when the loop continues until a condition is met.</li>
+    <li>Use <strong>do...while</strong> → when you want the code to run at least once before checking the condition.</li>
+  </ul>
+
+  <h2>⚠️ Common Mistakes</h2>
+  <ul>
+    <li>Forgetting to update the counter (causes infinite loops).</li>
+    <li>Using <code>==</code> instead of <code>===</code> in conditions.</li>
+    <li>Misplacing <code>break</code> or <code>continue</code>.</li>
+    <li>Nesting too many loops → leads to “spaghetti code.”</li>
+  </ul>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Write a <code>for</code> loop that prints numbers from 1 to 100.</li>
+    <li>Use a <code>while</code> loop to print only even numbers from 2 to 20.</li>
+    <li>Write a <code>do...while</code> loop that asks the user for input until they type "exit".</li>
+    <li>Use nested <code>for</code> loops to draw a triangle of stars:
+      <pre><code>*
+**
+***
+****
+*****</code></pre>
+    </li>
+    <li>Create a loop that calculates the factorial of a given number.</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li><strong>for</strong> loops are best for known iterations.</li>
+    <li><strong>while</strong> loops continue until a condition is false.</li>
+    <li><strong>do...while</strong> loops always run at least once.</li>
+    <li>Use <code>break</code> to exit and <code>continue</code> to skip iterations.</li>
+    <li>Avoid infinite loops by carefully managing conditions.</li>
+  </ul>
+
+  <p>
+    🎉 Congratulations! You now understand how to use loops to repeat tasks efficiently.  
+    Next up: <strong>Lesson 6: Functions in JavaScript</strong>, where we’ll learn how to group 
+    reusable blocks of code.
+  </p>
+</article>
+
+    `},
+    {title: "Functions in JavaScript", content: `<article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>⚡ Introduction</h2>
+  <p>
+    In programming, we often need to perform the same task multiple times. 
+    Instead of rewriting the same block of code again and again, we use 
+    <strong>functions</strong>. Functions allow us to group a set of instructions together, 
+    give them a name, and reuse them whenever needed.
+  </p>
+  <p>
+    In simple words: a <strong>function</strong> is like a recipe. You define it once, and you 
+    can cook the dish as many times as you want just by calling it.
+  </p>
+
+  <h2>🔑 What is a Function?</h2>
+  <p>
+    A function is a block of reusable code designed to perform a single task. 
+    Functions help keep programs <strong>organized, readable, and reusable</strong>.
+  </p>
+
+  <h3>✅ Syntax</h3>
+  <pre><code>function functionName(parameters) {
+  // code to be executed
+}</code></pre>
+
+  <h3>✅ Example: Simple Function</h3>
+  <pre><code>function greet() {
+  console.log("Hello, welcome to JavaScript!");
+}
+
+greet(); // Calling the function</code></pre>
+  <p>
+    Output: <code>Hello, welcome to JavaScript!</code>
+  </p>
+
+  <h2>📦 Function Parameters and Arguments</h2>
+  <p>
+    Functions can accept inputs called <strong>parameters</strong>. When calling a function, 
+    we pass values called <strong>arguments</strong>.
+  </p>
+
+  <h3>✅ Example: Function with Parameters</h3>
+  <pre><code>function greetUser(name) {
+  console.log("Hello, " + name + "!");
+}
+
+greetUser("Alice");
+greetUser("Bob");</code></pre>
+  <p>
+    Output:
+  </p>
+  <pre><code>Hello, Alice!
+Hello, Bob!</code></pre>
+
+  <h2>🔙 Return Values</h2>
+  <p>
+    Functions can return a result using the <code>return</code> keyword. 
+    Returning makes functions more powerful because the output can be reused.
+  </p>
+
+  <h3>✅ Example: Function that Returns a Value</h3>
+  <pre><code>function add(a, b) {
+  return a + b;
+}
+
+let sum = add(5, 3);
+console.log("Sum =", sum);</code></pre>
+  <p>Output: <code>Sum = 8</code></p>
+
+  <h2>📝 Function Declarations vs Expressions</h2>
+  <h3>1️⃣ Function Declaration</h3>
+  <pre><code>function multiply(x, y) {
+  return x * y;
+}</code></pre>
+
+  <h3>2️⃣ Function Expression</h3>
+  <pre><code>let multiply = function(x, y) {
+  return x * y;
+};</code></pre>
+  <p>
+    Both work the same way, but function expressions can be assigned to variables.
+  </p>
+
+  <h2>⚡ Arrow Functions (ES6)</h2>
+  <p>
+    Introduced in ES6, <strong>arrow functions</strong> provide a shorter syntax.
+  </p>
+  <pre><code>// Traditional
+function square(x) {
+  return x * x;
+}
+
+// Arrow function
+const square = (x) =&gt; x * x;
+
+console.log(square(4)); // 16</code></pre>
+
+  <h2>📌 Default Parameters</h2>
+  <p>
+    JavaScript functions allow default values for parameters.
+  </p>
+  <pre><code>function greet(name = "Guest") {
+  console.log("Hello, " + name);
+}
+
+greet();       // Hello, Guest
+greet("Alice"); // Hello, Alice</code></pre>
+
+  <h2>📦 Rest Parameters (...args)</h2>
+  <p>
+    Rest parameters let a function accept any number of arguments as an array.
+  </p>
+  <pre><code>function sumAll(...numbers) {
+  let total = 0;
+  for (let num of numbers) {
+    total += num;
+  }
+  return total;
+}
+
+console.log(sumAll(1, 2, 3, 4)); // 10</code></pre>
+
+  <h2>🔁 Functions and Scope</h2>
+  <p>
+    <strong>Scope</strong> determines where variables can be accessed. 
+    JavaScript has <strong>global scope</strong> and <strong>local scope</strong>.
+  </p>
+
+  <h3>✅ Example: Local vs Global Scope</h3>
+  <pre><code>let globalVar = "I am global";
+
+function testScope() {
+  let localVar = "I am local";
+  console.log(globalVar); // Accessible
+  console.log(localVar);  // Accessible
+}
+
+testScope();
+console.log(localVar); // ❌ Error: not defined</code></pre>
+
+  <h2>📌 Function Hoisting</h2>
+  <p>
+    Function declarations are “hoisted” to the top of their scope, 
+    meaning they can be called before they’re defined.
+  </p>
+
+  <pre><code>sayHello();
+
+function sayHello() {
+  console.log("Hello!");
+}</code></pre>
+
+  <h2>🌀 Anonymous Functions</h2>
+  <p>
+    Functions without a name are called <strong>anonymous functions</strong>. 
+    They are often used in event listeners or passed as arguments.
+  </p>
+
+  <pre><code>setTimeout(function() {
+  console.log("This runs after 2 seconds");
+}, 2000);</code></pre>
+
+  <h2>⚡ Higher-Order Functions</h2>
+  <p>
+    A function that takes another function as an argument or returns a function 
+    is called a <strong>higher-order function</strong>.
+  </p>
+
+  <pre><code>function operate(a, b, operation) {
+  return operation(a, b);
+}
+
+function add(x, y) {
+  return x + y;
+}
+
+console.log(operate(5, 3, add)); // 8</code></pre>
+
+  <h2>📦 Callback Functions</h2>
+  <p>
+    When a function is passed as an argument to another function and then executed, 
+    it’s called a <strong>callback</strong>.
+  </p>
+
+  <pre><code>function greetUser(name, callback) {
+  console.log("Hello, " + name);
+  callback();
+}
+
+function sayBye() {
+  console.log("Goodbye!");
+}
+
+greetUser("Alice", sayBye);</code></pre>
+  <p>Output:</p>
+  <pre><code>Hello, Alice
+Goodbye!</code></pre>
+
+  <h2>🧩 Recursive Functions</h2>
+  <p>
+    A function that calls itself is called a <strong>recursive function</strong>. 
+    Recursion is useful for tasks like factorial, Fibonacci, and traversing trees.
+  </p>
+
+  <pre><code>function factorial(n) {
+  if (n === 0) {
+    return 1;
+  }
+  return n * factorial(n - 1);
+}
+
+console.log(factorial(5)); // 120</code></pre>
+
+  <h2>📚 Real-World Uses of Functions</h2>
+  <ul>
+    <li>Form validation (e.g., checking if an email is valid)</li>
+    <li>Calculating totals in an e-commerce cart</li>
+    <li>Reusable utilities like converting temperatures</li>
+    <li>Event handling in web applications</li>
+  </ul>
+
+  <h2>⚠️ Common Mistakes</h2>
+  <ul>
+    <li>Forgetting to return a value when needed</li>
+    <li>Confusing parameters with arguments</li>
+    <li>Reusing variable names and causing scope issues</li>
+    <li>Overusing global variables</li>
+  </ul>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Write a function that takes a number and returns whether it’s even or odd.</li>
+    <li>Create a function that takes two numbers and returns the larger one.</li>
+    <li>Write a recursive function to compute the Fibonacci sequence.</li>
+    <li>Use an arrow function to calculate the area of a rectangle.</li>
+    <li>Make a higher-order function that applies a discount to a list of prices.</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li>Functions make code reusable and modular.</li>
+    <li>They can accept inputs (parameters) and return outputs.</li>
+    <li>JavaScript supports declarations, expressions, and arrow functions.</li>
+    <li>Advanced concepts include recursion, callbacks, and higher-order functions.</li>
+  </ul>
+
+  <p>
+    🎉 Well done! You’ve mastered functions in JavaScript.  
+    Next up: <strong>Lesson 7: Objects in JavaScript</strong> — 
+    where we’ll explore how to structure and organize data.
+  </p>
+</article>
+
+    `},
+    {title: "Objects in JavaScript", content: `<article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>⚡ Introduction</h2>
+  <p>
+    In JavaScript, almost everything is an <strong>object</strong>. Objects allow you to group data 
+    (properties) and behavior (methods) into a single entity. They are one of the most important 
+    building blocks of JavaScript programming. If variables and data types are the foundation, 
+    <strong>objects are the walls and furniture</strong> that make your program useful and structured.
+  </p>
+
+  <h2>🔑 What is an Object?</h2>
+  <p>
+    An object is a collection of key–value pairs. Keys are called <strong>properties</strong> 
+    (or methods if the value is a function).
+  </p>
+
+  <h3>✅ Example: Creating a Simple Object</h3>
+  <pre><code>let person = {
+  name: "Alice",
+  age: 25,
+  isStudent: true
+};
+
+console.log(person.name);  // Alice
+console.log(person.age);   // 25
+console.log(person.isStudent); // true</code></pre>
+
+  <p>
+    Here, <code>name</code>, <code>age</code>, and <code>isStudent</code> are properties of the 
+    <code>person</code> object.
+  </p>
+
+  <h2>📦 Creating Objects</h2>
+  <h3>1️⃣ Object Literals</h3>
+  <pre><code>let car = {
+  brand: "Toyota",
+  model: "Corolla",
+  year: 2022
+};</code></pre>
+
+  <h3>2️⃣ Using <code>new Object()</code></h3>
+  <pre><code>let car = new Object();
+car.brand = "Toyota";
+car.model = "Corolla";</code></pre>
+
+  <h3>3️⃣ Using a Constructor Function</h3>
+  <pre><code>function Car(brand, model) {
+  this.brand = brand;
+  this.model = model;
+}
+
+let myCar = new Car("Honda", "Civic");
+console.log(myCar.brand); // Honda</code></pre>
+
+  <h3>4️⃣ Using ES6 Classes</h3>
+  <pre><code>class Car {
+  constructor(brand, model) {
+    this.brand = brand;
+    this.model = model;
+  }
+}
+
+let car1 = new Car("Tesla", "Model 3");
+console.log(car1.model); // Model 3</code></pre>
+
+  <h2>📌 Accessing Object Properties</h2>
+  <p>There are two ways:</p>
+  <ul>
+    <li><strong>Dot notation</strong> – <code>object.property</code></li>
+    <li><strong>Bracket notation</strong> – <code>object["property"]</code></li>
+  </ul>
+
+  <pre><code>let person = { name: "Bob", age: 30 };
+
+console.log(person.name);     // Dot notation -> Bob
+console.log(person["age"]);   // Bracket notation -> 30</code></pre>
+
+  <h2>🛠️ Adding, Updating, and Deleting Properties</h2>
+  <pre><code>let user = { username: "admin" };
+
+// Add
+user.email = "admin@example.com";
+
+// Update
+user.username = "superadmin";
+
+// Delete
+delete user.email;
+
+console.log(user);</code></pre>
+
+  <h2>⚡ Methods in Objects</h2>
+  <p>
+    If a property’s value is a function, it is called a <strong>method</strong>.
+  </p>
+
+  <pre><code>let calculator = {
+  add: function(a, b) {
+    return a + b;
+  },
+  multiply(a, b) {   // Shorthand method
+    return a * b;
+  }
+};
+
+console.log(calculator.add(3, 4));     // 7
+console.log(calculator.multiply(3, 4)); // 12</code></pre>
+
+  <h2>📍 The <code>this</code> Keyword</h2>
+  <p>
+    Inside an object method, <code>this</code> refers to the object itself.
+  </p>
+
+  <pre><code>let person = {
+  name: "Charlie",
+  greet: function() {
+    console.log("Hello, my name is " + this.name);
+  }
+};
+
+person.greet(); // Hello, my name is Charlie</code></pre>
+
+  <h2>🔁 Nested Objects</h2>
+  <pre><code>let student = {
+  name: "David",
+  grades: {
+    math: 90,
+    science: 85
+  }
+};
+
+console.log(student.grades.math); // 90</code></pre>
+
+  <h2>📦 Objects Inside Arrays</h2>
+  <pre><code>let users = [
+  { id: 1, name: "Alice" },
+  { id: 2, name: "Bob" }
+];
+
+console.log(users[0].name); // Alice</code></pre>
+
+  <h2>🧩 Object Destructuring</h2>
+  <p>ES6 introduced destructuring to extract values easily.</p>
+  <pre><code>let user = { name: "Eve", age: 28 };
+
+let { name, age } = user;
+console.log(name); // Eve
+console.log(age);  // 28</code></pre>
+
+  <h2>📦 Spread Operator with Objects</h2>
+  <pre><code>let obj1 = { a: 1, b: 2 };
+let obj2 = { ...obj1, c: 3 };
+
+console.log(obj2); // { a: 1, b: 2, c: 3 }</code></pre>
+
+  <h2>⚡ Object Methods (Built-in)</h2>
+  <ul>
+    <li><code>Object.keys(obj)</code> – returns all keys</li>
+    <li><code>Object.values(obj)</code> – returns all values</li>
+    <li><code>Object.entries(obj)</code> – returns key-value pairs</li>
+    <li><code>Object.assign(target, source)</code> – copies properties</li>
+    <li><code>Object.freeze(obj)</code> – makes object immutable</li>
+  </ul>
+
+  <pre><code>let book = { title: "JS Guide", author: "John" };
+
+console.log(Object.keys(book));   // ["title", "author"]
+console.log(Object.values(book)); // ["JS Guide", "John"]</code></pre>
+
+  <h2>🌀 Object References and Copying</h2>
+  <p>
+    Objects are assigned by reference, not by value.
+  </p>
+  <pre><code>let obj1 = { name: "Sam" };
+let obj2 = obj1; // Both refer to same object
+
+obj2.name = "Tom";
+console.log(obj1.name); // Tom</code></pre>
+
+  <h3>✅ Copying with <code>Object.assign</code></h3>
+  <pre><code>let obj1 = { x: 10 };
+let obj2 = Object.assign({}, obj1);
+
+obj2.x = 20;
+console.log(obj1.x); // 10</code></pre>
+
+  <h3>✅ Copying with Spread</h3>
+  <pre><code>let obj1 = { x: 5 };
+let obj2 = { ...obj1 };
+
+obj2.x = 100;
+console.log(obj1.x); // 5</code></pre>
+
+  <h2>🧩 JSON (JavaScript Object Notation)</h2>
+  <p>
+    JSON is a text format for storing and transferring data, based on objects.
+  </p>
+  <pre><code>let user = { name: "Anna", age: 22 };
+
+let jsonStr = JSON.stringify(user); // Convert object to JSON string
+console.log(jsonStr); // {"name":"Anna","age":22}
+
+let newUser = JSON.parse(jsonStr);  // Convert JSON string to object
+console.log(newUser.name); // Anna</code></pre>
+
+  <h2>⚠️ Common Mistakes with Objects</h2>
+  <ul>
+    <li>Forgetting that objects are references (changing one changes the other)</li>
+    <li>Using <code>for...in</code> without filtering inherited properties</li>
+    <li>Overusing global objects and polluting the namespace</li>
+    <li>Not freezing objects when immutability is required</li>
+  </ul>
+
+  <h2>📚 Real-World Use Cases</h2>
+  <ul>
+    <li>Storing user profiles in apps</li>
+    <li>Keeping configuration settings</li>
+    <li>Handling API responses (which usually return JSON objects)</li>
+    <li>Grouping related functions (like Math object: <code>Math.max()</code>)</li>
+  </ul>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Create an object <code>book</code> with properties: title, author, year. Add a method <code>getSummary</code> that returns a string summary.</li>
+    <li>Write a function that takes an object and returns the number of keys.</li>
+    <li>Make an array of objects representing students (name, grade). Print names of students with grade &gt; 80.</li>
+    <li>Use destructuring to extract <code>username</code> and <code>email</code> from a <code>user</code> object.</li>
+    <li>Convert a JavaScript object into JSON and back to an object.</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li>Objects group properties (data) and methods (functions).</li>
+    <li>They can be created using literals, constructors, or classes.</li>
+    <li><code>this</code> refers to the object inside methods.</li>
+    <li>Objects can be nested, copied, destructured, and frozen.</li>
+    <li>JSON is based on JavaScript objects and is widely used in APIs.</li>
+  </ul>
+
+  <p>
+    🎉 Excellent! You’ve learned all about objects in JavaScript.  
+    Next up: <strong>Lesson 8: Arrays in JavaScript</strong>, where we’ll dive into 
+    another fundamental structure for handling lists of data.
+  </p>
+</article>
+
+    `},
+    {title: "Arrays in JavaScript", content: `<article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>⚡ Introduction</h2>
+  <p>
+    In JavaScript, an <strong>array</strong> is a special type of object used to 
+    store multiple values in a single variable. Unlike regular variables that hold 
+    only one value, arrays let us store <strong>ordered collections</strong> of data 
+    such as numbers, strings, objects, or even other arrays.
+  </p>
+  <p>
+    Arrays are one of the most powerful and commonly used data structures 
+    in JavaScript. They’re essential when working with lists of data like 
+    user records, products, messages, or search results.
+  </p>
+
+  <h2>🔑 What is an Array?</h2>
+  <p>
+    An array is an ordered collection of values, where each value is 
+    called an <strong>element</strong>, and each element has an index. 
+    Array indices in JavaScript are <strong>zero-based</strong>, 
+    meaning the first element is at index <code>0</code>.
+  </p>
+
+  <h3>✅ Example: Creating an Array</h3>
+  <pre><code>let fruits = ["Apple", "Banana", "Cherry"];
+console.log(fruits[0]); // Apple
+console.log(fruits[1]); // Banana</code></pre>
+
+  <h2>📦 Creating Arrays</h2>
+  <h3>1️⃣ Using Array Literals</h3>
+  <pre><code>let numbers = [10, 20, 30, 40];</code></pre>
+
+  <h3>2️⃣ Using the Array Constructor</h3>
+  <pre><code>let numbers = new Array(10, 20, 30);</code></pre>
+
+  <h3>3️⃣ Creating Empty Arrays</h3>
+  <pre><code>let emptyArray = [];
+let anotherEmpty = new Array();</code></pre>
+
+  <h2>📌 Accessing Array Elements</h2>
+  <pre><code>let colors = ["Red", "Green", "Blue"];
+console.log(colors[0]); // Red
+console.log(colors[2]); // Blue</code></pre>
+
+  <p>If you access an index that doesn’t exist, you get <code>undefined</code>.</p>
+  <pre><code>console.log(colors[5]); // undefined</code></pre>
+
+  <h2>🛠️ Adding & Updating Elements</h2>
+  <pre><code>let animals = ["Dog", "Cat"];
+animals[2] = "Elephant"; // Add
+animals[1] = "Tiger";    // Update
+
+console.log(animals); // ["Dog", "Tiger", "Elephant"]</code></pre>
+
+  <h2>🧹 Removing Elements</h2>
+  <pre><code>let fruits = ["Apple", "Banana", "Cherry"];
+delete fruits[1]; 
+console.log(fruits); // ["Apple", empty, "Cherry"]</code></pre>
+
+  <p>
+    ❌ Not recommended, because it leaves an empty slot. 
+    Instead, use <code>splice()</code> for proper removal.
+  </p>
+
+  <h2>🔁 Array Length</h2>
+  <pre><code>let arr = [1, 2, 3, 4];
+console.log(arr.length); // 4</code></pre>
+
+  <h2>⚡ Common Array Methods</h2>
+  <h3>1️⃣ push() and pop()</h3>
+  <pre><code>let fruits = ["Apple", "Banana"];
+fruits.push("Cherry"); // Add at end
+console.log(fruits);   // ["Apple", "Banana", "Cherry"]
+
+fruits.pop(); // Remove last element
+console.log(fruits);   // ["Apple", "Banana"]</code></pre>
+
+  <h3>2️⃣ shift() and unshift()</h3>
+  <pre><code>let numbers = [2, 3, 4];
+numbers.unshift(1); // Add at start
+console.log(numbers); // [1, 2, 3, 4]
+
+numbers.shift(); // Remove first element
+console.log(numbers); // [2, 3, 4]</code></pre>
+
+  <h3>3️⃣ splice()</h3>
+  <p>Used to add, remove, or replace elements.</p>
+  <pre><code>let colors = ["Red", "Green", "Blue"];
+colors.splice(1, 1, "Yellow"); 
+console.log(colors); // ["Red", "Yellow", "Blue"]</code></pre>
+
+  <h3>4️⃣ slice()</h3>
+  <p>Returns a shallow copy of a portion of an array.</p>
+  <pre><code>let arr = [10, 20, 30, 40];
+let newArr = arr.slice(1, 3);
+console.log(newArr); // [20, 30]</code></pre>
+
+  <h3>5️⃣ concat()</h3>
+  <pre><code>let a = [1, 2];
+let b = [3, 4];
+let combined = a.concat(b);
+console.log(combined); // [1, 2, 3, 4]</code></pre>
+
+  <h3>6️⃣ indexOf() and includes()</h3>
+  <pre><code>let fruits = ["Apple", "Banana", "Cherry"];
+console.log(fruits.indexOf("Banana")); // 1
+console.log(fruits.includes("Grapes")); // false</code></pre>
+
+  <h2>🌀 Iterating Over Arrays</h2>
+  <h3>✅ for loop</h3>
+  <pre><code>let arr = [1, 2, 3];
+for (let i = 0; i &lt; arr.length; i++) {
+  console.log(arr[i]);
+}</code></pre>
+
+  <h3>✅ for...of loop</h3>
+  <pre><code>for (let value of arr) {
+  console.log(value);
+}</code></pre>
+
+  <h3>✅ forEach()</h3>
+  <pre><code>arr.forEach(function(num) {
+  console.log(num);
+});</code></pre>
+
+  <h2>⚡ Higher-Order Array Methods</h2>
+  <h3>1️⃣ map()</h3>
+  <p>Creates a new array by transforming each element.</p>
+  <pre><code>let numbers = [1, 2, 3];
+let squares = numbers.map(x =&gt; x * x);
+console.log(squares); // [1, 4, 9]</code></pre>
+
+  <h3>2️⃣ filter()</h3>
+  <pre><code>let ages = [10, 20, 30, 40];
+let adults = ages.filter(age =&gt; age &gt;= 18);
+console.log(adults); // [20, 30, 40]</code></pre>
+
+  <h3>3️⃣ reduce()</h3>
+  <pre><code>let numbers = [1, 2, 3, 4];
+let sum = numbers.reduce((acc, val) =&gt; acc + val, 0);
+console.log(sum); // 10</code></pre>
+
+  <h3>4️⃣ find() and findIndex()</h3>
+  <pre><code>let arr = [5, 12, 8, 130];
+console.log(arr.find(x =&gt; x &gt; 10)); // 12
+console.log(arr.findIndex(x =&gt; x &gt; 10)); // 1</code></pre>
+
+  <h3>5️⃣ sort()</h3>
+  <pre><code>let fruits = ["Banana", "Apple", "Cherry"];
+fruits.sort();
+console.log(fruits); // ["Apple", "Banana", "Cherry"]</code></pre>
+
+  <p>⚠️ By default, <code>sort()</code> treats elements as strings. Use a compare function for numbers:</p>
+  <pre><code>let nums = [10, 2, 5];
+nums.sort((a, b) =&gt; a - b);
+console.log(nums); // [2, 5, 10]</code></pre>
+
+  <h2>🧩 Multidimensional Arrays</h2>
+  <pre><code>let matrix = [
+  [1, 2],
+  [3, 4],
+  [5, 6]
+];
+
+console.log(matrix[1][0]); // 3</code></pre>
+
+  <h2>📦 Array Destructuring</h2>
+  <pre><code>let numbers = [10, 20, 30];
+let [a, b, c] = numbers;
+console.log(a, b, c); // 10 20 30</code></pre>
+
+  <h2>⚡ Spread Operator with Arrays</h2>
+  <pre><code>let arr1 = [1, 2];
+let arr2 = [3, 4];
+let combined = [...arr1, ...arr2];
+console.log(combined); // [1, 2, 3, 4]</code></pre>
+
+  <h2>🧹 Common Mistakes</h2>
+  <ul>
+    <li>Using <code>delete</code> instead of <code>splice()</code> (leaves holes in arrays)</li>
+    <li>Confusing <code>slice()</code> and <code>splice()</code></li>
+    <li>Forgetting that <code>sort()</code> sorts as strings unless given a compare function</li>
+    <li>Overusing loops instead of higher-order methods like <code>map()</code> and <code>filter()</code></li>
+  </ul>
+
+  <h2>📚 Real-World Use Cases</h2>
+  <ul>
+    <li>Storing product lists in an e-commerce site</li>
+    <li>Managing messages in a chat application</li>
+    <li>Handling search results and pagination</li>
+    <li>Working with data returned from APIs (often arrays of objects)</li>
+  </ul>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Create an array of numbers and find the largest number using <code>reduce()</code>.</li>
+    <li>Make an array of strings and filter out those shorter than 5 characters.</li>
+    <li>Use <code>map()</code> to create a new array of squared values.</li>
+    <li>Create a 2D array (matrix) and print all elements.</li>
+    <li>Combine two arrays of student names using the spread operator.</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li>Arrays store ordered collections of values.</li>
+    <li>They provide built-in methods for adding, removing, and transforming data.</li>
+    <li>Loops and higher-order functions make iteration easier.</li>
+    <li>Advanced features include destructuring, spread, and multidimensional arrays.</li>
+  </ul>
+
+  <p>
+    🎉 Excellent work! You’ve learned how to work with arrays in JavaScript.  
+    Next up: <strong>Lesson 9: JavaScript Strings in Depth</strong>, 
+    where we’ll explore string manipulation and methods.
+  </p>
+</article>
+
+    `},
+    {title: "Strings in JavaScript", content: `<article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>⚡ Introduction</h2>
+  <p>
+    In JavaScript, a <strong>string</strong> is a sequence of characters 
+    used to represent text. Strings are one of the most important data types 
+    in programming, as they allow us to work with names, messages, 
+    paragraphs, user input, file paths, and much more. 
+  </p>
+ 
+  <h2>📌 Declaring Strings</h2>
+  <h3>1️⃣ Using Single or Double Quotes</h3>
+  <pre><code>let str1 = "Hello World";
+let str2 = 'JavaScript is fun!';
+</code></pre>
+
+ <h3>2️⃣ Using Backticks (Template Literals)</h3>
+  <p>Template literals allow embedded expressions and multi-line strings.</p>
+  <pre><code>let name = "Alice";
+
+    let greeting = Hello, ${name}! Welcome to JavaScript.;
+console.log(greeting); // Hello, Alice! Welcome to JavaScript.</code></pre>
+
+  <h3>3️⃣ Escape Characters</h3>
+  <pre><code>let text = "She said, \"Hello!\"";
+console.log(text); // She said, "Hello!"</code></pre>
+
+  <h2>🔎 Accessing Characters</h2>
+  <pre><code>let word = "JavaScript";
+console.log(word[0]); // J
+console.log(word.charAt(4)); // S</code></pre>
+
+  <p>
+    Strings are <strong>index-based</strong>, starting at 0. If you try 
+    to access an index that doesn’t exist, you get <code>undefined</code>.
+  </p>
+
+  <h2>📏 String Length</h2>
+  <pre><code>let msg = "Hello World";
+console.log(msg.length); // 11</code></pre>
+
+  <h2>✂️ String Methods</h2>
+  <p>JavaScript provides a rich set of methods for string manipulation.</p>
+
+  <h3>1️⃣ toUpperCase() and toLowerCase()</h3>
+  <pre><code>let city = "Dhaka";
+console.log(city.toUpperCase()); // DHAKA
+console.log(city.toLowerCase()); // dhaka</code></pre>
+
+  <h3>2️⃣ trim(), trimStart(), trimEnd()</h3>
+  <pre><code>let text = "   hello   ";
+console.log(text.trim()); // "hello"
+console.log(text.trimStart()); // "hello   "</code></pre>
+
+  <h3>3️⃣ substring(), slice(), substr()</h3>
+  <pre><code>let str = "JavaScript";
+console.log(str.substring(0, 4)); // "Java"
+console.log(str.slice(4, 10));    // "Script"
+console.log(str.substr(4, 6));    // "Script" (deprecated)</code></pre>
+
+  <h3>4️⃣ includes()</h3>
+  <pre><code>let sentence = "I love programming";
+console.log(sentence.includes("love")); // true</code></pre>
+
+  <h3>5️⃣ indexOf() and lastIndexOf()</h3>
+  <pre><code>let str = "banana";
+console.log(str.indexOf("a")); // 1
+console.log(str.lastIndexOf("a")); // 5</code></pre>
+
+  <h3>6️⃣ startsWith() and endsWith()</h3>
+  <pre><code>let file = "document.pdf";
+console.log(file.startsWith("doc")); // true
+console.log(file.endsWith(".pdf"));  // true</code></pre>
+
+  <h3>7️⃣ replace() and replaceAll()</h3>
+  <pre><code>let msg = "I like cats. Cats are cute.";
+console.log(msg.replace("cats", "dogs"));  
+// I like dogs. Cats are cute.
+
+
+
+console.log(msg.replaceAll("Cats", "Dogs"));  
+// I like cats. Dogs are cute.</code></pre>
+
+  <h3>8️⃣ repeat()</h3>
+  <pre><code>let laugh = "ha";
+console.log(laugh.repeat(3)); // hahaha</code></pre>
+
+  <h3>9️⃣ split() and join()</h3>
+  <pre><code>let text = "apple,banana,cherry";
+let fruits = text.split(",");
+console.log(fruits); // ["apple", "banana", "cherry"]
+
+let joined = fruits.join(" - ");
+console.log(joined); // "apple - banana - cherry"</code></pre>
+
+  <h3>🔟 padStart() and padEnd()</h3>
+  <pre><code>let num = "5";
+console
+
+
+console.log(msg.replaceAll("Cats", "Dogs"));  
+// I like cats. Dogs are cute.</code></pre>
+
+  <h3>8️⃣ repeat()</h3>
+  <pre><code>let laugh = "ha";
+console.log(laugh.repeat(3)); // hahaha</code></pre>
+
+  <h3>9️⃣ split() and join()</h3>
+  <pre><code>let text = "apple,banana,cherry";
+let fruits = text.split(",");
+console.log(fruits); // ["apple", "banana", "cherry"]
+let joined = fruits.join(" - ");
+console.log(joined); // "apple - banana - cherry"</code></pre>
+
+  <h3>🔟 padStart() and padEnd()</h3>
+  <pre><code>let num = "5";
+console.log(num.padStart(3, "0")); // "005"
+console.log(num.padEnd(3, "0"));   // "500"</code></pre>
+
+  <h2>🧮 String Concatenation</h2>
+  <h3>Using + Operator</h3>
+  <pre><code>let first = "Hello";
+let second = "World";
+let combined = first + " " + second;
+console.log(combined); // "Hello World"</code></pre>
+
+  <h3>Using Template Literals</h3>
+  <pre><code>let name = "Bob";
+let age = 25;
+
+// My name is Bob and I am 25 years old.</code></pre>
+
+  <h2>📦 Converting Data to Strings</h2>
+  <pre><code>let num = 123;
+let str = String(num);
+console.log(typeof str); // string
+
+let bool = true;
+console.log(bool.toString()); // "true"</code></pre>
+
+  <h2>⚡ Escape Sequences in Strings</h2>
+  <pre><code>let text = "Line1\nLine2\nLine3";
+console.log(text);
+/* Output:
+Line1
+Line2
+Line3
+*/</code></pre>
+
+
+  <ul>
+    <li><code>\n</code> → Newline</li>
+    <li><code>\t</code> → Tab</li>
+    <li><code>\\</code> → Backslash</li>
+    <li><code>\"</code> → Double quote</li>
+  </ul>
+
+  <h2>🌀 Iterating Over Strings</h2>
+  <h3>✅ for loop</h3>
+  <pre><code>let str = "Code";
+for (let i = 0; i &lt; str.length; i++) {
+  console.log(str[i]);
+}</code></pre>
+
+  <h3>✅ for...of loop</h3>
+  <pre><code>for (let ch of "Hello") {
+  console.log(ch);
+}</code></pre>
+
+  <h2>⚡ Searching in Strings</h2>
+  <pre><code>let str = "The quick brown fox";
+console.log(str.search("quick")); // 4
+console.log(str.match(/fox/));    // ["fox"]</code></pre>
+
+  <h2>🧩 String Immutability</h2>
+  <p>
+    Strings in JavaScript are immutable. Once created, you cannot 
+    change a string in place. Instead, you create a new string.
+  </p>
+  <pre><code>let word = "Cat";
+word[0] = "B";
+console.log(word); // "Cat" (unchanged)</code></pre>
+
+  <h2>🧪 Practice Examples</h2>
+  <ol>
+    <li>Write a function to count how many vowels are in a string.</li>
+    <li>Reverse a string using <code>split()</code>, <code>reverse()</code>, and <code>join()</code>.</li>
+    <li>Check if a string is a palindrome.</li>
+    <li>Extract the domain name from an email address.</li>
+    <li>Capitalize the first letter of every word in a sentence.</li>
+  </ol>
+
+  <h2>📚 Real-World Use Cases</h2>
+  <ul>
+    <li>Storing and displaying user names</li>
+    <li>Handling file names and URLs</li>
+    <li>Building chat or messaging applications</li>
+    <li>Parsing and validating user input (emails, phone numbers, etc.)</li>
+    <li>Working with APIs (responses often contain JSON strings)</li>
+  </ul>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li>Strings are sequences of characters enclosed in quotes or backticks.</li>
+    <li>They are immutable, but we can create new strings from them.</li>
+    <li>JavaScript provides many built-in methods for searching, modifying, and formatting strings.</li>
+    <li>Template literals make string interpolation and multi-line text much easier.</li>
+  </ul>
+
+  <p>
+    🎉 Congratulations! You’ve mastered JavaScript strings.  
+    Next up: <strong>Lesson 10: Functions & Scope in JavaScript (Advanced)</strong>.
+  </p>
+</article>
+  
+
+    `},{title: "Functions & Scope", content: `<article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>⚡ Introduction</h2>
+  <p>
+    Functions are one of the most important building blocks of JavaScript. 
+    A <strong>function</strong> is a reusable block of code designed to perform 
+    a specific task. Instead of writing the same code multiple times, 
+    we define a function once and use it whenever needed. Functions make code 
+    <em>modular, reusable, and easier to maintain</em>.
+  </p>
+  <p>
+    Along with functions comes the concept of <strong>scope</strong>, 
+    which determines where variables and functions are accessible in your program. 
+    Understanding scope helps avoid bugs and prevents accidental overwriting of values.
+  </p>
+
+  <h2>📌 Defining a Function</h2>
+  <h3>1️⃣ Function Declaration</h3>
+  <pre><code>function greet() {
+  console.log("Hello, World!");
+}
+greet(); // Hello, World!
+</code></pre>
+
+  <h3>2️⃣ Function Expression</h3>
+  <pre><code>const greet = function() {
+  console.log("Hello from function expression!");
+};
+greet();</code></pre>
+
+  <h3>3️⃣ Arrow Function (ES6)</h3>
+  <pre><code>const greet = () => {
+  console.log("Hello from arrow function!");
+};
+greet();</code></pre>
+
+  <p>
+    Arrow functions are shorter but behave differently with <code>this</code>, 
+    which we’ll explore later.
+  </p>
+
+  <h2>🎯 Function Parameters & Arguments</h2>
+  <p>
+    Parameters act like placeholders when defining a function. Arguments are the 
+    actual values passed when calling the function.
+  </p>
+  <pre><code>function add(a, b) {
+  return a + b;
+}
+console.log(greet()); // Hello, Guest!
+console.log(greet("Alice")); // Hello, Alice!</code></pre>
+
+  <h3>Rest Parameters</h3>
+  <p>We can collect multiple arguments into a single parameter using <code>...</code>.</p>
+  <pre><code>function sum(...numbers) {
+  return numbers.reduce((a, b) => a + b, 0);
+}
+console.log(sum(1, 2, 3, 4)); // 10</code></pre>
+
+  <h2>🔁 Returning Values</h2>
+  <p>
+    Functions can return values using the <code>return</code> keyword. 
+    If no <code>return</code> is specified, the function returns <code>undefined</code>.
+  </p>
+  <pre><code>function square(n) {
+  return n * n;
+}
+console.log(square(4)); // 16</code></pre>
+
+  <h2>⚡ Function Scope</h2>
+  <p>
+    Scope defines where variables are accessible. In JavaScript, 
+    we have:
+  </p>
+  <ul>
+    <li><strong>Global Scope</strong> – Accessible anywhere.</li>
+    <li><strong>Local/Function Scope</strong> – Accessible only inside the function.</li>
+    <li><strong>Block Scope</strong> – (Introduced in ES6 with <code>let</code> and <code>const</code>).</li>
+  </ul>
+
+  <h3>Global Scope Example</h3>
+  <pre><code>let globalVar = "I am global";
+
+function showGlobal() {
+  console.log(globalVar); 
+}
+showGlobal(); // I am global</code></pre>
+
+  <h3>Local Scope Example</h3>
+  <pre><code>function test() {
+  let localVar = "I am local";
+  console.log(localVar);
+}
+test();
+// console.log(localVar); ❌ Error: localVar is not defined</code></pre>
+
+  <h3>Block Scope Example</h3>
+  <pre><code>{
+  let blockVar = "Inside block";
+  console.log(blockVar); // Works inside block
+}
+// console.log(blockVar); ❌ Error: blockVar is not defined</code></pre>
+
+  <h2>🌐 Lexical Scope & Closures</h2>
+  <p>
+    Functions in JavaScript follow <strong>lexical scope</strong>, meaning 
+    they remember the scope in which they were created. This leads to the concept of 
+    <strong>closures</strong>.
+  </p>
+
+  <h3>Closure Example</h3>
+  <pre><code>function outer() {
+  let count = 0;
+
+  function inner() {
+    count++;
+    return count;
+  }
+  return inner;
+}
+
+const counter = outer();
+console.log(counter()); // 1
+console.log(counter()); // 2</code></pre>
+
+  <p>
+    Here, <code>inner()</code> still has access to <code>count</code> 
+    even after <code>outer()</code> has finished executing. This is closure in action.
+  </p>
+
+  <h2>📌 Hoisting in Functions</h2>
+  <p>
+    JavaScript <strong>hoists</strong> function declarations, 
+    meaning you can call them before defining.
+  </p>
+  <pre><code>sayHello(); // Works
+function sayHello() {
+  console.log("Hello!");
+}</code></pre>
+
+  <p>
+    But <strong>function expressions</strong> and <strong>arrow functions</strong> 
+    are <em>not hoisted</em>.
+  </p>
+  <pre><code>sayHi(); // ❌ Error
+const sayHi = function() {
+  console.log("Hi!");
+};</code></pre>
+
+  <h2>⚡ Arrow Functions vs Regular Functions</h2>
+  <p>
+    The key difference lies in how they handle <code>this</code>.
+  </p>
+  <pre><code>const obj = {
+  name: "Alice",
+  regular: function() {
+    console.log(this.name);
+  },
+  arrow: () => {
+    console.log(this.name);
+  }
+};
+
+obj.regular(); // Alice
+obj.arrow();   // undefined (arrow doesn't bind its own this)</code></pre>
+
+  <h2>🧩 Immediately Invoked Function Expressions (IIFE)</h2>
+  <p>
+    An <strong>IIFE</strong> is a function that runs immediately after being defined. 
+    It is useful for creating isolated scopes.
+  </p>
+  <pre><code>(function() {
+  console.log("IIFE executed!");
+})();</code></pre>
+
+  <h2>🧪 Practice Examples</h2>
+  <ol>
+    <li>Write a function to check if a number is prime.</li>
+    <li>Write a function that reverses a string.</li>
+    <li>Create a closure-based counter function with <code>increment()</code> and <code>reset()</code>.</li>
+    <li>Use an arrow function to calculate the factorial of a number.</li>
+    <li>Demonstrate the difference between <code>var</code>, <code>let</code>, and <code>const</code> inside functions.</li>
+  </ol>
+
+  <h2>📚 Real-World Applications</h2>
+  <ul>
+    <li>Functions are used for reusable code blocks (e.g., calculating totals in shopping carts).</li>
+    <li>Closures power private variables in JavaScript libraries.</li>
+    <li>Arrow functions are widely used in callbacks (event listeners, promises).</li>
+    <li>IIFEs are used in older JavaScript to prevent global variable pollution.</li>
+    <li>Scope control ensures variables don’t overwrite each other.</li>
+  </ul>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li>Functions allow reusable and modular code.</li>
+    <li>Parameters can have defaults and rest operators.</li>
+    <li>Scope determines variable accessibility: global, function, block.</li>
+    <li>Closures enable functions to remember their lexical environment.</li>
+    <li>Arrow functions are concise but handle <code>this</code> differently.</li>
+    <li>IIFEs create isolated scopes.</li>
+  </ul>
+
+  <p>
+    🎉 Congratulations! You now have a deep understanding of 
+    <strong>Functions & Scope</strong> in JavaScript.  
+    Next up: <strong>Lesson 11: Objects in Depth (Prototypes & Methods)</strong>.
+  </p>
+</article>
+
+    `},{title: "Objects in Depth", content: `<article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>⚡ Introduction</h2>
+  <p>
+    In JavaScript, <strong>objects</strong> are one of the most powerful 
+    and flexible data structures. They are used to represent real-world entities 
+    such as users, cars, or bank accounts. An object is essentially a collection 
+    of <em>key-value pairs</em>, where the keys are called <strong>properties</strong> 
+    and the values can be anything: numbers, strings, arrays, functions, or even 
+    other objects.
+  </p>
+  <p>
+    In this lesson, we’ll dive deeper into objects and cover:
+  </p>
+  <ul>
+    <li>Property descriptors</li>
+    <li>Methods and <code>this</code></li>
+    <li>Object copying and merging</li>
+    <li>Prototypes and inheritance</li>
+    <li>Built-in object methods</li>
+  </ul>
+
+  <h2>📌 Object Methods & The <code>this</code> Keyword</h2>
+  <p>
+    Functions stored as object properties are called <strong>methods</strong>. 
+    When invoked, they often need to access the object itself. This is where 
+    <code>this</code> comes into play.
+  </p>
+
+
+};
+person.greet(); // Hello, my name is Alice
+</code></pre>
+
+  <p>
+    Here, <code>this</code> refers to the object that called the method.
+  </p>
+
+  <h3>Arrow Functions & <code>this</code></h3>
+  <p>
+    Arrow functions do not bind their own <code>this</code>; 
+    they inherit it from the surrounding scope.
+  </p>
+};
+user.greet(); // undefined
+</code></pre>
+
+  <p>
+    In this case, <code>this</code> is not the object, but the 
+    outer scope (likely <code>window</code> in browsers).
+  </p>
+
+  <h2>🔑 Property Descriptors</h2>
+  <p>
+    Every property in an object has metadata called a 
+    <strong>property descriptor</strong>. We can use 
+    <code>Object.getOwnPropertyDescriptor()</code> to inspect it.
+  </p>
+
+  <pre><code>const car = { brand: "Toyota" };
+console.log(Object.getOwnPropertyDescriptor(car, "brand"));
+/* 
+{
+  value: "Toyota",
+  writable: true,
+  enumerable: true,
+  configurable: true
+}
+*/</code></pre>
+
+  <h3>Defining Properties</h3>
+  <pre><code>Object.defineProperty(car, "year", {
+  value: 2025,
+  writable: false,
+  enumerable: false,
+  configurable: false
+});
+console.log(car.year); // 2025
+car.year = 2030; // ❌ No effect, not writable
+</code></pre>
+
+  <ul>
+    <li><strong>writable</strong>: Can the value be changed?</li>
+    <li><strong>enumerable</strong>: Will it appear in loops?</li>
+    <li><strong>configurable</strong>: Can the property be deleted or modified?</li>
+  </ul>
+
+  <h2>📦 Object Copying & Merging</h2>
+  <h3>Shallow Copy with Object.assign()</h3>
+  <pre><code>const obj1 = { a: 1 };
+const obj2 = { b: 2 };
+const merged = Object.assign({}, obj1, obj2);
+console.log(merged); // { a: 1, b: 2 }</code></pre>
+
+  <h3>Spread Operator</h3>
+  <pre><code>const combined = { ...obj1, ...obj2 };
+console.log(combined); // { a: 1, b: 2 }</code></pre>
+
+  <h3>Deep Copy Issue</h3>
+  <pre><code>const nested = { a: { b: 1 } };
+const copy = { ...nested };
+copy.a.b = 2;
+console.log(nested.a.b); // 2 (both reference same object)
+</code></pre>
+
+  <p>
+    To truly deep copy, you need libraries like <code>Lodash</code> 
+    or structuredClone in modern JS:
+  </p>
+  <pre><code>const deepCopy = structuredClone(nested);</code></pre>
+
+  <h2>🌀 Prototypes & Inheritance</h2>
+  <p>
+    JavaScript uses <strong>prototypal inheritance</strong>. 
+    Each object has an internal link to another object called its 
+    <strong>prototype</strong>. When you try to access a property 
+    that doesn’t exist on the object, JavaScript looks up the chain.
+  </p>
+
+  <h3>Prototype Example</h3>
+  <pre><code>const animal = {
+  eats: true
+};
+
+const dog = Object.create(animal);
+dog.barks = true;
+
+console.log(dog.eats); // true (inherited)
+console.log(dog.barks); // true</code></pre>
+
+  <h3>Functions & Prototypes</h3>
+  <p>
+    Every function in JavaScript has a <code>prototype</code> property 
+    that is used when creating objects with <code>new</code>.
+  </p>
+
+  <pre><code>function Person(name) {
+  this.name = name;
+}
+
+
+const alice = new Person("Alice");
+alice.sayHi(); // Hi, I’m Alice
+</code></pre>
+
+  <h2>🏗️ Classes (Syntactic Sugar)</h2>
+  <p>
+    ES6 introduced <strong>classes</strong>, which are cleaner 
+    syntax for constructor functions and prototypes.
+  </p>
+
+  <pre><code>class Animal {
+  constructor(name) {
+    this.name = name;
+  }
+
+
+}
+}
+
+const d = new Dog("Rex");
+d.speak(); // Rex barks.
+</code></pre>
+
+  <h2>📚 Built-in Object Methods</h2>
+  <ul>
+    <li><code>Object.keys(obj)</code> → array of property names</li>
+    <li><code>Object.values(obj)</code> → array of property values</li>
+    <li><code>Object.entries(obj)</code> → array of [key, value] pairs</li>
+    <li><code>Object.freeze(obj)</code> → makes object immutable</li>
+    <li><code>Object.seal(obj)</code> → prevents adding/removing props but allows modification</li>
+  </ul>
+
+  <pre><code>const book = { title: "JS Guide", pages: 300 };
+console.log(Object.keys(book));   // ["title", "pages"]
+console.log(Object.values(book)); // ["JS Guide", 300]
+console.log(Object.entries(book)); // [["title","JS Guide"],["pages",300]]</code></pre>
+
+  <h2>🧩 Object Iteration</h2>
+  <pre><code>const obj = { a: 1, b: 2, c: 3 };
+
+// for...in loop
+for (let key in obj) {
+  console.log(key, obj[key]);
+}
+
+// Object.keys
+Object.keys(obj).forEach(key => {
+  console.log(key, obj[key]);
+});
+</code></pre>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Create an object <code>student</code> with properties and a method <code>introduce()</code>.</li>
+    <li>Use <code>Object.defineProperty</code> to create a non-writable property.</li>
+    <li>Demonstrate shallow copy vs deep copy using nested objects.</li>
+    <li>Implement a constructor function <code>Car</code> and add a method via prototype.</li>
+    <li>Create a <code>Shape</code> class with subclasses <code>Circle</code> and <code>Square</code>.</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li>Objects can have methods and use <code>this</code> for self-reference.</li>
+    <li>Property descriptors control <code>writable</code>, <code>enumerable</code>, and <code>configurable</code>.</li>
+    <li>Shallow copy copies only top-level, deep copy clones nested objects.</li>
+    <li>Prototypal inheritance allows sharing of methods and properties.</li>
+    <li>ES6 classes provide a modern, cleaner syntax for prototypes.</li>
+    <li>Built-in methods like <code>Object.keys</code>, <code>Object.values</code>, and <code>Object.entries</code> simplify object handling.</li>
+  </ul>
+
+  <p>
+    🎉 Congratulations! You now understand JavaScript objects at a deeper level.  
+    Next up: <strong>Lesson 12: Arrays in Depth (Advanced Methods & Iteration)</strong>.
+  </p>
+</article>
+
+    `},{title: "DOM Manipulation (Part 1)", content: `<article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>⚡ Introduction</h2>
+  <p>
+    JavaScript becomes truly powerful when it interacts with the <strong>DOM</strong> 
+    (Document Object Model). The DOM represents the structure of your web page as a tree 
+    of objects. Every tag you write in HTML – such as <code>&lt;h1&gt;</code>, 
+    <code>&lt;p&gt;</code>, <code>&lt;div&gt;</code>, or <code>&lt;button&gt;</code> – 
+    becomes a node in this tree, which JavaScript can access and manipulate.
+  </p>
+  <p>
+    DOM Manipulation is the foundation of building dynamic, interactive websites. In this 
+    lesson, we’ll cover:
+  </p>
+  <ul>
+    <li>How the DOM works</li>
+    <li>Different ways to select elements</li>
+    <li>Modifying content with <code>innerHTML</code> and <code>textContent</code></li>
+    <li>Best practices and performance considerations</li>
+  </ul>
+
+  <h2>📖 The DOM in a Nutshell</h2>
+  <p>
+    The DOM is like a live map of your webpage. Imagine your HTML:
+  </p>
+
+  <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;h1 id="title"&gt;Hello, World!&lt;/h1&gt;
+    &lt;p class="intro"&gt;This is an example paragraph.&lt;/p&gt;
+    &lt;button&gt;Click Me&lt;/button&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+  <p>
+    In the DOM, the above page is represented as a tree of nodes: 
+    the <code>html</code> element contains <code>body</code>, which contains 
+    <code>h1</code>, <code>p</code>, and <code>button</code>. Each is accessible 
+    through JavaScript.
+  </p>
+
+  <h2>🔎 Selecting Elements</h2>
+  <p>
+    The first step in DOM manipulation is selecting elements. JavaScript provides 
+    several methods:
+  </p>
+
+  <h3>1. <code>getElementById()</code></h3>
+  <p>Used to select an element by its unique <code>id</code>.</p>
+  <pre><code>const heading = document.getElementById("title");
+console.log(heading); // &lt;h1 id="title"&gt;Hello, World!&lt;/h1&gt;
+</code></pre>
+
+  <h3>2. <code>getElementsByClassName()</code></h3>
+  <p>Selects elements by class name. Returns an <strong>HTMLCollection</strong> (array-like).</p>
+  <pre><code>const paragraphs = document.getElementsByClassName("intro");
+console.log(paragraphs[0]); // &lt;p class="intro"&gt;This is an example paragraph.&lt;/p&gt;
+</code></pre>
+
+  <h3>3. <code>getElementsByTagName()</code></h3>
+  <p>Selects all elements with a given tag name.</p>
+  <pre><code>const buttons = document.getElementsByTagName("button");
+console.log(buttons.length); // 1
+</code></pre>
+
+  <h3>4. <code>querySelector()</code></h3>
+  <p>
+    Selects the <em>first matching element</em> using CSS selectors.
+  </p>
+  <pre><code>const firstParagraph = document.querySelector(".intro");
+console.log(firstParagraph); // The first &lt;p&gt; with class "intro"
+</code></pre>
+
+  <h3>5. <code>querySelectorAll()</code></h3>
+  <p>
+    Selects <em>all matching elements</em> as a <strong>NodeList</strong>.
+  </p>
+  <pre><code>const allParagraphs = document.querySelectorAll("p");
+allParagraphs.forEach(p =&gt; console.log(p.textContent));
+</code></pre>
+
+  <h3>⚠️ Difference between HTMLCollection and NodeList</h3>
+  <ul>
+    <li><strong>HTMLCollection</strong> → Live, updates automatically if the DOM changes.</li>
+    <li><strong>NodeList</strong> → Static, does not auto-update.</li>
+  </ul>
+
+  <h2>✏️ Modifying Content</h2>
+  <p>
+    Once an element is selected, we can modify its content. Two primary properties are:
+    <code>innerHTML</code> and <code>textContent</code>.
+  </p>
+
+  <h3>1. <code>innerHTML</code></h3>
+  <p>
+    Allows you to set or get the HTML inside an element.
+  </p>
+  <pre><code>const div = document.querySelector("div");
+div.innerHTML = "&lt;h2&gt;New Heading&lt;/h2&gt;&lt;p&gt;This is new text.&lt;/p&gt;";
+</code></pre>
+
+  <p>
+    ⚠️ Be careful: <code>innerHTML</code> parses and renders HTML, 
+    which makes it powerful but also vulnerable to <strong>XSS attacks</strong> 
+    if you insert user-provided content.
+  </p>
+
+  <h3>2. <code>textContent</code></h3>
+  <p>
+    Works similarly but only sets/gets <em>plain text</em>, ignoring HTML tags.
+  </p>
+  <pre><code>const heading = document.getElementById("title");
+heading.textContent = "&lt;b&gt;Safe Text&lt;/b&gt;";
+console.log(heading.innerHTML); // &amp;lt;b&amp;gt;Safe Text&amp;lt;/b&amp;gt;
+</code></pre>
+
+  <p>
+    Here, the tags are displayed literally instead of being parsed.
+  </p>
+
+  <h2>📚 Example: Building a Simple Editor</h2>
+  <p>
+    Let’s build a mini example where we change text dynamically:
+  </p>
+
+  <pre><code>&lt;h1 id="heading"&gt;Hello&lt;/h1&gt;
+&lt;button id="btn"&gt;Change&lt;/button&gt;
+
+&lt;script&gt;
+  const btn = document.getElementById("btn");
+  const heading = document.getElementById("heading");
+
+  btn.addEventListener("click", () =&gt; {
+    heading.innerHTML = "&lt;span style='color:red'&gt;Text Changed!&lt;/span&gt;";
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <p>
+    Here, clicking the button replaces the heading’s content with styled HTML.
+  </p>
+
+  <h2>🏗️ Best Practices</h2>
+  <ul>
+    <li>Prefer <code>textContent</code> for inserting text (safer).</li>
+    <li>Use <code>innerHTML</code> only when you need to insert HTML markup.</li>
+    <li>Use <code>querySelector</code> and <code>querySelectorAll</code> for flexibility.</li>
+    <li>Avoid excessive DOM lookups – store selected elements in variables.</li>
+  </ul>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Create a page with a heading and button. On button click, change the heading text using <code>textContent</code>.</li>
+    <li>Build a list (<code>&lt;ul&gt;</code>) and dynamically replace its items using <code>innerHTML</code>.</li>
+    <li>Use <code>querySelectorAll</code> to select all paragraphs and change their text color.</li>
+    <li>Experiment with <code>getElementById</code> vs <code>querySelector</code>.</li>
+    <li>Show the difference between <code>innerHTML</code> and <code>textContent</code> in the same example.</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li>The DOM represents your HTML as a tree of objects.</li>
+    <li>You can select elements using <code>getElementById</code>, <code>getElementsByClassName</code>, <code>querySelector</code>, etc.</li>
+    <li><code>innerHTML</code> lets you insert HTML markup, but can be unsafe if misused.</li>
+    <li><code>textContent</code> is safer and should be preferred when working with plain text.</li>
+    <li>DOM manipulation is the core of dynamic, interactive web pages.</li>
+  </ul>
+
+  <p>
+    🎉 Congratulations! You’ve completed <strong>Part 1 of DOM Manipulation</strong>.  
+    In the next lesson (Part 2), we’ll cover <strong>creating/removing elements, attributes, and classes</strong>.
+  </p>
+</article>
+
+    `},{title: " DOM Manipulation (Part 2)", content: `
+     <article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>⚡ Introduction</h2>
+  <p>
+    In the last lesson, we explored how to <strong>select elements</strong> and 
+    change their content using <code>innerHTML</code> and <code>textContent</code>. 
+    Now we’ll take DOM manipulation further by learning how to 
+    <strong>create new elements, remove existing ones, modify attributes, and 
+    control classes</strong>.
+  </p>
+  <p>
+    This lesson is crucial because most dynamic web applications – from to-do lists 
+    to e-commerce carts – rely on adding and removing elements in real-time. 
+  </p>
+
+  <h2>🛠️ Creating Elements</h2>
+  <p>
+    JavaScript lets us create new elements dynamically using 
+    <code>document.createElement()</code>.
+  </p>
+
+  <pre><code>// Create a new &lt;p&gt; element
+const newParagraph = document.createElement("p");
+
+// Add text to it
+newParagraph.textContent = "This is a dynamically created paragraph.";
+
+// Append to body
+document.body.appendChild(newParagraph);
+</code></pre>
+
+  <p>
+    The new paragraph will appear at the end of the page. Notice we used 
+    <code>appendChild()</code> to attach it to the DOM.
+  </p>
+
+  <h3>📌 Inserting at Specific Locations</h3>
+  <p>Besides <code>appendChild</code>, we have other methods:</p>
+  <ul>
+    <li><code>prepend()</code> → Adds element as the <em>first child</em></li>
+    <li><code>before()</code> → Inserts element <em>before</em> a node</li>
+    <li><code>after()</code> → Inserts element <em>after</em> a node</li>
+    <li><code>replaceWith()</code> → Replaces an existing node</li>
+  </ul>
+
+  <pre><code>const container = document.querySelector("#container");
+const newDiv = document.createElement("div");
+newDiv.textContent = "Inserted at the beginning!";
+container.prepend(newDiv);
+
+const anotherDiv = document.createElement("div");
+anotherDiv.textContent = "Inserted after container!";
+container.after(anotherDiv);
+</code></pre>
+
+  <h2>🗑️ Removing Elements</h2>
+  <p>
+    Sometimes, we need to remove elements from the DOM. We can use:
+  </p>
+  <ul>
+    <li><code>remove()</code> → Deletes the element itself</li>
+    <li><code>removeChild()</code> → Deletes a child from its parent</li>
+  </ul>
+
+  <pre><code>const paragraph = document.querySelector("p");
+paragraph.remove(); // Removes the paragraph
+
+const parent = document.querySelector("#list");
+const firstItem = parent.firstElementChild;
+parent.removeChild(firstItem); // Removes first child
+</code></pre>
+
+  <h2>🔑 Working with Attributes</h2>
+  <p>
+    HTML elements often have attributes (like <code>src</code>, <code>href</code>, 
+    <code>alt</code>, etc.). JavaScript gives us multiple ways to read and modify them.
+  </p>
+
+  <h3>1. <code>setAttribute()</code></h3>
+  <pre><code>const link = document.querySelector("a");
+link.setAttribute("href", "https://www.example.com");
+link.setAttribute("target", "_blank");
+</code></pre>
+
+  <h3>2. <code>getAttribute()</code></h3>
+  <pre><code>console.log(link.getAttribute("href")); // https://www.example.com
+</code></pre>
+
+  <h3>3. <code>removeAttribute()</code></h3>
+  <pre><code>link.removeAttribute("target");
+</code></pre>
+
+  <h3>4. Direct Property Access</h3>
+  <p>
+    Many attributes can be accessed directly as properties:
+  </p>
+  <pre><code>const image = document.querySelector("img");
+image.src = "new-image.jpg"; // Same as setAttribute("src", "new-image.jpg")
+</code></pre>
+
+  <h2>🎨 Working with Classes</h2>
+  <p>
+    Classes are critical for styling and functionality. JavaScript provides 
+    <code>classList</code> to manage classes easily.
+  </p>
+
+  <h3>1. <code>add()</code></h3>
+  <pre><code>const box = document.querySelector("#box");
+box.classList.add("highlight");
+</code></pre>
+
+  <h3>2. <code>remove()</code></h3>
+  <pre><code>box.classList.remove("highlight");
+</code></pre>
+
+  <h3>3. <code>toggle()</code></h3>
+  <p>
+    Adds the class if it doesn’t exist, removes it if it does.
+  </p>
+  <pre><code>box.classList.toggle("hidden");
+</code></pre>
+
+  <h3>4. <code>contains()</code></h3>
+  <p>
+    Checks if a class exists.
+  </p>
+  <pre><code>if (box.classList.contains("highlight")) {
+  console.log("Box is highlighted!");
+}
+</code></pre>
+
+  <h2>📚 Example: To-Do List App (Mini Project)</h2>
+  <p>
+    Let’s apply what we learned by creating a basic to-do list that lets users add 
+    and remove tasks.
+  </p>
+
+  <pre><code>&lt;input type="text" id="taskInput" placeholder="Enter task"&gt;
+&lt;button id="addBtn"&gt;Add Task&lt;/button&gt;
+&lt;ul id="taskList"&gt;&lt;/ul&gt;
+
+&lt;script&gt;
+  const input = document.getElementById("taskInput");
+  const button = document.getElementById("addBtn");
+  const list = document.getElementById("taskList");
+
+  button.addEventListener("click", () =&gt; {
+    if (input.value.trim() !== "") {
+      const li = document.createElement("li");
+      li.textContent = input.value;
+
+      const removeBtn = document.createElement("button");
+      removeBtn.textContent = "❌";
+      removeBtn.addEventListener("click", () =&gt; {
+        li.remove();
+      });
+
+      li.appendChild(removeBtn);
+      list.appendChild(li);
+
+      input.value = "";
+    }
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <p>
+    This simple app lets you:
+  </p>
+  <ul>
+    <li>Create new <code>&lt;li&gt;</code> items dynamically.</li>
+    <li>Attach <code>button</code> elements to each task.</li>
+    <li>Remove items by clicking the ❌ button.</li>
+  </ul>
+
+  <h2>🏗️ Best Practices</h2>
+  <ul>
+    <li>Use <code>classList</code> instead of modifying <code>className</code> directly.</li>
+    <li>Use <code>textContent</code> instead of <code>innerHTML</code> when inserting user input.</li>
+    <li>Detach event listeners before removing nodes if needed (for performance).</li>
+    <li>Minimize DOM manipulation inside loops – batch changes when possible.</li>
+  </ul>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Create a new button dynamically and insert it into a <code>&lt;div&gt;</code>.</li>
+    <li>Build a gallery where clicking "Add Image" appends a new <code>&lt;img&gt;</code> element.</li>
+    <li>Write a script to toggle a dark mode class on the <code>&lt;body&gt;</code>.</li>
+    <li>Create a form that dynamically adds a list of submitted names.</li>
+    <li>Experiment with <code>setAttribute</code> vs direct property assignment.</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li><code>document.createElement()</code> lets you create new elements.</li>
+    <li>Use <code>appendChild</code>, <code>prepend</code>, <code>before</code>, 
+        and <code>after</code> to insert elements.</li>
+    <li><code>remove()</code> and <code>removeChild()</code> delete nodes.</li>
+    <li><code>setAttribute</code>, <code>getAttribute</code>, and <code>removeAttribute</code> 
+        manage element attributes.</li>
+    <li><code>classList</code> provides methods to add, remove, toggle, and check classes.</li>
+    <li>Dynamic apps rely on these methods for real-time interactivity.</li>
+  </ul>
+
+  <p>
+    🎉 Congratulations! You’ve now mastered <strong>DOM Manipulation Part 2</strong>.  
+    Next, we’ll explore <strong>Events in JavaScript</strong> – how to listen to user actions 
+    like clicks, keyboard presses, and more.
+  </p>
+</article>
+
+    `},{title: "Events in JavaScript", content: `<article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>⚡ Introduction</h2>
+  <p>
+    Events are at the heart of web interactivity. An <strong>event</strong> is an action
+    or occurrence recognized by the browser, such as a user clicking a button,
+    pressing a key, resizing the window, or submitting a form.
+  </p>
+  <p>
+    Without events, your website is static. With events, you can make it 
+    <strong>responsive to user actions</strong> — like showing a popup when a button is
+    clicked, validating a form when it’s submitted, or changing styles when the mouse
+    hovers over an element.
+  </p>
+
+  <h2>📖 Types of Events in JavaScript</h2>
+  <p>Here are the most common categories of events:</p>
+  <ul>
+    <li><strong>Mouse Events</strong> – <code>click</code>, <code>dblclick</code>, <code>mouseover</code>, <code>mouseout</code>, <code>mousemove</code></li>
+    <li><strong>Keyboard Events</strong> – <code>keydown</code>, <code>keyup</code>, <code>keypress</code></li>
+    <li><strong>Form Events</strong> – <code>submit</code>, <code>change</code>, <code>input</code>, <code>focus</code>, <code>blur</code></li>
+    <li><strong>Window Events</strong> – <code>load</code>, <code>resize</code>, <code>scroll</code></li>
+    <li><strong>Clipboard Events</strong> – <code>copy</code>, <code>cut</code>, <code>paste</code></li>
+  </ul>
+
+  <h2>🖱️ Mouse Events Example</h2>
+  <pre><code>&lt;button id="btn"&gt;Click Me&lt;/button&gt;
+
+&lt;script&gt;
+  const btn = document.getElementById("btn");
+
+  btn.addEventListener("click", () =&gt; {
+    alert("Button clicked!");
+  });
+
+  btn.addEventListener("mouseover", () =&gt; {
+    console.log("Mouse is over the button");
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <h2>⌨️ Keyboard Events Example</h2>
+  <pre><code>&lt;input type="text" id="name" placeholder="Type your name"&gt;
+
+&lt;script&gt;
+  const input = document.getElementById("name");
+
+  input.addEventListener("keydown", (event) =&gt; {
+    console.log("Key pressed:", event.key);
+  });
+
+  input.addEventListener("keyup", (event) =&gt; {
+    console.log("Key released:", event.key);
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <h2>📄 Form Events Example</h2>
+  <pre><code>&lt;form id="myForm"&gt;
+    &lt;input type="text" name="username" required&gt;
+    &lt;button type="submit"&gt;Submit&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;script&gt;
+  const form = document.getElementById("myForm");
+
+  form.addEventListener("submit", (event) =&gt; {
+    event.preventDefault(); // Prevent page reload
+    alert("Form submitted!");
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <h2>📐 Window Events Example</h2>
+  <pre><code>&lt;script&gt;
+  window.addEventListener("resize", () =&gt; {
+    console.log("Window resized:", window.innerWidth, "x", window.innerHeight);
+  });
+
+  window.addEventListener("scroll", () =&gt; {
+    console.log("Scrolled at:", window.scrollY);
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <h2>📌 Adding Event Listeners</h2>
+  <p>There are three main ways to attach events:</p>
+
+  <h3>1. Inline HTML Attribute</h3>
+  <pre><code>&lt;button onclick="alert('Clicked!')"&gt;Click&lt;/button&gt;</code></pre>
+  <p>⚠️ Not recommended (mixes HTML and JS).</p>
+
+  <h3>2. Assigning to an Element’s Property</h3>
+  <pre><code>const btn = document.getElementById("btn");
+btn.onclick = () =&gt; {
+  alert("Clicked!");
+};
+</code></pre>
+
+  <h3>3. <code>addEventListener()</code> (Best Practice)</h3>
+  <pre><code>btn.addEventListener("click", () =&gt; {
+  alert("Clicked with addEventListener!");
+});
+</code></pre>
+
+  <p>
+    ✅ <code>addEventListener</code> is preferred because it allows multiple handlers 
+    and better control.
+  </p>
+
+  <h2>📊 Event Object</h2>
+  <p>
+    When an event occurs, JavaScript automatically passes an <strong>event object</strong>
+    containing information about the event.
+  </p>
+
+  <pre><code>btn.addEventListener("click", (event) =&gt; {
+  console.log("Event type:", event.type);
+  console.log("Target element:", event.target);
+});
+</code></pre>
+
+  <p>
+    Useful properties:
+  </p>
+  <ul>
+    <li><code>event.type</code> – Type of event (e.g., "click")</li>
+    <li><code>event.target</code> – The element that triggered the event</li>
+    <li><code>event.key</code> – Key pressed (for keyboard events)</li>
+    <li><code>event.clientX / clientY</code> – Mouse coordinates</li>
+  </ul>
+
+  <h2>🎯 Event Bubbling and Capturing</h2>
+  <p>
+    Events flow through the DOM in two phases: <strong>capturing</strong> (down) and
+    <strong>bubbling</strong> (up).
+  </p>
+
+  <pre><code>&lt;div id="outer"&gt;
+  &lt;button id="inner"&gt;Click&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  const outer = document.getElementById("outer");
+  const inner = document.getElementById("inner");
+
+  outer.addEventListener("click", () =&gt; {
+    console.log("Outer div clicked (bubbling)");
+  });
+
+  inner.addEventListener("click", () =&gt; {
+    console.log("Button clicked");
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <p>
+    By default, events use <strong>bubbling</strong>, meaning they start at the target
+    and bubble up to ancestors. You can enable <strong>capturing</strong> by passing 
+    <code>true</code> as the third argument in <code>addEventListener</code>.
+  </p>
+
+  <h2>🧹 Removing Event Listeners</h2>
+  <pre><code>function sayHello() {
+  alert("Hello!");
+}
+
+btn.addEventListener("click", sayHello);
+btn.removeEventListener("click", sayHello);
+</code></pre>
+
+  <p>
+    ⚠️ To remove an event listener, you must reference the same function object — 
+    anonymous functions cannot be removed this way.
+  </p>
+
+  <h2>📚 Example: Interactive Color Changer</h2>
+  <pre><code>&lt;button id="red"&gt;Red&lt;/button&gt;
+&lt;button id="blue"&gt;Blue&lt;/button&gt;
+&lt;div id="box" style="width:100px; height:100px; background:gray;"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  const box = document.getElementById("box");
+
+  document.getElementById("red").addEventListener("click", () =&gt; {
+    box.style.background = "red";
+  });
+
+  document.getElementById("blue").addEventListener("click", () =&gt; {
+    box.style.background = "blue";
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <p>
+    Now the user can click a button to change the box color dynamically.
+  </p>
+
+  <h2>🏗️ Best Practices</h2>
+  <ul>
+    <li>Always use <code>addEventListener</code> instead of inline events.</li>
+    <li>Remove listeners if they’re no longer needed (to avoid memory leaks).</li>
+    <li>Use event delegation (listen on parent, check <code>event.target</code>) for lists or tables.</li>
+    <li>Always prevent default behavior (e.g., form submission) when handling events manually.</li>
+  </ul>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Create a button that logs “Button clicked” when pressed.</li>
+    <li>Make an input field that shows the current typed text in real time.</li>
+    <li>Create a form and prevent it from reloading the page on submit.</li>
+    <li>Write code to change the background color when the window is resized.</li>
+    <li>Experiment with bubbling vs capturing on nested elements.</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li>Events represent user actions or browser actions.</li>
+    <li>Types include mouse, keyboard, form, window, and clipboard events.</li>
+    <li><code>addEventListener</code> is the best way to attach handlers.</li>
+    <li>The event object provides useful info like type, target, and key.</li>
+    <li>Understand bubbling vs capturing for complex event handling.</li>
+  </ul>
+
+  <p>
+    🎉 Congratulations! You’ve learned <strong>Events in JavaScript</strong>.  
+    In the next lesson, we’ll dive into <strong>Forms & Validation</strong> — 
+    where you’ll learn to handle user input securely and effectively.
+  </p>
+</article>
+
+    `},{title: "Forms & Validation", content: `<article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>📖 Introduction</h2>
+  <p>
+    Forms are the backbone of web interactivity. From signing up on a website,
+    logging in, or making a payment, almost every site uses forms to collect user
+    data. But collecting data isn’t enough — we must also <strong>validate</strong> it.
+  </p>
+  <p>
+    <strong>Form validation</strong> ensures that users enter data in the correct format
+    (like a proper email address, non-empty fields, valid passwords, etc.) before the
+    form is submitted. This prevents errors, improves user experience, and protects
+    your website from bad data.
+  </p>
+
+  <h2>📝 HTML Form Basics</h2>
+  <p>
+    Before using JavaScript, let’s recall how an HTML form looks:
+  </p>
+
+  <pre><code>&lt;form id="signupForm"&gt;
+  &lt;label&gt;Username: &lt;input type="text" id="username" required&gt;&lt;/label&gt;&lt;br&gt;
+  &lt;label&gt;Email: &lt;input type="email" id="email" required&gt;&lt;/label&gt;&lt;br&gt;
+  &lt;label&gt;Password: &lt;input type="password" id="password" required&gt;&lt;/label&gt;&lt;br&gt;
+  &lt;button type="submit"&gt;Sign Up&lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
+
+  <p>
+    The <code>required</code> attribute in HTML5 already provides basic validation, but
+    JavaScript allows us to <strong>customize rules</strong> and give real-time feedback.
+  </p>
+
+  <h2>⚡ Adding JavaScript Validation</h2>
+  <p>
+    To handle form submission, we can use the <code>submit</code> event and prevent the
+    default page reload:
+  </p>
+
+  <pre><code>&lt;script&gt;
+  const form = document.getElementById("signupForm");
+
+  form.addEventListener("submit", (event) =&gt; {
+    event.preventDefault(); // Stop form from submitting
+    console.log("Form submitted, now validating...");
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <h2>✅ Common Validation Rules</h2>
+  <ul>
+    <li><strong>Required fields</strong> – no empty input allowed.</li>
+    <li><strong>Email validation</strong> – must match email format.</li>
+    <li><strong>Password strength</strong> – minimum length, special characters.</li>
+    <li><strong>Confirm password</strong> – must match password.</li>
+    <li><strong>Number ranges</strong> – e.g., age between 18 and 100.</li>
+  </ul>
+
+  <h2>👤 Example: Username Validation</h2>
+  <p>Ensure the username isn’t empty and has at least 3 characters:</p>
+
+  <pre><code>&lt;script&gt;
+  const username = document.getElementById("username");
+
+  function validateUsername() {
+    if (username.value.trim().length &lt; 3) {
+      alert("Username must be at least 3 characters");
+      return false;
+    }
+    return true;
+  }
+
+  form.addEventListener("submit", (event) =&gt; {
+    event.preventDefault();
+    if (validateUsername()) {
+      alert("Form submitted successfully!");
+    }
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <h2>📧 Example: Email Validation</h2>
+  <p>Use a regex (regular expression) to check if the email looks valid:</p>
+
+  <pre><code>&lt;script&gt;
+  const email = document.getElementById("email");
+
+  function validateEmail() {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(email.value)) {
+      alert("Enter a valid email address");
+      return false;
+    }
+    return true;
+  }
+
+  form.addEventListener("submit", (event) =&gt; {
+    event.preventDefault();
+    if (validateEmail()) {
+      alert("Email looks good!");
+    }
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <h2>🔑 Example: Password Strength</h2>
+  <p>
+    Let’s ensure the password is at least 6 characters long and contains one number:
+  </p>
+
+  <pre><code>&lt;script&gt;
+  const password = document.getElementById("password");
+
+  function validatePassword() {
+    const regex = /^(?=.*[0-9]).{6,}$/;
+    if (!regex.test(password.value)) {
+      alert("Password must be at least 6 characters and include a number");
+      return false;
+    }
+    return true;
+  }
+
+  form.addEventListener("submit", (event) =&gt; {
+    event.preventDefault();
+    if (validatePassword()) {
+      alert("Password is valid!");
+    }
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <h2>🖊️ Real-Time Validation</h2>
+  <p>
+    Instead of validating only on submit, we can validate as the user types with
+    <code>input</code> or <code>keyup</code> events.
+  </p>
+
+  <pre><code>&lt;script&gt;
+  username.addEventListener("input", () =&gt; {
+    if (username.value.length &lt; 3) {
+      username.style.borderColor = "red";
+    } else {
+      username.style.borderColor = "green";
+    }
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <p>
+    ✅ This gives immediate feedback, improving the user experience.
+  </p>
+
+  <h2>⚖️ Combining Multiple Validations</h2>
+  <p>
+    Typically, you validate multiple fields before allowing submission:
+  </p>
+
+  <pre><code>&lt;script&gt;
+  function validateForm() {
+    return validateUsername() &amp;&amp; validateEmail() &amp;&amp; validatePassword();
+  }
+
+  form.addEventListener("submit", (event) =&gt; {
+    event.preventDefault();
+    if (validateForm()) {
+      alert("Form submitted successfully!");
+    }
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <h2>🧹 Cleaning Error Messages</h2>
+  <p>
+    Instead of using <code>alert()</code>, display inline error messages:
+  </p>
+
+  <pre><code>&lt;div id="errorMsg" style="color:red"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  function showError(message) {
+    document.getElementById("errorMsg").textContent = message;
+  }
+
+  function validateUsername() {
+    if (username.value.length &lt; 3) {
+      showError("Username too short!");
+      return false;
+    }
+    showError("");
+    return true;
+  }
+&lt;/script&gt;
+</code></pre>
+
+  <h2>📚 Example: Full Signup Form</h2>
+  <pre><code>&lt;form id="signupForm"&gt;
+  &lt;input type="text" id="username" placeholder="Username"&gt;&lt;br&gt;
+  &lt;input type="email" id="email" placeholder="Email"&gt;&lt;br&gt;
+  &lt;input type="password" id="password" placeholder="Password"&gt;&lt;br&gt;
+  &lt;div id="errorMsg" style="color:red"&gt;&lt;/div&gt;
+  &lt;button type="submit"&gt;Sign Up&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;script&gt;
+  function validateForm() {
+    return validateUsername() &amp;&amp; validateEmail() &amp;&amp; validatePassword();
+  }
+
+  form.addEventListener("submit", (event) =&gt; {
+    event.preventDefault();
+    if (validateForm()) {
+      alert("Welcome, " + username.value + "!");
+    }
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <h2>🔒 Client-Side vs Server-Side Validation</h2>
+  <ul>
+    <li><strong>Client-side validation</strong> (with JavaScript) gives instant feedback and improves UX.</li>
+    <li><strong>Server-side validation</strong> is still required for security, as JavaScript can be bypassed.</li>
+    <li>Best practice: <strong>use both</strong> for safety and usability.</li>
+  </ul>
+
+  <h2>🏗️ Best Practices</h2>
+  <ul>
+    <li>Use both client-side and server-side validation.</li>
+    <li>Keep error messages clear and user-friendly.</li>
+    <li>Don’t rely solely on regex for complex validations (e.g., strong passwords).</li>
+    <li>Use real-time validation where possible.</li>
+    <li>Always sanitize and validate input on the server to prevent security issues (like SQL injection).</li>
+  </ul>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Create a form with username, email, and password, and validate each field.</li>
+    <li>Add a confirm password field and ensure it matches the original password.</li>
+    <li>Validate a phone number to ensure it’s exactly 10 digits.</li>
+    <li>Prevent form submission if any field is invalid, with inline error messages.</li>
+    <li>Enhance the form with real-time validation feedback.</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li>Forms collect user input; validation ensures it’s correct.</li>
+    <li>JavaScript lets you validate fields like username, email, and passwords.</li>
+    <li>Real-time validation improves user experience.</li>
+    <li>Always combine client-side and server-side validation for maximum safety.</li>
+  </ul>
+
+  <p>
+    🎉 Congratulations! You’ve mastered <strong>Forms & Validation in JavaScript</strong>.  
+    In the next lesson, we’ll explore <strong>Advanced DOM Techniques</strong>, 
+    where we’ll dynamically create, update, and remove elements.
+  </p>
+</article>
+
+    `},{title: "Error Handling ", content: `<article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>⚡ Introduction</h2>
+  <p>
+    Errors happen in every program. They might occur because of user mistakes, invalid
+    input, missing files, or bugs in your code. Without proper error handling, your
+    script may stop running entirely — creating a poor user experience.
+  </p>
+  <p>
+    In JavaScript, we can use <strong>error handling techniques</strong> to manage these
+    situations gracefully. This lesson covers <code>try...catch</code>, throwing custom
+    errors, and debugging strategies.
+  </p>
+
+  <h2>🚨 Types of Errors in JavaScript</h2>
+  <ul>
+    <li><strong>Syntax Errors</strong> – Occur when code is written incorrectly (e.g., missing parenthesis).</li>
+    <li><strong>Runtime Errors</strong> – Happen during execution (e.g., calling an undefined function).</li>
+    <li><strong>Logical Errors</strong> – The code runs, but produces the wrong result.</li>
+  </ul>
+
+  <h2>🧱 The <code>try...catch</code> Statement</h2>
+  <p>
+    The <code>try...catch</code> block allows you to run code that might throw an
+    error, and handle that error without stopping execution.
+  </p>
+
+  <pre><code>&lt;script&gt;
+  try {
+    let result = 10 / x; // x is not defined
+    console.log(result);
+  } catch (error) {
+    console.error("An error occurred:", error.message);
+  }
+&lt;/script&gt;
+</code></pre>
+
+  <p>
+    Here, instead of crashing, the error is caught and logged gracefully.
+  </p>
+
+  <h2>🧹 Using <code>finally</code></h2>
+  <p>
+    The <code>finally</code> block executes no matter what — whether there was an error
+    or not. It’s often used for cleanup tasks.
+  </p>
+
+  <pre><code>&lt;script&gt;
+  try {
+    console.log("Trying risky code...");
+    throw new Error("Something went wrong!");
+  } catch (error) {
+    console.log("Caught error:", error.message);
+  } finally {
+    console.log("This always runs (cleanup, closing connections, etc.)");
+  }
+&lt;/script&gt;
+</code></pre>
+
+  <h2>💡 Throwing Your Own Errors</h2>
+  <p>
+    Sometimes, you want to signal that something went wrong by <strong>throwing a
+    custom error</strong>.
+  </p>
+
+  <pre><code>&lt;script&gt;
+  function divide(a, b) {
+    if (b === 0) {
+      throw new Error("Cannot divide by zero");
+    }
+    return a / b;
+  }
+
+  try {
+    console.log(divide(10, 0));
+  } catch (error) {
+    console.error("Custom error:", error.message);
+  }
+&lt;/script&gt;
+</code></pre>
+
+  <p>
+    ✅ Best practice: Use <code>throw</code> to create meaningful error messages for
+    invalid operations.
+  </p>
+
+  <h2>📂 Built-in Error Types</h2>
+  <p>JavaScript provides several built-in error constructors:</p>
+  <ul>
+    <li><code>Error</code> – General error.</li>
+    <li><code>SyntaxError</code> – Code syntax is invalid.</li>
+    <li><code>ReferenceError</code> – Refers to something not defined.</li>
+    <li><code>TypeError</code> – Wrong type of value (e.g., calling a number as a function).</li>
+    <li><code>RangeError</code> – Number out of range.</li>
+    <li><code>EvalError</code> – Issues with <code>eval()</code> function.</li>
+  </ul>
+
+  <h3>Example: ReferenceError</h3>
+  <pre><code>&lt;script&gt;
+  try {
+    console.log(myVar); // myVar is not defined
+  } catch (error) {
+    console.error("Caught:", error.name, "-", error.message);
+  }
+&lt;/script&gt;
+</code></pre>
+
+  <h2>🔍 Debugging in JavaScript</h2>
+  <p>
+    Debugging means finding and fixing errors in code. Common debugging techniques:
+  </p>
+  <ul>
+    <li><strong>Console Logging</strong> – Use <code>console.log()</code> to trace values.</li>
+    <li><strong>Breakpoints</strong> – Use browser DevTools (F12) to pause and inspect code.</li>
+    <li><strong>Debugger Statement</strong> – Add <code>debugger;</code> in your code to trigger a breakpoint.</li>
+  </ul>
+
+  <pre><code>&lt;script&gt;
+  function calculateArea(width, height) {
+    debugger; // Pauses execution here
+    return width * height;
+  }
+
+  console.log(calculateArea(5, 10));
+&lt;/script&gt;
+</code></pre>
+
+  <h2>🎯 Example: Validating User Input</h2>
+  <p>
+    Let’s combine error handling with input validation.
+  </p>
+
+  <pre><code>&lt;script&gt;
+  function getAgeInput(age) {
+    if (isNaN(age)) {
+      throw new TypeError("Age must be a number");
+    }
+    if (age &lt;= 0) {
+      throw new RangeError("Age must be greater than 0");
+    }
+    return age;
+  }
+
+  try {
+    console.log(getAgeInput("abc"));
+  } catch (error) {
+    console.error("Validation failed:", error.message);
+  }
+&lt;/script&gt;
+</code></pre>
+
+  <h2>⚖️ Best Practices for Error Handling</h2>
+  <ul>
+    <li>Always use <code>try...catch</code> around risky operations (like API calls).</li>
+    <li>Use <code>finally</code> to clean up resources.</li>
+    <li>Throw meaningful errors instead of generic ones.</li>
+    <li>Differentiate between error types (TypeError, ReferenceError, etc.).</li>
+    <li>Don’t overuse try...catch — only use it where errors are expected.</li>
+  </ul>
+
+  <h2>📚 Example: Fetch API with Error Handling</h2>
+  <pre><code>&lt;script&gt;
+  async function fetchData() {
+    try {
+      const response = await fetch("https://invalid.url");
+      if (!response.ok) {
+        throw new Error("HTTP error: " + response.status);
+      }
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Fetching failed:", error.message);
+    } finally {
+      console.log("Request finished (success or fail).");
+    }
+  }
+
+  fetchData();
+&lt;/script&gt;
+</code></pre>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Write a function that throws an error when dividing by zero.</li>
+    <li>Create a program that validates user input for email, throwing a custom error if invalid.</li>
+    <li>Simulate a failed API request using <code>fetch()</code> and handle it gracefully.</li>
+    <li>Use <code>debugger</code> to pause and inspect variable values in a loop.</li>
+    <li>Experiment with different built-in error types (<code>ReferenceError</code>, <code>TypeError</code>, etc.).</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li>JavaScript errors can be syntax, runtime, or logical errors.</li>
+    <li><code>try...catch</code> is the main way to handle runtime errors.</li>
+    <li><code>throw</code> lets you create custom errors.</li>
+    <li><code>finally</code> runs cleanup code regardless of errors.</li>
+    <li>Debugging tools like console, breakpoints, and <code>debugger</code> help fix bugs.</li>
+  </ul>
+
+  <p>
+    🎉 Congratulations! You’ve learned how to handle errors in JavaScript using
+    <strong>try...catch</strong>, <strong>throw</strong>, and debugging tools.  
+    In the next lesson, we’ll explore <strong>Asynchronous JavaScript – Callbacks, Promises, and Async/Await</strong>.
+  </p>
+</article>
+
+    `},{title: "ES6+ Features – Destructuring", content: `<article>
+    <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>⚡ Introduction</h2>
+  <p>
+    JavaScript has evolved significantly over the years. Before ES6 (2015), the language
+    felt clunky compared to other modern languages. ES6 and later versions added many
+    features that made code shorter, more readable, and more powerful. In this lesson,
+    we’ll focus on four core ES6+ features you’ll use daily:
+  </p>
+  <ul>
+    <li><strong>Destructuring</strong> – Extract values from arrays and objects easily.</li>
+    <li><strong>Spread and Rest operators</strong> – Flexible ways to expand or gather values.</li>
+    <li><strong>Default parameters</strong> – Provide fallback values in functions.</li>
+    <li><strong>Modules</strong> – Organize code into reusable files.</li>
+  </ul>
+
+  <h2>🔎 Destructuring Assignment</h2>
+  <p>
+    Destructuring lets you “unpack” values from arrays or properties from objects into
+    separate variables in a concise way.
+  </p>
+
+  <h3>Array Destructuring</h3>
+  <pre><code>&lt;script&gt;
+  const numbers = [10, 20, 30];
+  const [a, b, c] = numbers;
+
+  console.log(a); // 10
+  console.log(b); // 20
+  console.log(c); // 30
+&lt;/script&gt;
+</code></pre>
+
+  <p>✅ Without destructuring, you’d have to write <code>const a = numbers[0];</code>.</p>
+
+  <h4>Skipping Values</h4>
+  <pre><code>&lt;script&gt;
+  const [first, , third] = [1, 2, 3];
+  console.log(first, third); // 1 3
+&lt;/script&gt;
+</code></pre>
+
+  <h4>Using Defaults</h4>
+  <pre><code>&lt;script&gt;
+  const [x = 5, y = 10] = [7];
+  console.log(x, y); // 7 10
+&lt;/script&gt;
+</code></pre>
+
+  <h3>Object Destructuring</h3>
+  <pre><code>&lt;script&gt;
+  const person = { name: "Alice", age: 25 };
+  const { name, age } = person;
+
+  console.log(name); // Alice
+  console.log(age);  // 25
+&lt;/script&gt;
+</code></pre>
+
+  <h4>Renaming Variables</h4>
+  <pre><code>&lt;script&gt;
+  const { name: userName, age: userAge } = person;
+  console.log(userName, userAge); // Alice 25
+&lt;/script&gt;
+</code></pre>
+
+  <h4>Nested Destructuring</h4>
+  <pre><code>&lt;script&gt;
+  const student = {
+    id: 101,
+    info: {
+      grade: "A",
+      subject: "Math"
+    }
+  };
+
+  const { info: { grade, subject } } = student;
+  console.log(grade, subject); // A Math
+&lt;/script&gt;
+</code></pre>
+
+
+  greet({ name: "Bob", age: 30 }); 
+&lt;/script&gt;
+</code></pre>
+
+  <h2>🌊 Spread Operator (<code>...</code>)</h2>
+  <p>
+    The spread operator (<code>...</code>) expands arrays or objects into individual
+    elements.
+  </p>
+
+  <h3>Expanding Arrays</h3>
+  <pre><code>&lt;script&gt;
+  const arr1 = [1, 2, 3];
+  const arr2 = [4, 5, 6];
+  const merged = [...arr1, ...arr2];
+
+  console.log(merged); // [1, 2, 3, 4, 5, 6]
+&lt;/script&gt;
+</code></pre>
+
+  <h3>Copying Arrays</h3>
+  <pre><code>&lt;script&gt;
+  const original = [1, 2, 3];
+  const copy = [...original];
+
+  copy.push(4);
+  console.log(original); // [1, 2, 3]
+  console.log(copy);     // [1, 2, 3, 4]
+&lt;/script&gt;
+</code></pre>
+
+  <h3>Spreading in Function Calls</h3>
+  <pre><code>&lt;script&gt;
+  function sum(a, b, c) {
+    return a + b + c;
+  }
+
+  const numbers = [1, 2, 3];
+  console.log(sum(...numbers)); // 6
+&lt;/script&gt;
+</code></pre>
+
+  <h3>Spreading Objects</h3>
+  <pre><code>&lt;script&gt;
+  const obj1 = { name: "Alice" };
+  const obj2 = { age: 25 };
+  const person = { ...obj1, ...obj2 };
+
+  console.log(person); // { name: "Alice", age: 25 }
+&lt;/script&gt;
+</code></pre>
+
+  <h2>📦 Rest Operator (<code>...</code>)</h2>
+  <p>
+    The rest operator gathers multiple values into an array. It looks like the spread
+    operator, but is used differently.
+  </p>
+
+  <h3>Function Parameters</h3>
+  <pre><code>&lt;script&gt;
+  function sumAll(...nums) {
+    return nums.reduce((total, n) =&gt; total + n, 0);
+  }
+
+  console.log(sumAll(1, 2, 3, 4, 5)); // 15
+&lt;/script&gt;
+</code></pre>
+
+  <h3>Destructuring with Rest</h3>
+  <pre><code>&lt;script&gt;
+  const [first, ...others] = [10, 20, 30, 40];
+  console.log(first);  // 10
+  console.log(others); // [20, 30, 40]
+&lt;/script&gt;
+</code></pre>
+
+  <h2>🎁 Default Parameters</h2>
+  <p>
+    Before ES6, you had to manually check if a function argument was undefined. With
+    default parameters, you can give function arguments fallback values.
+  </p>
+
+
+
+  greet();         // Hello, Guest!
+  greet("Alice");  // Hello, Alice!
+&lt;/script&gt;
+</code></pre>
+
+  <h3>Using Expressions as Defaults</h3>
+  <pre><code>&lt;script&gt;
+  function multiply(a, b = a) {
+    return a * b;
+  }
+
+  console.log(multiply(5));    // 25
+  console.log(multiply(5, 2)); // 10
+&lt;/script&gt;
+</code></pre>
+
+  <h2>📚 Modules in JavaScript</h2>
+  <p>
+    Modules allow you to split code across multiple files and reuse it. This makes
+    applications more organized and maintainable.
+  </p>
+
+  <h3>Exporting</h3>
+  <pre><code>// file: math.js
+export function add(a, b) {
+  return a + b;
+}
+
+export const PI = 3.14159;
+
+// default export
+export default function subtract(a, b) {
+  return a - b;
+}
+</code></pre>
+
+  <h3>Importing</h3>
+  <pre><code>// file: app.js
+import subtract, { add, PI } from "./math.js";
+
+console.log(add(2, 3));       // 5
+console.log(subtract(10, 4)); // 6
+console.log(PI);              // 3.14159
+</code></pre>
+
+  <h3>Named vs Default Exports</h3>
+  <ul>
+    <li><strong>Named exports</strong> must be imported with the same name (<code>{ add }</code>).</li>
+    <li><strong>Default export</strong> can be renamed on import.</li>
+  </ul>
+
+  <h2>⚖️ Best Practices</h2>
+  <ul>
+    <li>Use destructuring to keep code concise and readable.</li>
+    <li>Prefer spread/rest operators instead of <code>apply()</code> or <code>arguments</code>.</li>
+    <li>Always provide sensible default parameters in functions.</li>
+    <li>Organize code with modules for scalability.</li>
+    <li>Use named exports when exporting multiple items, and default for one main item.</li>
+  </ul>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Destructure the object <code>{name: "Sam", age: 22, country: "USA"}</code> into variables.</li>
+    <li>Merge two arrays using the spread operator.</li>
+    <li>Write a function using rest parameters to find the maximum number.</li>
+    <li>Create a module with <code>multiply</code> and <code>divide</code> functions, then import them.</li>
+    <li>Write a function with default parameters that greets a user with name and time of day.</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li><strong>Destructuring</strong> extracts values from arrays/objects easily.</li>
+    <li><strong>Spread</strong> expands arrays/objects, <strong>Rest</strong> collects them.</li>
+    <li><strong>Default parameters</strong> simplify function argument handling.</li>
+    <li><strong>Modules</strong> help structure large projects into reusable pieces.</li>
+  </ul>
+
+  <p>
+    🎉 Congratulations! You’ve mastered essential ES6+ features. These tools make
+    JavaScript cleaner and more efficient. In the next lesson, we’ll explore
+    <strong>Asynchronous JavaScript: Callbacks, Promises, and Async/Await</strong>.
+  </p>
+</article>
+
+    `},{title: "Asynchronous JavaScript", content: `<article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>⚡ Introduction</h2>
+  <p>
+    JavaScript is single-threaded, meaning it can only execute one thing at a time.
+    But in real-world applications, we often deal with tasks that take time — like
+    fetching data from a server, reading a file, or waiting for a user action.
+    If JavaScript handled these synchronously, the entire page would freeze until
+    the task finished.
+  </p>
+  <p>
+    That’s why we need <strong>asynchronous programming</strong>. It lets JavaScript
+    handle time-consuming tasks without blocking the rest of the program. In this
+    lesson, we’ll cover:
+  </p>
+  <ul>
+    <li>What asynchronous code is</li>
+    <li>Callbacks and why they can be problematic</li>
+    <li>Promises as a cleaner solution</li>
+    <li>Async/Await for even simpler syntax</li>
+  </ul>
+
+  <h2>⏱️ Synchronous vs Asynchronous</h2>
+  <h3>Synchronous Example</h3>
+  <pre><code>&lt;script&gt;
+  console.log("Start");
+  console.log("Middle");
+  console.log("End");
+&lt;/script&gt;
+</code></pre>
+  <p>Output:</p>
+  <pre><code>Start
+Middle
+End</code></pre>
+  <p>Everything runs one after the other, no waiting.</p>
+
+  <h3>Asynchronous Example</h3>
+  <pre><code>&lt;script&gt;
+  console.log("Start");
+
+  setTimeout(() =&gt; {
+    console.log("Async task done!");
+  }, 2000);
+
+  console.log("End");
+&lt;/script&gt;
+</code></pre>
+  <p>Output:</p>
+  <pre><code>Start
+End
+Async task done!</code></pre>
+  <p>
+    Notice how <code>setTimeout</code> delayed execution without blocking the rest
+    of the code.
+  </p>
+
+  <h2>📞 Callbacks</h2>
+  <p>
+    A <strong>callback</strong> is a function passed as an argument to another
+    function, to be executed later.
+  </p>
+
+  <h3>Basic Callback Example</h3>
+  <pre><code>&lt;script&gt;
+  function greet(name, callback) {
+    console.log("Hello " + name);
+    callback();
+  }
+
+  function sayBye() {
+    console.log("Goodbye!");
+  }
+
+  greet("Alice", sayBye);
+&lt;/script&gt;
+</code></pre>
+  <p>Output:</p>
+  <pre><code>Hello Alice
+Goodbye!</code></pre>
+
+  <h3>Callbacks with Asynchronous Tasks</h3>
+  <pre><code>&lt;script&gt;
+  function fetchData(callback) {
+    console.log("Fetching data...");
+    setTimeout(() =&gt; {
+      callback("Data received!");
+    }, 2000);
+  }
+
+  fetchData((message) =&gt; {
+    console.log(message);
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <h3>Callback Hell</h3>
+  <p>
+    When you have multiple asynchronous operations that depend on each other,
+    callbacks can become messy and deeply nested.
+  </p>
+  <pre><code>&lt;script&gt;
+  setTimeout(() =&gt; {
+    console.log("Step 1");
+    setTimeout(() =&gt; {
+      console.log("Step 2");
+      setTimeout(() =&gt; {
+        console.log("Step 3");
+      }, 1000);
+    }, 1000);
+  }, 1000);
+&lt;/script&gt;
+</code></pre>
+  <p>This is often called <strong>callback hell</strong>.</p>
+
+  <h2>🤝 Promises</h2>
+  <p>
+    A <strong>Promise</strong> is an object that represents the eventual completion
+    (or failure) of an asynchronous operation. It has three states:
+  </p>
+  <ul>
+    <li><code>pending</code> – initial state</li>
+    <li><code>fulfilled</code> – operation completed successfully</li>
+    <li><code>rejected</code> – operation failed</li>
+  </ul>
+
+  <h3>Creating a Promise</h3>
+  <pre><code>&lt;script&gt;
+  const promise = new Promise((resolve, reject) =&gt; {
+    let success = true;
+
+    if (success) {
+      resolve("Task completed!");
+    } else {
+      reject("Task failed!");
+    }
+  });
+
+  promise.then(result =&gt; {
+    console.log(result);
+  }).catch(error =&gt; {
+    console.log(error);
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <h3>Chaining Promises</h3>
+  <pre><code>&lt;script&gt;
+  function step1() {
+    return new Promise(resolve =&gt; {
+      setTimeout(() =&gt; resolve("Step 1 done"), 1000);
+    });
+  }
+
+  function step2() {
+    return new Promise(resolve =&gt; {
+      setTimeout(() =&gt; resolve("Step 2 done"), 1000);
+    });
+  }
+
+  step1()
+    .then(result =&gt; {
+      console.log(result);
+      return step2();
+    })
+    .then(result =&gt; {
+      console.log(result);
+    });
+&lt;/script&gt;
+</code></pre>
+
+  <h3>Promise.all</h3>
+  <p>
+    Runs multiple promises in parallel and waits for all to finish.
+  </p>
+  <pre><code>&lt;script&gt;
+  const p1 = Promise.resolve("First");
+  const p2 = Promise.resolve("Second");
+
+  Promise.all([p1, p2]).then(values =&gt; {
+    console.log(values); // ["First", "Second"]
+  });
+&lt;/script&gt;
+</code></pre>
+
+  <h2>⏳ Async/Await</h2>
+  <p>
+    <code>async/await</code> is built on top of promises and makes asynchronous
+    code look synchronous.
+  </p>
+
+  <h3>Basic Example</h3>
+  <pre><code>&lt;script&gt;
+  async function fetchData() {
+    return "Data loaded!";
+  }
+
+  fetchData().then(result =&gt; console.log(result));
+&lt;/script&gt;
+</code></pre>
+
+  <h3>Await Example</h3>
+  <pre><code>&lt;script&gt;
+  function delay(ms) {
+    return new Promise(resolve =&gt; setTimeout(resolve, ms));
+  }
+
+  async function runSteps() {
+    console.log("Step 1");
+    await delay(1000);
+
+    console.log("Step 2");
+    await delay(1000);
+
+    console.log("Step 3");
+  }
+
+  runSteps();
+&lt;/script&gt;
+</code></pre>
+
+  <h3>Try/Catch with Async/Await</h3>
+  <pre><code>&lt;script&gt;
+  async function getData() {
+    try {
+      let response = await fetch("https://jsonplaceholder.typicode.com/posts/1");
+      let data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  }
+
+  getData();
+&lt;/script&gt;
+</code></pre>
+
+  <h2>⚖️ Best Practices</h2>
+  <ul>
+    <li>Use promises instead of callbacks to avoid messy nesting.</li>
+    <li>Prefer <code>async/await</code> for readability when working with multiple async tasks.</li>
+    <li>Always handle errors with <code>.catch</code> or <code>try/catch</code>.</li>
+    <li>Use <code>Promise.all</code> for tasks that can run in parallel.</li>
+  </ul>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Create a function with a callback that simulates downloading a file.</li>
+    <li>Rewrite the callback function using a Promise.</li>
+    <li>Chain two promises together that simulate sequential API calls.</li>
+    <li>Write an async function that waits 3 seconds before logging "Done".</li>
+    <li>Fetch data from a public API using async/await and handle errors gracefully.</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li>Callbacks let us handle async tasks but can get messy.</li>
+    <li>Promises solve callback hell and give cleaner syntax.</li>
+    <li><code>async/await</code> makes async code look synchronous and easier to read.</li>
+  </ul>
+
+  <p>
+    🎉 Congratulations! You’ve learned the foundation of asynchronous JavaScript:
+    callbacks, promises, and async/await. In the next lesson, we’ll go deeper into
+    <strong>Asynchronous JavaScript Part 2 – Fetch API, AJAX, and JSON</strong>.
+  </p>
+</article>
+
+    `},{title: "Asynchronous JavaScript (Part 2)", content: `<article>
+  <p><strong>Word Count:</strong> ~1500</p>
+
+  <h2>⚡ Introduction</h2>
+  <p>
+    In the previous lesson, you learned how JavaScript handles asynchronous code using
+    <strong>callbacks</strong>, <strong>promises</strong>, and <strong>async/await</strong>.
+    Now let’s apply that knowledge to one of the most important parts of modern
+    JavaScript: <strong>communicating with servers</strong>.
+  </p>
+  <p>
+    Most real-world applications need to send and receive data — whether it’s loading
+    posts on a social media site, fetching weather information, or submitting a form.
+    This lesson covers:
+  </p>
+  <ul>
+    <li><strong>AJAX</strong> – the old way of fetching data (still important historically).</li>
+    <li><strong>Fetch API</strong> – the modern, promise-based method for HTTP requests.</li>
+    <li><strong>JSON</strong> – the standard format for data exchange on the web.</li>
+  </ul>
+
+  <h2>📡 What Is AJAX?</h2>
+  <p>
+    AJAX stands for <strong>Asynchronous JavaScript and XML</strong>. It allows web
+    pages to request data from a server without reloading the entire page. Although
+    XML is in the name, today AJAX is mostly used with <strong>JSON</strong>.
+  </p>
+
+  <h3>How AJAX Works</h3>
+  <ol>
+    <li>JavaScript sends an HTTP request to the server.</li>
+    <li>The server processes it and sends back a response.</li>
+    <li>JavaScript updates the page dynamically, without a full reload.</li>
+  </ol>
+
+  <h3>AJAX with <code>XMLHttpRequest</code></h3>
+  <pre><code>&lt;script&gt;
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://jsonplaceholder.typicode.com/posts/1", true);
+
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      console.log(JSON.parse(xhr.responseText));
+    }
+  };
+
+  xhr.send();
+&lt;/script&gt;
+</code></pre>
+  <p>
+    While <code>XMLHttpRequest</code> works, it’s verbose and harder to manage.
+    That’s why the <strong>Fetch API</strong> was introduced in ES6.
+  </p>
+
+  <h2>🌐 Fetch API</h2>
+  <p>
+    The Fetch API is a modern way to make network requests in JavaScript. It uses
+    promises, making the syntax much cleaner.
+  </p>
+
+  <h3>Basic Fetch Example</h3>
+  <pre><code>&lt;script&gt;
+  fetch("https://jsonplaceholder.typicode.com/posts/1")
+    .then(response =&gt; response.json())
+    .then(data =&gt; console.log(data))
+    .catch(error =&gt; console.error("Error:", error));
+&lt;/script&gt;
+</code></pre>
+  <p>✅ Much simpler than <code>XMLHttpRequest</code>!</p>
+
+  <h3>Fetch with Async/Await</h3>
+  <pre><code>&lt;script&gt;
+  async function getPost() {
+    try {
+      const response = await fetch("https://jsonplaceholder.typicode.com/posts/1");
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  getPost();
+&lt;/script&gt;
+</code></pre>
+
+  <h2>📤 Sending Data with Fetch (POST Request)</h2>
+  <p>
+    Fetch can also send data to a server, usually in JSON format, with a POST request.
+  </p>
+
+  <pre><code>&lt;script&gt;
+  async function createPost() {
+    try {
+      const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          title: "My New Post",
+          body: "This is the post content.",
+          userId: 1
+        })
+      });
+
+      const data = await response.json();
+      console.log("Created:", data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  createPost();
+&lt;/script&gt;
+</code></pre>
+
+  <h2>📥 Other HTTP Methods</h2>
+  <ul>
+    <li><code>GET</code> – retrieve data (default).</li>
+    <li><code>POST</code> – send new data to the server.</li>
+    <li><code>PUT</code> – update an existing resource.</li>
+    <li><code>DELETE</code> – remove a resource.</li>
+  </ul>
+
+  <h3>PUT Example</h3>
+  <pre><code>&lt;script&gt;
+  async function updatePost() {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts/1", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        id: 1,
+        title: "Updated Post",
+        body: "Updated content",
+        userId: 1
+      })
+    });
+
+    const data = await response.json();
+    console.log("Updated:", data);
+  }
+
+  updatePost();
+&lt;/script&gt;
+</code></pre>
+
+  <h3>DELETE Example</h3>
+  <pre><code>&lt;script&gt;
+  async function deletePost() {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts/1", {
+      method: "DELETE"
+    });
+
+    console.log("Deleted:", response.status); // 200
+  }
+
+  deletePost();
+&lt;/script&gt;
+</code></pre>
+
+  <h2>📑 JSON – JavaScript Object Notation</h2>
+  <p>
+    <strong>JSON</strong> is the most common format for sending and receiving data
+    between clients and servers. It’s lightweight, text-based, and looks like
+    JavaScript objects.
+  </p>
+
+  <h3>JSON Example</h3>
+  <pre><code>{
+    "name": "Alice",
+    "age": 25,
+    "isStudent": false,
+    "hobbies": ["reading", "coding"]
+  }
+</code></pre>
+
+  <h3>Working with JSON in JavaScript</h3>
+  <ul>
+    <li><code>JSON.stringify()</code> – convert JS objects to JSON strings.</li>
+    <li><code>JSON.parse()</code> – convert JSON strings to JS objects.</li>
+  </ul>
+
+  <pre><code>&lt;script&gt;
+  const obj = { name: "Bob", age: 30 };
+  const json = JSON.stringify(obj);
+
+  console.log(json); // {"name":"Bob","age":30}
+
+  const parsed = JSON.parse(json);
+  console.log(parsed.name); // Bob
+&lt;/script&gt;
+</code></pre>
+
+  <h2>⚡ Error Handling with Fetch</h2>
+  <p>
+    Fetch only rejects on <strong>network errors</strong>, not on bad HTTP status
+    codes. That means you should always check <code>response.ok</code>.
+  </p>
+
+  <pre><code>&lt;script&gt;
+  async function safeFetch() {
+    try {
+      const response = await fetch("https://jsonplaceholder.typicode.com/404");
+
+      if (!response.ok) {
+        throw new Error("HTTP error " + response.status);
+      }
+
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  safeFetch();
+&lt;/script&gt;
+</code></pre>
+
+  <h2>⚖️ Best Practices</h2>
+  <ul>
+    <li>Use <code>fetch</code> instead of <code>XMLHttpRequest</code> for new code.</li>
+    <li>Always handle errors with <code>try/catch</code> or <code>.catch()</code>.</li>
+    <li>Use <code>async/await</code> for readability.</li>
+    <li>Check <code>response.ok</code> to catch HTTP errors.</li>
+    <li>Send and receive data as <strong>JSON</strong> unless you specifically need another format.</li>
+  </ul>
+
+  <h2>🧪 Practice Exercises</h2>
+  <ol>
+    <li>Make a GET request to <code>https://jsonplaceholder.typicode.com/users</code> and log the result.</li>
+    <li>Write a function that posts a new comment to the API.</li>
+    <li>Update a user’s info using a PUT request.</li>
+    <li>Delete a post using a DELETE request.</li>
+    <li>Convert a JavaScript object into JSON and send it to the server.</li>
+  </ol>
+
+  <h2>🎯 Summary</h2>
+  <ul>
+    <li><strong>AJAX</strong> (via <code>XMLHttpRequest</code>) was the old way of making async requests.</li>
+    <li><strong>Fetch API</strong> is the modern, promise-based alternative.</li>
+    <li><strong>JSON</strong> is the standard format for exchanging data on the web.</li>
+    <li>Always handle errors and check <code>response.ok</code>.</li>
+    <li>Use async/await to make code cleaner and easier to understand.</li>
+  </ul>
+
+  <p>
+    🎉 Congratulations! You’ve mastered asynchronous data handling in JavaScript
+  </p>
+</article>
+
+    `},
+
+//     {title: "If Statements", content: `
+//       Conditional statements allow you to run code only when a condition is true.
+//       <pre><code>age = 18
+// if age >= 18:
+//     print("You are an adult")</code></pre>
+//     `},
+    // ➡ Add lessons up to 15 or even 100 here!
+  ];
+
+  let currentLesson = 0;
+
+  // Generate lesson list dynamically
+  const lessonListDiv = document.getElementById("lessonList");
+  lessons.forEach((lesson, index) => {
+    const div = document.createElement("div");
+    div.className = "lesson-card";
+    div.innerText = "Lesson " + (index+1) + ": " + lesson.title;
+    div.onclick = () => openLesson(index);
+    lessonListDiv.appendChild(div);
+  });
+
+  function openLesson(index) {
+    currentLesson = index;
+    document.getElementById("home").classList.remove("active");
+    document.getElementById("lessonPage").classList.add("active");
+    showLesson();
+  }
+
+  function showLesson() {
+    const lesson = lessons[currentLesson];
+    document.getElementById("lessonContent").innerHTML = `
+      <h2>Lesson ${currentLesson+1}: ${lesson.title}</h2>
+      <p>${lesson.content}</p>
+    `;
+  }
+
+  function nextLesson() {
+    if (currentLesson < lessons.length - 1) {
+      currentLesson++;
+      showLesson();
+    } else {
+      alert("🎉 You finished all lessons!");
+    }
+  }
+
+  function prevLesson() {
+    if (currentLesson > 0) {
+      currentLesson--;
+      showLesson();
+    } else {
+      alert("This is the first lesson!");
+    }
+  }
+
+  function goHome() {
+    document.getElementById("lessonPage").classList.remove("active");
+    document.getElementById("home").classList.add("active");
+  }
+</script>
+
+</body>
+</html>
