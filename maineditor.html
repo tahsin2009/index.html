@@ -382,25 +382,32 @@ function runCode() {
       output.innerHTML += `<div class="error">Error: ${err}</div>`;
     }
   } else if (openFile.endsWith(".py")) {
-    if (!pyodideReady) { output.innerHTML = "Pyodide not ready yet..."; return; }
-    (async () => {
-      try {
-        pyodide.runPython(`import sys
+  if (!pyodideReady) { output.innerHTML = "Pyodide not ready yet..."; return; }
+  (async () => {
+    try {
+      // Redirect console output
+      pyodide.runPython(`
+import sys, js
 class ConsoleWriter:
   def write(self, s):
-    import js
     js.document.getElementById("console-output").innerHTML += s
   def flush(self): pass
 sys.stdout = ConsoleWriter()
-sys.stderr = ConsoleWriter()`);
-        await pyodide.runPythonAsync(code);
-      } catch (err) {
-        output.innerHTML += `<div class="error">Error: ${err}</div>`;
-      }
-    })();
-  } else {
-    output.innerHTML = `<div class="warn">▶ Run works for .js or .py files</div>`;
-  }
+sys.stderr = ConsoleWriter()
+
+# Make input() work with JS prompt()
+import builtins
+def js_input(prompt=""):
+    return js.window.prompt(prompt)
+builtins.input = js_input
+`);
+      await pyodide.runPythonAsync(code);
+    } catch (err) {
+      output.innerHTML += `<div class="error">Error: ${err}</div>`;
+    }
+  })();
+}
+
 }
 function goLive() {
   if (!openFile || !openFile.endsWith(".html")) return;
