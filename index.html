@@ -136,7 +136,6 @@
   .actions{display:flex;gap:12px;align-items:center;margin-top:6px}
   .action{cursor:pointer;display:flex;gap:8px;align-items:center;color:#444;font-size:13px}
   .counter{font-weight:600}
-  .desc{color:#333;margin-top:8px;white-space:pre-wrap}
   .code-block {
   background:#0f1720;
   color:#e6f2ff;
@@ -149,17 +148,19 @@
   max-height:120px; /* default collapsed height */
   position:relative;
 }
-
+/* DESCRIPTION (collapsed by default, expandable with Show more/Show less) */
 .desc {
-  color:#333;
-  margin-top:8px;
-  white-space:pre-wrap;
-  max-height: 60px;       /* default collapsed height */
-  overflow: hidden;
+  color: #333;
+  margin-top: 8px;
+  white-space: pre-wrap;
+  max-height: 100px;        /* visible portion when collapsed */
+  overflow: hidden;         /* hide rest when collapsed */
   position: relative;
+  transition: max-height 0.28s ease;
+  line-height: 1.4;
 }
 .desc.expanded {
-  max-height: none;       /* full height when expanded */
+  max-height: none;         /* full height when expanded */
 }
 
 
@@ -620,24 +621,32 @@ async function renderFeed() {
         <pre class="code-block"><code class="language-${c.lang || 'javascript'}">${escapeHtml(c.code)}</code></pre>
       `).join('');
 
-      const postHTML = `
-        <div class="post">
-          <div class="meta">
-            <div class="avatar">${escapeHtml((post.userName?.[0] || 'U').toUpperCase())}</div>
-            <div>
-              <div class="username">${escapeHtml(post.userName || 'Unknown')}</div>
-              <div class="posted-time muted">${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString() : ''}</div>
-            </div>
-          </div>
-          <div class="desc">${escapeHtml(desc)}</div>
-          ${codeBlocks}
-          <div class="actions" style="margin-top:8px">
-            <button class="small-btn" onclick="toggleLike('${postId}')">❤️ ${likes}</button>
-            <button class="small-btn" onclick="openComments('${postId}')">💬</button>
-            <button class="small-btn" onclick="toggleSave('${postId}')">🔖</button>
-          </div>
-        </div>
-      `;
+            const postHTML = `
+  <div class="post">
+    <div class="meta">
+      <div class="avatar">${escapeHtml((post.userName?.[0] || 'U').toUpperCase())}</div>
+      <div>
+        <div class="username">${escapeHtml(post.userName || 'Unknown')}</div>
+        <div class="posted-time muted">${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString() : ''}</div>
+      </div>
+    </div>
+
+    <!-- description with id so it can be toggled -->
+    <div class="desc" id="desc-${postId}">${escapeHtml(desc)}</div>
+
+    <!-- show toggle button only for long descriptions -->
+    ${desc && desc.length > 100 ? `<div style="margin-top:6px"><button class="small-btn" id="toggleDesc-${postId}" onclick="toggleDescription('${postId}')">Show more</button></div>` : ''}
+
+    ${codeBlocks}
+
+    <div class="actions" style="margin-top:8px">
+      <button class="small-btn" onclick="toggleLike('${postId}')">❤️ ${likes}</button>
+      <button class="small-btn" onclick="openComments('${postId}')">💬</button>
+      <button class="small-btn" onclick="toggleSave('${postId}')">🔖</button>
+    </div>
+  </div>
+`;
+
 
       feedList.innerHTML += postHTML;
     });
@@ -1028,6 +1037,17 @@ auth.onAuthStateChanged(user => {
 /* Helpers */
 function timeAgo(ts){ const sec = Math.floor((Date.now() - ts)/1000); if(sec<60) return `${sec}s`; if(sec<3600) return `${Math.floor(sec/60)}m`; if(sec<86400) return `${Math.floor(sec/3600)}h`; return `${Math.floor(sec/86400)}d`; }
 function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>\"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;', '"':'&quot;',"'":'&#39;' })[c]); }
+
+
+function toggleDescription(postId) {
+  const descEl = document.getElementById('desc-' + postId);
+  const btn = document.getElementById('toggleDesc-' + postId);
+  if (!descEl || !btn) return;
+
+  const expanded = descEl.classList.toggle('expanded');
+  btn.textContent = expanded ? 'Show less' : 'Show more';
+}
+
 
 init();
 </script>
